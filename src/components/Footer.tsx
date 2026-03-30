@@ -8,9 +8,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
-              <Logo size={32} />
-              <span className="font-display text-xl text-foreground">Indubienes</span>
+            <div className="flex items-center mb-4">
+              <Logo height={32} />
             </div>
             <p className="text-sm text-muted leading-relaxed mb-6">
               Inmobiliaria en Medellín especializada en venta, arriendo y administración de propiedades. Más de una década de experiencia en el mercado inmobiliario.

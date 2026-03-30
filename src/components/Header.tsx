@@ -28,16 +28,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <Logo size={36} />
-            <div className="flex flex-col">
-              <span className="font-display text-lg sm:text-xl tracking-wide text-foreground">
-                Indubienes
-              </span>
-              <span className="text-[10px] tracking-[0.2em] uppercase text-muted hidden sm:block">
-                Inmobiliaria
-              </span>
-            </div>
+          <Link href="/" className="flex items-center group">
+            <Logo height={36} />
           </Link>
 
           {/* Desktop Navigation */}
