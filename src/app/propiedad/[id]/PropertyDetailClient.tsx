@@ -16,7 +16,6 @@ export default function PropertyDetailClient({ property }: Props) {
   ].filter(img => img?.url);
 
   const [currentImage, setCurrentImage] = useState(0);
-  const [showContactForm, setShowContactForm] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',

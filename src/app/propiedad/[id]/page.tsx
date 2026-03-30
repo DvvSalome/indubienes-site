@@ -1,5 +1,4 @@
 import { getProperty } from '@/lib/wasi';
-import { formatPrice } from '@/lib/wasi';
 import { notFound } from 'next/navigation';
 import PropertyDetailClient from './PropertyDetailClient';
 

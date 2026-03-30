@@ -1,11 +1,5 @@
 import { Property, PropertyType } from './types';
 
-const baseImage = {
-  url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop',
-  url_big: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
-  url_original: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=900&fit=crop',
-};
-
 const propertyImages = [
   {
     url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop',
@@ -61,9 +55,6 @@ const galleryImages = [
     url_original: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=900&fit=crop',
   },
 ];
-
-const zones = ['Laureles', 'El Poblado', 'Belén', 'Envigado', 'Sabaneta', 'La Estrella'];
-const propertyTypes = ['Apartamento', 'Casa', 'Apartaestudio', 'Local Comercial', 'Bodega', 'Finca'];
 
 export const mockProperties: Property[] = [
   {

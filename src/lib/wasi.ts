@@ -169,6 +169,7 @@ export async function getPropertyTypes(): Promise<PropertyType[]> {
 }
 
 // Normalize property data from WASI API
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeProperty(raw: any): Property {
   return {
     id_property: raw.id_property || 0,
