@@ -3,56 +3,59 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  // Hardcoded test - bypass env vars entirely
-  const COMPANY = '1288465';
-  const TOKEN = '***REDACTED***';
+  const WASI_COMPANY_ID = (process.env.WASI_COMPANY_ID || '1288465').trim();
+  const WASI_TOKEN = (process.env.WASI_TOKEN || '***REDACTED***').trim();
 
   try {
-    // Test 1: Using URLSearchParams (like wasi.ts does)
-    const params = new URLSearchParams({
-      id_company: COMPANY,
-      wasi_token: TOKEN,
+    // Replicate exact wasiRequest logic for highlighted
+    const queryParams = new URLSearchParams({
+      id_company: WASI_COMPANY_ID,
+      wasi_token: WASI_TOKEN,
       for_sale: 'true',
     });
-    const url1 = `https://api.wasi.co/v1/property/highlighted/?${params.toString()}`;
+    const url = `https://api.wasi.co/v1/property/highlighted/?${queryParams.toString()}`;
 
-    const resp1 = await fetch(url1, {
+    const response = await fetch(url, {
+      method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-    const text1 = await resp1.text();
-    let parsed1 = null;
-    try { parsed1 = JSON.parse(text1); } catch { /* */ }
 
-    // Test 2: Using template literal (manual)
-    const url2 = `https://api.wasi.co/v1/property/highlighted/?id_company=${COMPANY}&wasi_token=${TOKEN}&for_sale=true`;
+    if (!response.ok) {
+      return NextResponse.json({ step: 'response_not_ok', status: response.status, statusText: response.statusText });
+    }
 
-    const resp2 = await fetch(url2, {
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
-    });
-    const text2 = await resp2.text();
-    let parsed2 = null;
-    try { parsed2 = JSON.parse(text2); } catch { /* */ }
+    const data = await response.json();
+
+    // Check WASI error
+    if (data?.status === 'error' || data?.error) {
+      return NextResponse.json({ step: 'wasi_error', data });
+    }
+
+    // Extract properties (numeric keys only)
+    const properties = Object.entries(data)
+      .filter(([key]) => !isNaN(Number(key)))
+      .map(([key, value]: [string, unknown]) => {
+        const raw = value as Record<string, unknown>;
+        return {
+          key,
+          id: raw.id_property,
+          title: (raw.title as string)?.substring(0, 50),
+          image: (raw.main_image as Record<string, string>)?.url?.substring(0, 50),
+        };
+      });
 
     return NextResponse.json({
-      test1_urlsearchparams: {
-        url: url1,
-        status: resp1.status,
-        keys: parsed1 ? Object.keys(parsed1).slice(0, 5) : null,
-        first_title: parsed1?.['0']?.title || null,
-        preview: text1.substring(0, 200),
-      },
-      test2_template: {
-        url: url2,
-        status: resp2.status,
-        keys: parsed2 ? Object.keys(parsed2).slice(0, 5) : null,
-        first_title: parsed2?.['0']?.title || null,
-        preview: text2.substring(0, 200),
-      },
+      step: 'success',
+      token_used: WASI_TOKEN.substring(0, 4) + '...' + WASI_TOKEN.substring(WASI_TOKEN.length - 4),
+      company_used: WASI_COMPANY_ID,
+      response_keys: Object.keys(data),
+      properties_found: properties.length,
+      properties: properties.slice(0, 3),
     });
   } catch (error: unknown) {
     return NextResponse.json({
+      step: 'exception',
       error: error instanceof Error ? error.message : String(error),
     }, { status: 500 });
   }
