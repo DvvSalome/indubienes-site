@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
+import SmartImage from '@/components/SmartImage';
 
 interface Props {
   property: Property;
@@ -71,10 +72,10 @@ export default function PropertyDetailClient({ property }: Props) {
             <div className="mb-8">
               <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-surface mb-3">
                 {allImages.length > 0 ? (
-                  <img
+                  <SmartImage
                     src={allImages[currentImage]?.url_big || allImages[currentImage]?.url}
                     alt={property.title}
-                    className="w-full h-full object-cover"
+                    className="group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-faint">

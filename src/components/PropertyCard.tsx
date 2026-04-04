@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
+import SmartImage from '@/components/SmartImage';
 
 export default function PropertyCard({ property }: { property: Property }) {
   const price = property.for_sale && property.sale_price
@@ -17,12 +18,13 @@ export default function PropertyCard({ property }: { property: Property }) {
       <div className="property-card bg-card rounded-xl overflow-hidden border border-border">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-surface">
-          <img
-            src={imageUrl}
-            alt={property.title || ''}
-            loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          <div className="absolute inset-0">
+            <SmartImage
+              src={imageUrl}
+              alt={property.title || ''}
+              className="group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
           {/* Overlay gradient */}
           <div className="absolute inset-0 image-overlay opacity-60" />
 

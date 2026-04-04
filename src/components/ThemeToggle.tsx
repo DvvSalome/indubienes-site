@@ -28,8 +28,9 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="relative w-9 h-9 rounded-full flex items-center justify-center text-muted hover:text-foreground transition-colors duration-300 hover:bg-surface"
+      className="relative w-9 h-9 rounded-full flex items-center justify-center text-foreground/70 hover:text-gold border border-border/50 hover:border-gold/40 transition-all duration-300 hover:bg-surface"
       aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+      title={isDark ? 'Modo claro' : 'Modo oscuro'}
     >
       {isDark ? (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
