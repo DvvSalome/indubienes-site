@@ -9,18 +9,18 @@
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Switzer', system-ui, sans-serif;
 
-  /* Light mode */
-  --background: #FAFAF7;
+  /* Light mode — warm palette, no stark whites */
+  --background: #F5F3EE;
   --foreground: #1A1A1A;
-  --surface: #F0EDE8;
-  --surface-hover: #E8E4DD;
-  --card: #FFFFFF;
-  --card-hover: #F7F5F0;
-  --gold: #C9A962;
-  --gold-hover: #B8943D;
-  --muted: #6B6B6B;
-  --faint: #9A9A9A;
-  --border-color: #E0DCD4;
+  --surface: #EBE8E2;
+  --surface-hover: #E2DED6;
+  --card: #FAFAF7;
+  --card-hover: #F2F0EB;
+  --gold: #B8943D;
+  --gold-hover: #A68335;
+  --muted: #5A5A5A;
+  --faint: #8A8A8A;
+  --border-color: #D8D4CB;
 }
 
 .dark {
@@ -113,14 +113,19 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
 }
 
-/* Property card hover effect — luxury */
+/* Property card — luxury elevated style */
 .property-card {
   transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 .property-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(201, 169, 98, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dark .property-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .dark .property-card:hover {
@@ -277,6 +282,7 @@ main {
 .scroll-reveal.revealed {
   animation: none;
 }
+
 /* Admin Login Page - Luxury Styling */
 
 .admin-login-container {
