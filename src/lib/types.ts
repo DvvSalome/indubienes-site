@@ -49,7 +49,6 @@ export interface Property {
   maintenance_fee_label: string;
   property_condition_label: string;
   visits: number;
-  built_area: number;
   private_area: number;
   reference: string;
 }

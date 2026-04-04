@@ -274,7 +274,6 @@ function normalizeProperty(raw: any): Property {
     maintenance_fee_label: extractLabel(raw.maintenance_fee_label),
     property_condition_label: extractLabel(raw.property_condition_label),
     visits: Number(raw.visits) || 0,
-    built_area: Number(raw.built_area) || 0,
     private_area: Number(raw.private_area) || 0,
     reference: raw.reference || '',
   };
