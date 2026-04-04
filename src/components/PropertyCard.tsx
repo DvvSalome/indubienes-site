@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
-import SmartImage from '@/components/SmartImage';
 
 function toTitleCase(str: string): string {
   if (!str) return '';
@@ -40,14 +39,13 @@ export default function PropertyCard({ property }: { property: Property }) {
     <Link href={`/propiedad/${property.id_property}`} className="block group">
       <div className="property-card bg-white dark:bg-card rounded-2xl overflow-hidden border border-black/[0.06] dark:border-border hover:border-gold/30 dark:hover:border-gold/30 transition-all duration-300">
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-surface">
-          <div className="absolute inset-0">
-            <SmartImage
-              src={imageUrl}
-              alt={displayTitle || ''}
-              className="group-hover:scale-105 transition-transform duration-700 ease-out"
-            />
-          </div>
+        <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900">
+          <img
+            src={imageUrl}
+            alt={displayTitle || ''}
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            loading="lazy"
+          />
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
