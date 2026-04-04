@@ -2,16 +2,14 @@
 
 import { useEffect } from 'react';
 
-// Initializes theme from saved preference. Defaults to light mode.
 export default function ForceDarkMode() {
   useEffect(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      // Default: light mode
-      document.documentElement.classList.remove('dark');
-    }
+    // Always force dark mode — remove any saved light mode preference
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+    try {
+      window.localStorage?.removeItem('theme');
+    } catch {}
   }, []);
 
   return null;

@@ -16,11 +16,10 @@ export default function PropertyCard({ property }: { property: Property }) {
     <Link href={`/propiedad/${property.id_property}`} className="block group">
       <div className="property-card bg-card rounded-xl overflow-hidden border border-border">
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-surface">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#1a1a1a]">
           <img
             src={imageUrl}
             alt={property.title || ''}
-            loading="lazy"
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {/* Overlay gradient */}
