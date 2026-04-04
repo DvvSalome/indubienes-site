@@ -80,7 +80,8 @@ export function formatPrice(price: number): string {
 export async function searchProperties(filters: PropertySearchFilters = {}): Promise<PropertySearchResult> {
   const { skip = 0, take = 12, ...rest } = filters;
 
-  const result = await wasiRequest<{ total?: number; properties?: Record<string, Property> }>('/property/search', {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await wasiRequest<Record<string, any>>('/property/search', {
     method: 'POST',
     body: {
       ...rest,
@@ -91,12 +92,16 @@ export async function searchProperties(filters: PropertySearchFilters = {}): Pro
     },
   });
 
-  if (result && result.properties) {
-    const properties = Object.values(result.properties).map(normalizeProperty);
-    return {
-      properties,
-      total: result.total || properties.length,
-    };
+  if (result) {
+    // WASI returns properties at top level with numeric keys: {"total": N, "0": {...}, "1": {...}, "status": "success"}
+    const total = Number(result.total) || 0;
+    const properties = Object.entries(result)
+      .filter(([key]) => !isNaN(Number(key)))
+      .map(([, value]) => normalizeProperty(value));
+
+    if (properties.length > 0) {
+      return { properties, total };
+    }
   }
 
   // Fallback to mock data
@@ -138,7 +143,15 @@ export async function getHighlightedProperties(): Promise<Property[]> {
   });
 
   if (result) {
-    return Object.values(result).map(normalizeProperty).slice(0, 6);
+    // WASI returns properties at top level with numeric keys: {"total": N, "0": {...}, "1": {...}}
+    const properties = Object.entries(result)
+      .filter(([key]) => !isNaN(Number(key)))
+      .map(([, value]) => normalizeProperty(value))
+      .slice(0, 6);
+
+    if (properties.length > 0) {
+      return properties;
+    }
   }
 
   // Fallback
