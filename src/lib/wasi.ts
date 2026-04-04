@@ -3,7 +3,7 @@ import { mockProperties, mockPropertyTypes } from './mock-data';
 
 const WASI_BASE_URL = 'https://api.wasi.co/v1';
 const WASI_COMPANY_ID = process.env.WASI_COMPANY_ID || '1288465';
-const WASI_TOKEN = process.env.WASI_TOKEN || '';
+const WASI_TOKEN = process.env.WASI_TOKEN || '***REDACTED***';
 
 interface WasiRequestOptions {
   method?: 'GET' | 'POST';
