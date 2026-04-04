@@ -266,8 +266,17 @@ function normalizeProperty(raw: any): Property {
     for_rent: parseBool(raw.for_rent),
     observations: raw.observations || '',
     video: raw.video || '',
+    url_360: raw.url_360 || '',
     id_property_type: Number(raw.id_property_type) || 0,
     property_type_label: extractLabel(raw.property_type_label) || extractLabel(raw.id_property_type_label),
+    stratum: Number(raw.stratum) || 0,
+    maintenance_fee: Number(raw.maintenance_fee) || 0,
+    maintenance_fee_label: extractLabel(raw.maintenance_fee_label),
+    property_condition_label: extractLabel(raw.property_condition_label),
+    visits: Number(raw.visits) || 0,
+    built_area: Number(raw.built_area) || 0,
+    private_area: Number(raw.private_area) || 0,
+    reference: raw.reference || '',
   };
 }
 

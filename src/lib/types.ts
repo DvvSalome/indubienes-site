@@ -41,8 +41,17 @@ export interface Property {
   for_rent: boolean;
   observations: string;
   video: string;
+  url_360: string;
   id_property_type: number;
   property_type_label: string;
+  stratum: number;
+  maintenance_fee: number;
+  maintenance_fee_label: string;
+  property_condition_label: string;
+  visits: number;
+  built_area: number;
+  private_area: number;
+  reference: string;
 }
 
 export interface PropertySearchFilters {
