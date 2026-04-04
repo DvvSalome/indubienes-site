@@ -33,24 +33,24 @@ export default async function HomePage() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-          <p className="hero-tagline text-gold text-sm sm:text-base font-body tracking-[0.3em] uppercase mb-6" style={{ opacity: 0 }}>
+          <p className="hero-tagline text-gold text-sm sm:text-base font-body tracking-[0.3em] uppercase mb-6" >
             Inmobiliaria en Medellín
           </p>
 
           <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display text-white mb-8 leading-[1.1]" style={{ perspective: '600px' }}>
             <span className="block overflow-hidden">
-              <span className="hero-word inline-block" style={{ transform: 'translateY(110%)' }}>Encuentra</span>{' '}
-              <span className="hero-word inline-block" style={{ transform: 'translateY(110%)' }}>tu</span>{' '}
-              <span className="hero-word inline-block" style={{ transform: 'translateY(110%)' }}>lugar</span>
+              <span className="hero-word inline-block" >Encuentra</span>{' '}
+              <span className="hero-word inline-block" >tu</span>{' '}
+              <span className="hero-word inline-block" >lugar</span>
             </span>
             <span className="block overflow-hidden mt-2">
-              <span className="hero-word inline-block gold-text" style={{ transform: 'translateY(110%)' }}>ideal</span>{' '}
-              <span className="hero-word inline-block gold-text" style={{ transform: 'translateY(110%)' }}>para</span>{' '}
-              <span className="hero-word inline-block gold-text" style={{ transform: 'translateY(110%)' }}>vivir</span>
+              <span className="hero-word inline-block gold-text" >ideal</span>{' '}
+              <span className="hero-word inline-block gold-text" >para</span>{' '}
+              <span className="hero-word inline-block gold-text" >vivir</span>
             </span>
           </h1>
 
-          <p className="hero-subtitle text-lg sm:text-xl text-white/60 font-body max-w-2xl mx-auto mb-12" style={{ opacity: 0 }}>
+          <p className="hero-subtitle text-lg sm:text-xl text-white/60 font-body max-w-2xl mx-auto mb-12" >
             Apartamentos, casas y propiedades en las mejores zonas de Medellín y el Área Metropolitana
           </p>
 
@@ -58,7 +58,7 @@ export default async function HomePage() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="scroll-indicator absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ opacity: 0 }}>
+        <div className="scroll-indicator absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" >
           <span className="text-white/30 text-[10px] font-body tracking-[0.25em] uppercase">Explorar</span>
           <div className="w-[1px] h-8 bg-gradient-to-b from-white/40 to-transparent animate-pulse" />
         </div>
@@ -72,7 +72,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="featured-tagline text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Selección exclusiva</p>
-            <div className="section-line w-12 h-[1px] bg-gold mx-auto mb-6 origin-left" style={{ transform: 'scaleX(0)' }} />
+            <div className="section-line w-12 h-[1px] bg-gold mx-auto mb-6 origin-left"  />
             <h2 className="featured-title text-3xl sm:text-4xl lg:text-5xl font-display text-foreground mb-5 leading-tight">
               Propiedades Destacadas
             </h2>

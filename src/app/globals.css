@@ -202,3 +202,30 @@ main {
 .gold-glow-hover:hover {
   box-shadow: 0 0 30px rgba(201, 169, 98, 0.1), 0 0 0 1px rgba(201, 169, 98, 0.15);
 }
+
+/* Hero animation initial states — CSS fallback if GSAP is slow */
+.hero-tagline,
+.hero-subtitle,
+.hero-search,
+.scroll-indicator {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hero-title .hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(110%);
+}
+
+/* CSS fallback: after 2s if GSAP hasn't animated, show everything */
+@keyframes heroFallback {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-tagline,
+.hero-subtitle,
+.hero-search,
+.hero-title .hero-word {
+  animation: heroFallback 0.8s ease-out 2s forwards;
+}

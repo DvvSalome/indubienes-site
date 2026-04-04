@@ -132,7 +132,7 @@ export default function PropertiesClient({
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
       {/* Premium filter bar */}
-      <div className="mb-10">
+      <div className="mb-10 relative z-40">
         {/* Mobile toggle */}
         <button
           onClick={() => setShowFilters(!showFilters)}

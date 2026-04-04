@@ -9,13 +9,14 @@ export default function PropertyCard({ property }: { property: Property }) {
 
   const businessType = property.for_sale ? 'Venta' : 'Arriendo';
 
-  const imageUrl = property.main_image?.url || property.main_image?.url_big || '/placeholder-property.jpg';
+  // Prefer url_big for better quality and no padding
+  const imageUrl = property.main_image?.url_big || property.main_image?.url_original || property.main_image?.url || '/placeholder-property.jpg';
 
   return (
     <Link href={`/propiedad/${property.id_property}`} className="block group">
       <div className="property-card bg-card rounded-xl overflow-hidden border border-border">
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-surface">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#1a1a1a]">
           <img
             src={imageUrl}
             alt={property.title || ''}

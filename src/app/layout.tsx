@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import ForceDarkMode from "@/components/ForceDarkMode";
 
 export const metadata: Metadata = {
   title: "Indubienes - Inmobiliaria en Medellín | Venta y Arriendo de Propiedades",
@@ -29,7 +30,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://api.fontshare.com" />
       </head>
-      <body className="font-body antialiased min-h-screen flex flex-col">
+      <body className="font-body antialiased min-h-screen flex flex-col bg-[#0D0D0D] text-white">
+        <ForceDarkMode />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

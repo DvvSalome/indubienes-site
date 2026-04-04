@@ -63,7 +63,7 @@ export default function CustomSelect({
   const s = baseStyles[variant];
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className={`relative ${isOpen ? 'z-[100]' : 'z-10'}`}>
       {label && (
         <label className="block text-xs font-body text-muted mb-1.5 tracking-wide">{label}</label>
       )}
