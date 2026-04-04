@@ -215,7 +215,7 @@ export default function PropertyDetailClient({ property }: Props) {
                             <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
-                            {typeof f === 'string' ? f : (f as Record<string, unknown>)?.nombre || (f as Record<string, unknown>)?.name || ''}
+                            {typeof f === 'string' ? f : String((f as Record<string, string>)?.nombre || (f as Record<string, string>)?.name || '')}
                           </li>
                         ))}
                       </ul>
@@ -230,7 +230,7 @@ export default function PropertyDetailClient({ property }: Props) {
                             <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
-                            {typeof f === 'string' ? f : (f as Record<string, unknown>)?.nombre || (f as Record<string, unknown>)?.name || ''}
+                            {typeof f === 'string' ? f : String((f as Record<string, string>)?.nombre || (f as Record<string, string>)?.name || '')}
                           </li>
                         ))}
                       </ul>
