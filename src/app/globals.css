@@ -53,6 +53,7 @@ body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -61,20 +62,34 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--faint);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
+}
+
+/* Custom scrollbar for dropdowns */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--faint);
+  border-radius: 2px;
 }
 
 /* Selection */
@@ -92,56 +107,98 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Gold gradient text */
 .gold-text {
-  background: linear-gradient(135deg, #C9A962 0%, #E8D5A3 50%, #C9A962 100%);
+  background: linear-gradient(135deg, #C9A962 0%, #E8D5A3 40%, #D4B978 60%, #C9A962 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Animate on scroll */
-.animate-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.animate-on-scroll.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Property card hover effect */
+/* Property card hover effect — luxury */
 .property-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .property-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(201, 169, 98, 0.08);
 }
 
 .dark .property-card:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(201, 169, 98, 0.1);
 }
 
 /* Image overlay gradient */
 .image-overlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 35%, transparent 100%);
 }
 
-/* Hero overlay */
+/* Hero overlay — more cinematic */
 .hero-overlay {
-  background: linear-gradient(135deg, rgba(13, 13, 13, 0.85) 0%, rgba(13, 13, 13, 0.5) 50%, rgba(13, 13, 13, 0.3) 100%);
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(13, 13, 13, 0.4) 0%, transparent 70%),
+    linear-gradient(to bottom, rgba(13, 13, 13, 0.3) 0%, rgba(13, 13, 13, 0.6) 50%, rgba(13, 13, 13, 0.85) 100%);
 }
 
-/* Filter sidebar */
-.filter-sidebar {
-  scrollbar-width: thin;
-}
-
-/* Input focus ring */
-input:focus, select:focus, textarea:focus {
+/* Input focus ring — premium gold glow */
+input:focus, textarea:focus {
   outline: none;
   border-color: var(--gold) !important;
-  box-shadow: 0 0 0 2px rgba(201, 169, 98, 0.2);
+  box-shadow: 0 0 0 2px rgba(201, 169, 98, 0.15), 0 0 20px rgba(201, 169, 98, 0.05);
+}
+
+/* Smooth page transitions */
+main {
+  animation: pageIn 0.4s ease-out;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0.85;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Link underline animation */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hover) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Gold border glow on hover */
+.gold-glow-hover {
+  transition: box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.gold-glow-hover:hover {
+  box-shadow: 0 0 30px rgba(201, 169, 98, 0.1), 0 0 0 1px rgba(201, 169, 98, 0.15);
 }
