@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-export default function Logo({ className = '', height = 48 }: { className?: string; height?: number }) {
+export default function Logo({ className = '', height = 40 }: { className?: string; height?: number }) {
   const aspectRatio = 250 / 90;
   const width = Math.round(height * aspectRatio);
 
@@ -12,9 +12,15 @@ export default function Logo({ className = '', height = 48 }: { className?: stri
       alt="Inmobiliaria Indubienes"
       width={width}
       height={height}
-      className={`drop-shadow-sm ${className}`}
-      style={{ filter: 'brightness(1.1) contrast(1.05)' }}
+      className={`${className}`}
+      style={{
+        filter: 'brightness(1.15) contrast(1.1)',
+        imageRendering: 'auto',
+        maxHeight: `${height}px`,
+        width: 'auto',
+      }}
       priority
+      unoptimized
     />
   );
 }
