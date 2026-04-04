@@ -1,4 +1,4 @@
-import { Property, PropertySearchFilters, PropertySearchResult, PropertyType } from './types';
+import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, WasiClient, WasiClientSearchFilters, WasiClientSearchResult } from './types';
 import { mockProperties, mockPropertyTypes } from './mock-data';
 
 const WASI_BASE_URL = 'https://api.wasi.co/v1';
@@ -268,6 +268,82 @@ function normalizeProperty(raw: any): Property {
     video: raw.video || '',
     id_property_type: Number(raw.id_property_type) || 0,
     property_type_label: extractLabel(raw.property_type_label) || extractLabel(raw.id_property_type_label),
+  };
+}
+
+// Search WASI clients (leads/contacts)
+export async function searchClients(filters: WasiClientSearchFilters = {}): Promise<WasiClientSearchResult> {
+  const { skip = 0, take = 10, order_by = 'created_at', order = 'desc', ...rest } = filters;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await wasiRequest<Record<string, any>>('/client/search', {
+    method: 'POST',
+    body: {
+      ...rest,
+      skip,
+      take,
+      order_by,
+      order,
+    },
+  });
+
+  if (result) {
+    const total = Number(result.total) || 0;
+    const clients = Object.entries(result)
+      .filter(([key]) => !isNaN(Number(key)))
+      .map(([, value]) => normalizeClient(value));
+
+    return { clients, total };
+  }
+
+  return { clients: [], total: 0 };
+}
+
+// Get client count summary (total + new this month)
+export async function getClientStats(): Promise<{ total: number; newThisMonth: number }> {
+  // Get total count
+  const allResult = await searchClients({ take: 1 });
+  const total = allResult.total;
+
+  // Get new clients this month by searching with a recent date filter
+  // WASI doesn't have date filters on client/search, so we fetch recent and count manually
+  const recentResult = await searchClients({ take: 50, order_by: 'created_at', order: 'desc' });
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const newThisMonth = recentResult.clients.filter(c => {
+    const created = new Date(c.created_at);
+    return created >= startOfMonth;
+  }).length;
+
+  return { total, newThisMonth };
+}
+
+// Normalize client data from WASI API
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeClient(raw: any): WasiClient {
+  return {
+    id_client: Number(raw.id_client) || 0,
+    first_name: String(raw.first_name || '').trim(),
+    last_name: String(raw.last_name || '').trim(),
+    email: String(raw.email || ''),
+    phone: raw.phone || null,
+    cell_phone: raw.cell_phone || null,
+    client_type_label: extractLabel(raw.client_type_label),
+    client_types: Array.isArray(raw.client_types) ? raw.client_types : [],
+    client_status_label: extractLabel(raw.client_status_label),
+    client_pipeline_label: extractLabel(raw.client_pipeline_label),
+    client_origin_label: extractLabel(raw.client_origin_label),
+    city_label: extractLabel(raw.city_label),
+    region_label: extractLabel(raw.region_label),
+    country_label: extractLabel(raw.country_label),
+    reference: String(raw.reference || ''),
+    comment: raw.comment || null,
+    query: raw.query || null,
+    address: raw.address || null,
+    identification: raw.identification || null,
+    created_at: raw.created_at || '',
+    updated_at: raw.updated_at || '',
+    tag: Array.isArray(raw.tag) ? raw.tag : [],
   };
 }
 

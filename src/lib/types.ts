@@ -75,3 +75,43 @@ export interface PropertyType {
   name: string;
   count: number;
 }
+
+export interface WasiClient {
+  id_client: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  cell_phone: string | null;
+  client_type_label: string;
+  client_types: { id_client_type: number; client_type_label: string }[];
+  client_status_label: string;
+  client_pipeline_label: string;
+  client_origin_label: string;
+  city_label: string;
+  region_label: string;
+  country_label: string;
+  reference: string;
+  comment: string | null;
+  query: string | null;
+  address: string | null;
+  identification: string | null;
+  created_at: string;
+  updated_at: string;
+  tag: string[];
+}
+
+export interface WasiClientSearchResult {
+  clients: WasiClient[];
+  total: number;
+}
+
+export interface WasiClientSearchFilters {
+  skip?: number;
+  take?: number;
+  order_by?: string;
+  order?: string;
+  id_client_status?: number;
+  id_client_type?: number;
+  query?: string;
+}

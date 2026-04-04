@@ -161,7 +161,10 @@ export default function FunnelClient({ property }: FunnelClientProps) {
           {property.observations && (
             <div className="mb-12">
               <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4 font-display">Descripción</h3>
-              <p className="text-[#B0B0B0] leading-relaxed">{property.observations}</p>
+              <div
+                className="text-[#B0B0B0] leading-relaxed [&_p]:mb-3 [&_br]:leading-loose"
+                dangerouslySetInnerHTML={{ __html: property.observations }}
+              />
             </div>
           )}
 
@@ -204,18 +207,28 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             )}
           </div>
 
-          {/* Map Placeholder */}
-          <div className="bg-[#242424] rounded-lg overflow-hidden h-96">
-            <iframe
-              width="100%"
-              height="100%"
-              frameBorder="0"
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBQhTnzz-R2t91cLdPPOdVlGg6RgkxEBUg&q=${encodeURIComponent(`${property.address}, ${property.city_label}`)}`}
-              allowFullScreen={true}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+          {/* Map */}
+          {(property.latitude && property.longitude) ? (
+            <div className="bg-[#242424] rounded-lg overflow-hidden h-96">
+              <iframe
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.01},${property.latitude - 0.005},${property.longitude + 0.01},${property.latitude + 0.005}&layer=mapnik&marker=${property.latitude},${property.longitude}`}
+                className="w-full h-full"
+                style={{ border: 0 }}
+                loading="lazy"
+                title="Ubicación de la propiedad"
+              />
+            </div>
+          ) : property.address && property.city_label ? (
+            <div className="bg-[#242424] rounded-lg overflow-hidden h-96">
+              <iframe
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=-75.62,-75.52,6.22,6.30&layer=mapnik`}
+                className="w-full h-full"
+                style={{ border: 0 }}
+                loading="lazy"
+                title="Ubicación aproximada"
+              />
+            </div>
+          ) : null}
         </div>
       </section>
 
