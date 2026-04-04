@@ -24,11 +24,15 @@ export default function PropertyDetailClient({ property }: Props) {
     mensaje: `Hola, estoy interesado en la propiedad "${property.title}" (ID: ${property.id_property}). Me gustaría recibir más información.`,
   });
 
-  const price = property.for_sale && property.sale_price
-    ? property.sale_price_label || formatPrice(property.sale_price)
-    : property.rent_price_label || formatPrice(property.rent_price);
+  // Determine business type using multiple signals
+  const titleLower = (property.title || '').toLowerCase();
+  const isRent = property.for_rent || (!property.for_sale && property.rent_price > 0) || titleLower.includes('arrienda') || titleLower.includes('arriendo');
+  const isSale = property.for_sale || (!isRent && property.sale_price > 0) || titleLower.includes('vende') || titleLower.includes('venta');
+  const businessType = isRent && !isSale ? 'Arriendo' : 'Venta';
 
-  const businessType = property.for_sale ? 'Venta' : 'Arriendo';
+  const price = businessType === 'Venta'
+    ? (property.sale_price_label || formatPrice(property.sale_price) || property.rent_price_label || formatPrice(property.rent_price))
+    : (property.rent_price_label || formatPrice(property.rent_price) || property.sale_price_label || formatPrice(property.sale_price));
 
   const handleShare = () => {
     if (navigator.share) {

@@ -109,7 +109,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             {/* Image */}
-            <div className="about-image scroll-reveal reveal-left relative">
+            <div className="about-animate about-image scroll-reveal reveal-left relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
@@ -120,14 +120,14 @@ export default async function HomePage() {
               {/* Decorative accent */}
               <div className="absolute -bottom-4 -right-4 w-32 h-32 border border-gold/20 rounded-2xl -z-10 hidden sm:block" />
               {/* Floating stat card */}
-              <div className="about-stat-card scroll-reveal reveal-scale absolute -bottom-6 -right-6 bg-card rounded-xl p-6 shadow-2xl border border-border hidden sm:block" data-delay="300">
+              <div className="stat-animate about-stat-card scroll-reveal reveal-scale absolute -bottom-6 -right-6 bg-card rounded-xl p-6 shadow-2xl border border-border hidden sm:block" data-delay="300">
                 <p className="text-3xl font-display text-gold mb-1">10+</p>
                 <p className="text-sm text-muted font-body">Años de experiencia</p>
               </div>
             </div>
 
             {/* Content */}
-            <div className="about-content scroll-reveal reveal-right" data-delay="150">
+            <div className="about-animate about-content scroll-reveal reveal-right" data-delay="150">
               <p className="text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
               <div className="w-12 h-[1px] bg-gold mb-6" />
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-foreground mb-8 leading-tight">
@@ -183,9 +183,9 @@ export default async function HomePage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold/[0.02] rounded-full blur-3xl" />
 
         <div className="cta-content scroll-reveal relative z-10 max-w-3xl mx-auto text-center">
-          <p className="text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Trabajemos juntos</p>
-          <div className="w-12 h-[1px] bg-gold/50 mx-auto mb-8" />
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-white mb-8 leading-tight">
+          <p className="cta-animate text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Trabajemos juntos</p>
+          <div className="cta-animate gold-line-animate w-12 h-[1px] bg-gold/50 mx-auto mb-8 origin-left" />
+          <h2 className="cta-animate text-3xl sm:text-4xl lg:text-5xl font-display text-white mb-8 leading-tight">
             ¿Busca vender o arrendar<br />su propiedad?
           </h2>
           <p className="text-white/50 font-body mb-12 max-w-lg mx-auto leading-relaxed">

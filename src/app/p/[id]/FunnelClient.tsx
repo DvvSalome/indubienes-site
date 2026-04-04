@@ -23,8 +23,14 @@ export default function FunnelClient({ property }: FunnelClientProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const price = property.sale_price ? formatPrice(property.sale_price) : formatPrice(property.rent_price);
-  const type = property.for_sale ? 'Venta' : 'Arriendo';
+  // Determine business type using multiple signals
+  const titleLower = (property.title || '').toLowerCase();
+  const isRent = property.for_rent || (!property.for_sale && property.rent_price > 0) || titleLower.includes('arrienda') || titleLower.includes('arriendo');
+  const isSale = property.for_sale || (!isRent && property.sale_price > 0) || titleLower.includes('vende') || titleLower.includes('venta');
+  const type = isRent && !isSale ? 'Arriendo' : 'Venta';
+  const price = type === 'Venta'
+    ? formatPrice(property.sale_price) || formatPrice(property.rent_price)
+    : formatPrice(property.rent_price) || formatPrice(property.sale_price);
   const whatsappMessage = encodeURIComponent(
     `Hola, me interesa esta propiedad: ${property.property_type_label} en ${property.city_label}. ${property.bedrooms} hab, ${property.bathrooms} baños, ${property.area}m². ${price}`
   );

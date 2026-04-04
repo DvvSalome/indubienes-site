@@ -178,10 +178,24 @@ export async function getPropertyTypes(): Promise<PropertyType[]> {
     // WASI returns property types with numeric keys + "status" key - filter out non-numeric
     return Object.entries(result)
       .filter(([key]) => !isNaN(Number(key)))
-      .map(([, value]) => value as PropertyType);
+      .map(([, value]) => value as PropertyType)
+      .filter(pt => {
+        // Filter out encoded/raw translation keys like "models/property_type.id.34"
+        if (!pt.name || pt.name.startsWith('models/') || pt.name.includes('.id.')) return false;
+        return true;
+      });
   }
 
   return mockPropertyTypes;
+}
+
+// WASI returns booleans as strings "true"/"false", numbers 0/1, or actual booleans
+// Boolean("false") === true in JS, so we need explicit parsing
+function parseBool(val: unknown): boolean {
+  if (typeof val === 'boolean') return val;
+  if (typeof val === 'number') return val !== 0;
+  if (typeof val === 'string') return val === 'true' || val === '1';
+  return false;
 }
 
 // WASI sometimes returns objects like {id, nombre, name, own} instead of plain strings
@@ -248,8 +262,8 @@ function normalizeProperty(raw: any): Property {
     features: normalizeFeatures(raw.features),
     latitude: Number(raw.latitude) || 0,
     longitude: Number(raw.longitude) || 0,
-    for_sale: Boolean(raw.for_sale),
-    for_rent: Boolean(raw.for_rent),
+    for_sale: parseBool(raw.for_sale),
+    for_rent: parseBool(raw.for_rent),
     observations: raw.observations || '',
     video: raw.video || '',
     id_property_type: Number(raw.id_property_type) || 0,

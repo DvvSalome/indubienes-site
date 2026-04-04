@@ -104,8 +104,9 @@ export default function PropertiesClient({
   const propiedadOptions = [
     { value: '', label: 'Todos los tipos' },
     ...propertyTypes
-      .filter(pt => pt?.id_property_type)
+      .filter(pt => pt?.id_property_type && pt.name && !pt.name.startsWith('models/') && !pt.name.includes('.id.'))
       .sort((a, b) => (b.count || 0) - (a.count || 0))
+      .slice(0, 15) // Only show the most relevant types
       .map(pt => ({
         value: String(pt.id_property_type),
         label: `${pt.name}${pt.count ? ` (${pt.count})` : ''}`,
