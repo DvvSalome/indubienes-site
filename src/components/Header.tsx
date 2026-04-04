@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,13 +21,13 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? 'bg-[#0D0D0D]/90 backdrop-blur-xl shadow-lg shadow-black/20 border-b border-white/[0.06]'
+          ? 'bg-background/90 backdrop-blur-xl shadow-lg shadow-black/10 dark:shadow-black/20 border-b border-border'
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 sm:h-24">
-          {/* Logo — bigger */}
+          {/* Logo */}
           <Link href="/" className="flex items-center group">
             <Logo height={48} />
           </Link>
@@ -43,7 +44,7 @@ export default function Header() {
               <Link
                 key={label}
                 href={href}
-                className="text-sm font-body tracking-wide text-white/70 hover:text-gold transition-colors duration-300"
+                className="text-sm font-body tracking-wide text-foreground/70 hover:text-gold transition-colors duration-300"
               >
                 {label}
               </Link>
@@ -51,11 +52,13 @@ export default function Header() {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+
             {/* Phone - desktop only */}
             <a
               href="tel:+576043220207"
-              className="hidden lg:flex items-center gap-2 text-sm text-white/60 hover:text-gold transition-colors duration-300"
+              className="hidden lg:flex items-center gap-2 text-sm text-muted hover:text-gold transition-colors duration-300"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -66,7 +69,7 @@ export default function Header() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-white"
+              className="md:hidden p-2 text-foreground"
               aria-label="Menú"
             >
               {isMobileMenuOpen ? (
@@ -92,7 +95,7 @@ export default function Header() {
           isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="bg-[#0D0D0D]/95 backdrop-blur-2xl border-t border-white/[0.06]">
+        <div className="bg-background/95 backdrop-blur-2xl border-t border-border">
           <nav className="flex flex-col py-4 px-6 space-y-1">
             {[
               { label: 'Inicio', href: '/' },
@@ -105,7 +108,7 @@ export default function Header() {
                 key={label}
                 href={href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="py-3 text-base font-body text-white/80 hover:text-gold transition-colors duration-300 border-b border-white/[0.06]"
+                className="py-3 text-base font-body text-foreground/80 hover:text-gold transition-colors duration-300 border-b border-border"
               >
                 {label}
               </Link>

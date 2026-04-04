@@ -9,18 +9,18 @@
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Switzer', system-ui, sans-serif;
 
-  /* Light mode */
-  --background: #FAFAF7;
+  /* Light mode — warm palette, no stark whites */
+  --background: #F5F3EE;
   --foreground: #1A1A1A;
-  --surface: #F0EDE8;
-  --surface-hover: #E8E4DD;
-  --card: #FFFFFF;
-  --card-hover: #F7F5F0;
-  --gold: #C9A962;
-  --gold-hover: #B8943D;
-  --muted: #6B6B6B;
-  --faint: #9A9A9A;
-  --border-color: #E0DCD4;
+  --surface: #EBE8E2;
+  --surface-hover: #E2DED6;
+  --card: #FAFAF7;
+  --card-hover: #F2F0EB;
+  --gold: #B8943D;
+  --gold-hover: #A68335;
+  --muted: #5A5A5A;
+  --faint: #8A8A8A;
+  --border-color: #D8D4CB;
 }
 
 .dark {
