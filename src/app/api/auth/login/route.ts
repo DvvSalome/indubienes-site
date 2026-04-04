@@ -68,20 +68,33 @@ async function verifyWasiCredentials(
   token: string
 ): Promise<boolean> {
   try {
+    // WASI API uses query parameters for authentication, not headers
+    const params = new URLSearchParams({
+      id_company: companyId,
+      wasi_token: token,
+      take: '1',
+      skip: '0',
+    });
+
     const response = await fetch(
-      'https://api.wasi.co/v1/property/search',
+      `https://api.wasi.co/v1/property/search?${params.toString()}`,
       {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'X-Company-ID': companyId,
           'Content-Type': 'application/json',
         },
       }
     );
 
-    // If response is 2xx, credentials are valid
-    return response.ok;
+    // Check if we got a valid JSON response (not an error page)
+    if (!response.ok) return false;
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) return false;
+
+    const data = await response.json();
+    // WASI returns an object with numeric keys for properties
+    return data && typeof data === 'object' && !data.error;
   } catch (error) {
     console.error('WASI API verification failed:', error);
     return false;
