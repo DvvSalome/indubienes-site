@@ -192,9 +192,10 @@ export default function PropertyDetailClient({ property }: Props) {
             {property.observations && (
               <div className="mb-8">
                 <h2 className="text-xl font-display text-foreground mb-4">Descripción</h2>
-                <p className="text-muted font-body leading-relaxed whitespace-pre-line">
-                  {property.observations}
-                </p>
+                <div
+                  className="text-muted font-body leading-relaxed prose-invert prose-sm max-w-none [&_p]:mb-3 [&_br]:leading-loose"
+                  dangerouslySetInnerHTML={{ __html: property.observations }}
+                />
               </div>
             )}
 
