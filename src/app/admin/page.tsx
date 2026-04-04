@@ -20,7 +20,7 @@ export default function AdminDashboard() {
         // Fetch total properties from WASI API
         const propertiesRes = await fetch('/api/properties');
         const propertiesData = await propertiesRes.json();
-        const totalProperties = Array.isArray(propertiesData) ? propertiesData.length : 0;
+        const totalProperties = propertiesData.properties?.length || propertiesData.total || 0;
 
         setStats([
           {
