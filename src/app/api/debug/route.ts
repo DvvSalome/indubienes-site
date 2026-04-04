@@ -4,8 +4,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const WASI_BASE_URL = 'https://api.wasi.co/v1';
-  const WASI_COMPANY_ID = process.env.WASI_COMPANY_ID || '1288465';
-  const WASI_TOKEN = process.env.WASI_TOKEN || '***REDACTED***';
+  const WASI_COMPANY_ID = (process.env.WASI_COMPANY_ID || '1288465').trim();
+  const WASI_TOKEN = (process.env.WASI_TOKEN || '***REDACTED***').trim();
 
   try {
     const url = `${WASI_BASE_URL}/property/highlighted/?id_company=${WASI_COMPANY_ID}&wasi_token=${WASI_TOKEN}&for_sale=true`;
