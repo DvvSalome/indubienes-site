@@ -12,7 +12,7 @@ interface SmartImageProps {
 /**
  * SmartImage: detects image orientation on load.
  * - Landscape/square images → normal object-cover fill.
- * - Portrait images → centered image with blurred background fill.
+ * - Portrait images → centered image with blurred background fill (no white gaps).
  */
 export default function SmartImage({ src, alt, className = '', containerClassName = '' }: SmartImageProps) {
   const [isPortrait, setIsPortrait] = useState(false);
@@ -28,19 +28,22 @@ export default function SmartImage({ src, alt, className = '', containerClassNam
 
   if (isPortrait && loaded) {
     return (
-      <div className={`relative w-full h-full overflow-hidden ${containerClassName}`}>
-        {/* Blurred background fill */}
+      <div className={`relative w-full h-full overflow-hidden bg-black ${containerClassName}`}>
+        {/* Blurred background fill — scale 150% to ensure no gaps after blur */}
         <img
           src={src}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-50"
+          className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-70"
+          style={{ transform: 'scale(1.5)' }}
         />
+        {/* Dark overlay to unify the background tone */}
+        <div className="absolute inset-0 bg-black/30" />
         {/* Sharp centered image */}
         <img
           src={src}
           alt={alt}
-          className={`relative z-10 h-full w-auto mx-auto object-contain ${className}`}
+          className={`relative z-10 h-full w-auto mx-auto object-contain drop-shadow-2xl ${className}`}
           onLoad={handleLoad}
         />
       </div>
