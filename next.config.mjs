@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// Indubienes site configuration
 const nextConfig = {
   images: {
     remotePatterns: [
