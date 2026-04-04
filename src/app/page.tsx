@@ -71,25 +71,25 @@ export default async function HomePage() {
       <section className="featured-section py-24 sm:py-32 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <p className="featured-tagline text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Selección exclusiva</p>
-            <div className="section-line w-12 h-[1px] bg-gold mx-auto mb-6 origin-left"  />
-            <h2 className="featured-title text-3xl sm:text-4xl lg:text-5xl font-display text-foreground mb-5 leading-tight">
+            <p className="featured-tagline scroll-reveal text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Selección exclusiva</p>
+            <div className="section-line scroll-reveal reveal-line w-12 h-[1px] bg-gold mx-auto mb-6 origin-left" data-delay="100" />
+            <h2 className="featured-title scroll-reveal text-3xl sm:text-4xl lg:text-5xl font-display text-foreground mb-5 leading-tight" data-delay="150">
               Propiedades Destacadas
             </h2>
-            <p className="featured-desc text-muted font-body max-w-xl mx-auto leading-relaxed">
+            <p className="featured-desc scroll-reveal text-muted font-body max-w-xl mx-auto leading-relaxed" data-delay="250">
               Descubre nuestra selección de propiedades premium en las ubicaciones más cotizadas de Medellín
             </p>
           </div>
 
           <div className="properties-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {properties.slice(0, 6).map((property) => (
-              <div key={property.id_property} className="property-card-wrapper">
+            {properties.slice(0, 6).map((property, i) => (
+              <div key={property.id_property} className="property-card-wrapper scroll-reveal" data-delay={i * 100}>
                 <PropertyCard property={property} />
               </div>
             ))}
           </div>
 
-          <div className="featured-cta text-center mt-14">
+          <div className="featured-cta scroll-reveal text-center mt-14">
             <Link
               href="/propiedades"
               className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
@@ -109,7 +109,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             {/* Image */}
-            <div className="about-image relative">
+            <div className="about-image scroll-reveal reveal-left relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
@@ -120,14 +120,14 @@ export default async function HomePage() {
               {/* Decorative accent */}
               <div className="absolute -bottom-4 -right-4 w-32 h-32 border border-gold/20 rounded-2xl -z-10 hidden sm:block" />
               {/* Floating stat card */}
-              <div className="about-stat-card absolute -bottom-6 -right-6 bg-card rounded-xl p-6 shadow-2xl border border-border hidden sm:block">
+              <div className="about-stat-card scroll-reveal reveal-scale absolute -bottom-6 -right-6 bg-card rounded-xl p-6 shadow-2xl border border-border hidden sm:block" data-delay="300">
                 <p className="text-3xl font-display text-gold mb-1">10+</p>
                 <p className="text-sm text-muted font-body">Años de experiencia</p>
               </div>
             </div>
 
             {/* Content */}
-            <div className="about-content">
+            <div className="about-content scroll-reveal reveal-right" data-delay="150">
               <p className="text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
               <div className="w-12 h-[1px] bg-gold mb-6" />
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-foreground mb-8 leading-tight">
@@ -182,7 +182,7 @@ export default async function HomePage() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-gold/[0.03] rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold/[0.02] rounded-full blur-3xl" />
 
-        <div className="cta-content relative z-10 max-w-3xl mx-auto text-center">
+        <div className="cta-content scroll-reveal relative z-10 max-w-3xl mx-auto text-center">
           <p className="text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Trabajemos juntos</p>
           <div className="w-12 h-[1px] bg-gold/50 mx-auto mb-8" />
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-white mb-8 leading-tight">

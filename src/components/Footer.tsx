@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
-          <div className="footer-col lg:col-span-1">
+          <div className="footer-col scroll-reveal lg:col-span-1">
             <div className="flex items-center mb-5">
               <Logo height={32} />
             </div>
@@ -36,7 +36,7 @@ export default function Footer() {
           </div>
 
           {/* Links */}
-          <div className="footer-col">
+          <div className="footer-col scroll-reveal">
             <h4 className="font-display text-lg text-foreground mb-5">Navegación</h4>
             <ul className="space-y-3">
               {[
@@ -56,7 +56,7 @@ export default function Footer() {
           </div>
 
           {/* Property Types */}
-          <div className="footer-col">
+          <div className="footer-col scroll-reveal">
             <h4 className="font-display text-lg text-foreground mb-5">Tipos de Propiedad</h4>
             <ul className="space-y-3">
               {['Apartamentos', 'Casas', 'Apartaestudios', 'Locales', 'Bodegas', 'Fincas'].map((type) => (
@@ -70,7 +70,7 @@ export default function Footer() {
           </div>
 
           {/* Contact info */}
-          <div className="footer-col">
+          <div className="footer-col scroll-reveal">
             <h4 className="font-display text-lg text-foreground mb-5">Contacto</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">

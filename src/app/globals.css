@@ -229,3 +229,51 @@ main {
 .hero-title .hero-word {
   animation: heroFallback 0.8s ease-out 2s forwards;
 }
+
+/* ——— Scroll Reveal System (IntersectionObserver) ——— */
+/* Default: content is visible (safe fallback) */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.reveal-left {
+  transform: translateX(-50px);
+}
+
+.scroll-reveal.reveal-right {
+  transform: translateX(50px);
+}
+
+.scroll-reveal.reveal-scale {
+  transform: scale(0.9);
+}
+
+.scroll-reveal.reveal-line {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* When revealed by IntersectionObserver */
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1) scaleX(1);
+}
+
+/* Ensure no-JS / broken-JS fallback: after 3s show everything anyway */
+@keyframes scrollRevealFallback {
+  to { opacity: 1; transform: none; }
+}
+
+.scroll-reveal {
+  animation: scrollRevealFallback 0.6s ease-out 3s forwards;
+}
+
+/* Cancel fallback once JS has properly revealed */
+.scroll-reveal.revealed {
+  animation: none;
+}
