@@ -65,7 +65,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
   const allImages = [
     property.main_image,
     ...(property.galleries?.flatMap(g => g.images) || []),
-  ].filter(img => img?.url);
+  ].filter(img => img?.url || img?.url_original);
 
   /* ── Video ───────────────────────────────────────────── */
   const videoEmbed = getVideoEmbed(property.video);
@@ -125,7 +125,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
         {/* Background image with parallax effect */}
         <div className="absolute inset-0">
           <img
-            src={allImages[0]?.url_big || allImages[0]?.url || '/placeholder-property.jpg'}
+            src={allImages[0]?.url_original || allImages[0]?.url_big || allImages[0]?.url || '/placeholder-property.jpg'}
             alt={title}
             className="w-full h-full object-cover"
             style={{ transform: `translateY(${scrollY * 0.15}px)` }}
@@ -227,7 +227,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                       }`}
                     >
                       <img
-                        src={img.url}
+                        src={img.url_original || img.url}
                         alt={`Foto ${idx + 1}`}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading={idx < 4 ? 'eager' : 'lazy'}
@@ -449,7 +449,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
           {/* Image */}
           <div className="max-w-5xl max-h-[90vh] px-4" onClick={e => e.stopPropagation()}>
             <img
-              src={allImages[lightboxIdx]?.url_big || allImages[lightboxIdx]?.url}
+              src={allImages[lightboxIdx]?.url_original || allImages[lightboxIdx]?.url_big || allImages[lightboxIdx]?.url}
               alt={`Foto ${lightboxIdx + 1}`}
               className="max-w-full max-h-[85vh] object-contain rounded-lg mx-auto"
             />

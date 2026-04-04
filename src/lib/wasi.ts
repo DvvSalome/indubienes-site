@@ -232,31 +232,17 @@ function normalizeFeatures(raw: any): { internal: string[]; external: string[] }
 }
 
 /**
- * Fix WASI image URLs: change resize fit from "contain" (adds white borders) to "cover" (fills frame).
- * WASI image URLs are base64-encoded JSON with edit instructions.
+ * Normalize WASI image object.
+ * WASI url/url_big use fit:"contain" with white background (letterboxing) — unusable.
+ * url_original (images.wasi.co) is the raw photo without processing — always prefer it.
+ * CSS object-cover handles cropping client-side.
  */
-function fixWasiImageUrl(url: string): string {
-  if (!url || !url.includes('image.wasi.co/')) return url;
-  try {
-    const base64Part = url.replace('https://image.wasi.co/', '');
-    const decoded = JSON.parse(Buffer.from(base64Part, 'base64').toString('utf-8'));
-    if (decoded?.edits?.resize) {
-      decoded.edits.resize.fit = 'cover';
-      delete decoded.edits.resize.background;
-    }
-    const newBase64 = Buffer.from(JSON.stringify(decoded)).toString('base64');
-    return `https://image.wasi.co/${newBase64}`;
-  } catch {
-    return url;
-  }
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function fixImageObject(img: any): { url: string; url_big: string; url_original: string } {
   if (!img) return { url: '/placeholder-property.jpg', url_big: '/placeholder-property.jpg', url_original: '/placeholder-property.jpg' };
   return {
-    url: fixWasiImageUrl(img.url || ''),
-    url_big: fixWasiImageUrl(img.url_big || ''),
+    url: img.url || '',
+    url_big: img.url_big || '',
     url_original: img.url_original || img.url_big || img.url || '',
   };
 }
