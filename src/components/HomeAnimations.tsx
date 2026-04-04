@@ -84,12 +84,25 @@ export default function HomeAnimations() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.05, rootMargin: '50px 0px 0px 0px' }
     );
 
     revealElements.forEach((el) => observer.observe(el));
 
-    return () => observer.disconnect();
+    // Hard JS fallback: if CSS animation fallback also fails (e.g. background
+    // tab throttling), force-reveal everything after 4 seconds.
+    const fallbackTimer = setTimeout(() => {
+      revealElements.forEach((el) => {
+        if (!el.classList.contains('revealed')) {
+          el.classList.add('revealed');
+        }
+      });
+    }, 4000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   return null;

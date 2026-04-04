@@ -24,13 +24,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="dark">
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://api.fontshare.com" />
       </head>
-      <body className="font-body antialiased min-h-screen flex flex-col bg-[#0D0D0D] text-white">
+      <body className="font-body antialiased min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
         <ForceDarkMode />
         <Header />
         <main className="flex-1">{children}</main>
