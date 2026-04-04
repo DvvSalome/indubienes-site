@@ -3,6 +3,8 @@ import PropertyCard from '@/components/PropertyCard';
 import { getHighlightedProperties } from '@/lib/wasi';
 import HeroSearch from '@/components/HeroSearch';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const properties = await getHighlightedProperties();
 
