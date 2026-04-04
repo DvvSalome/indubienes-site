@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Property } from '@/lib/types';
-import { formatPrice } from '@/lib/wasi';
+import { formatPrice } from '@/lib/utils';
 import FunnelGallery from './FunnelGallery';
 import FunnelForm from './FunnelForm';
 

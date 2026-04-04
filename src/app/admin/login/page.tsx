@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Logo from '@/components/Logo';
-import './login.css';
 
 interface LoginFormData {
   company_id: string;
