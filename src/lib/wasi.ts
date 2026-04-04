@@ -175,7 +175,10 @@ export async function getPropertyTypes(): Promise<PropertyType[]> {
   const result = await wasiRequest<Record<string, PropertyType>>('/property-type/all');
 
   if (result) {
-    return Object.values(result);
+    // WASI returns property types with numeric keys + "status" key - filter out non-numeric
+    return Object.entries(result)
+      .filter(([key]) => !isNaN(Number(key)))
+      .map(([, value]) => value as PropertyType);
   }
 
   return mockPropertyTypes;

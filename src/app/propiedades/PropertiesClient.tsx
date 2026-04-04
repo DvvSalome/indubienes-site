@@ -112,9 +112,9 @@ export default function PropertiesClient({
                 <label className="block text-sm font-body text-muted mb-2">Tipo de propiedad</label>
                 <select value={propiedad} onChange={(e) => setPropiedad(e.target.value)} className={selectClass}>
                   <option value="">Todos</option>
-                  {propertyTypes.map((pt) => (
-                    <option key={pt.id_property_type} value={pt.id_property_type.toString()}>
-                      {pt.name} ({pt.count})
+                  {propertyTypes.filter(pt => pt?.id_property_type).map((pt) => (
+                    <option key={pt.id_property_type} value={String(pt.id_property_type)}>
+                      {pt.name}{pt.count ? ` (${pt.count})` : ''}
                     </option>
                   ))}
                 </select>
