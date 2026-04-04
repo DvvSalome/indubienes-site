@@ -32,7 +32,7 @@ async function wasiRequest<T>(endpoint: string, options: WasiRequestOptions = {}
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      cache: 'no-store', // Always fetch fresh data from WASI
     };
 
     if (method === 'POST') {
