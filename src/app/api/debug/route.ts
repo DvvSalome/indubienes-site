@@ -3,52 +3,56 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const WASI_BASE_URL = 'https://api.wasi.co/v1';
-  const WASI_COMPANY_ID = (process.env.WASI_COMPANY_ID || '1288465').trim();
-  const WASI_TOKEN = (process.env.WASI_TOKEN || '***REDACTED***').trim();
-
-  // Token reveal: first 4 + last 4 chars for debugging
-  const rawToken = process.env.WASI_TOKEN || '';
-  const tokenReveal = rawToken.length > 8
-    ? rawToken.substring(0, 4) + '...' + rawToken.substring(rawToken.length - 4)
-    : 'too_short';
-  const trimmedTokenReveal = WASI_TOKEN.length > 8
-    ? WASI_TOKEN.substring(0, 4) + '...' + WASI_TOKEN.substring(WASI_TOKEN.length - 4)
-    : 'too_short';
+  // Hardcoded test - bypass env vars entirely
+  const COMPANY = '1288465';
+  const TOKEN = '***REDACTED***';
 
   try {
-    const url = `${WASI_BASE_URL}/property/highlighted/?id_company=${WASI_COMPANY_ID}&wasi_token=${WASI_TOKEN}&for_sale=true`;
+    // Test 1: Using URLSearchParams (like wasi.ts does)
+    const params = new URLSearchParams({
+      id_company: COMPANY,
+      wasi_token: TOKEN,
+      for_sale: 'true',
+    });
+    const url1 = `https://api.wasi.co/v1/property/highlighted/?${params.toString()}`;
 
-    const response = await fetch(url, {
+    const resp1 = await fetch(url1, {
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
+    const text1 = await resp1.text();
+    let parsed1 = null;
+    try { parsed1 = JSON.parse(text1); } catch { /* */ }
 
-    const text = await response.text();
+    // Test 2: Using template literal (manual)
+    const url2 = `https://api.wasi.co/v1/property/highlighted/?id_company=${COMPANY}&wasi_token=${TOKEN}&for_sale=true`;
 
-    let parsed = null;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      // not json
-    }
+    const resp2 = await fetch(url2, {
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+    const text2 = await resp2.text();
+    let parsed2 = null;
+    try { parsed2 = JSON.parse(text2); } catch { /* */ }
 
     return NextResponse.json({
-      debug: true,
-      env_token_raw_length: rawToken.length,
-      env_token_trimmed_length: WASI_TOKEN.length,
-      token_reveal_raw: tokenReveal,
-      token_reveal_trimmed: trimmedTokenReveal,
-      env_company_raw: process.env.WASI_COMPANY_ID,
-      env_company_trimmed: WASI_COMPANY_ID,
-      response_status: response.status,
-      response_keys: parsed ? Object.keys(parsed).slice(0, 10) : null,
-      first_property_title: parsed && parsed['0'] ? parsed['0'].title : null,
-      raw_preview: text.substring(0, 300),
+      test1_urlsearchparams: {
+        url: url1,
+        status: resp1.status,
+        keys: parsed1 ? Object.keys(parsed1).slice(0, 5) : null,
+        first_title: parsed1?.['0']?.title || null,
+        preview: text1.substring(0, 200),
+      },
+      test2_template: {
+        url: url2,
+        status: resp2.status,
+        keys: parsed2 ? Object.keys(parsed2).slice(0, 5) : null,
+        first_title: parsed2?.['0']?.title || null,
+        preview: text2.substring(0, 200),
+      },
     });
   } catch (error: unknown) {
     return NextResponse.json({
-      debug: true,
       error: error instanceof Error ? error.message : String(error),
     }, { status: 500 });
   }
