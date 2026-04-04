@@ -71,8 +71,7 @@ export default function PropertiesClient({
   const selectClass = "w-full bg-card text-foreground border border-border rounded-lg px-3 py-2 text-sm font-body focus:border-gold appearance-none cursor-pointer";
   const inputClass = "w-full bg-card text-foreground border border-border rounded-lg px-3 py-2 text-sm font-body placeholder:text-faint";
 
-  // Group property types into common ones and the rest
-  const commonTypeIds = [1, 2, 3, 5, 6, 7, 8]; // Casa, Apto, Local, Lote, Finca, Bodega, Oficina
+  // Sort property types by count (most common first)
   const sortedTypes = [...propertyTypes]
     .filter(pt => pt?.id_property_type)
     .sort((a, b) => (b.count || 0) - (a.count || 0));
