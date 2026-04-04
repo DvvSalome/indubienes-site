@@ -66,40 +66,55 @@ export default function PropertiesClient({
     router.push(`/propiedades?${params.toString()}`);
   };
 
-  const selectClass = "w-full bg-card text-foreground border border-border rounded-lg px-4 py-2.5 text-sm font-body focus:border-gold appearance-none cursor-pointer";
-  const inputClass = "w-full bg-card text-foreground border border-border rounded-lg px-4 py-2.5 text-sm font-body placeholder:text-faint";
+  const hasActiveFilters = tipo || propiedad || minPrecio || maxPrecio || habitaciones || banos;
+
+  const selectClass = "w-full bg-card text-foreground border border-border rounded-lg px-3 py-2 text-sm font-body focus:border-gold appearance-none cursor-pointer";
+  const inputClass = "w-full bg-card text-foreground border border-border rounded-lg px-3 py-2 text-sm font-body placeholder:text-faint";
+
+  // Group property types into common ones and the rest
+  const commonTypeIds = [1, 2, 3, 5, 6, 7, 8]; // Casa, Apto, Local, Lote, Finca, Bodega, Oficina
+  const sortedTypes = [...propertyTypes]
+    .filter(pt => pt?.id_property_type)
+    .sort((a, b) => (b.count || 0) - (a.count || 0));
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Filter toggle (mobile) */}
+      {/* Compact horizontal filter bar */}
+      <div className="mb-8">
+        {/* Mobile toggle */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="lg:hidden flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border rounded-lg text-sm font-body text-foreground"
+          className="lg:hidden w-full flex items-center justify-between gap-2 px-4 py-3 bg-card border border-border rounded-xl text-sm font-body text-foreground mb-4"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="4" y1="21" x2="4" y2="14" />
-            <line x1="4" y1="10" x2="4" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="12" />
-            <line x1="12" y1="8" x2="12" y2="3" />
-            <line x1="20" y1="21" x2="20" y2="16" />
-            <line x1="20" y1="12" x2="20" y2="3" />
-            <line x1="1" y1="14" x2="7" y2="14" />
-            <line x1="9" y1="8" x2="15" y2="8" />
-            <line x1="17" y1="16" x2="23" y2="16" />
+          <span className="flex items-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14" />
+              <line x1="4" y1="10" x2="4" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12" y2="3" />
+              <line x1="20" y1="21" x2="20" y2="16" />
+              <line x1="20" y1="12" x2="20" y2="3" />
+              <line x1="1" y1="14" x2="7" y2="14" />
+              <line x1="9" y1="8" x2="15" y2="8" />
+              <line x1="17" y1="16" x2="23" y2="16" />
+            </svg>
+            Filtros
+            {hasActiveFilters && (
+              <span className="bg-gold text-[#0D0D0D] text-xs font-semibold px-2 py-0.5 rounded-full">Activos</span>
+            )}
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showFilters ? 'rotate-180' : ''}`}>
+            <polyline points="6 9 12 15 18 9" />
           </svg>
-          {showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
         </button>
 
-        {/* Sidebar filters */}
-        <aside className={`lg:w-72 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-          <div className="bg-card border border-border rounded-xl p-6 sticky top-28">
-            <h3 className="font-display text-lg text-foreground mb-6">Filtros</h3>
-
-            <div className="space-y-5">
+        {/* Filter grid */}
+        <div className={`${showFilters ? 'block' : 'hidden lg:block'}`}>
+          <div className="bg-card border border-border rounded-xl p-4 sm:p-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
               {/* Tipo de negocio */}
               <div>
-                <label className="block text-sm font-body text-muted mb-2">Tipo de negocio</label>
+                <label className="block text-xs font-body text-muted mb-1.5">Negocio</label>
                 <select value={tipo} onChange={(e) => setTipo(e.target.value)} className={selectClass}>
                   <option value="">Todos</option>
                   <option value="venta">Venta</option>
@@ -109,10 +124,10 @@ export default function PropertiesClient({
 
               {/* Tipo de propiedad */}
               <div>
-                <label className="block text-sm font-body text-muted mb-2">Tipo de propiedad</label>
+                <label className="block text-xs font-body text-muted mb-1.5">Propiedad</label>
                 <select value={propiedad} onChange={(e) => setPropiedad(e.target.value)} className={selectClass}>
                   <option value="">Todos</option>
-                  {propertyTypes.filter(pt => pt?.id_property_type).map((pt) => (
+                  {sortedTypes.map((pt) => (
                     <option key={pt.id_property_type} value={String(pt.id_property_type)}>
                       {pt.name}{pt.count ? ` (${pt.count})` : ''}
                     </option>
@@ -120,31 +135,9 @@ export default function PropertiesClient({
                 </select>
               </div>
 
-              {/* Precio */}
-              <div>
-                <label className="block text-sm font-body text-muted mb-2">Precio mínimo</label>
-                <input
-                  type="number"
-                  value={minPrecio}
-                  onChange={(e) => setMinPrecio(e.target.value)}
-                  placeholder="Ej: 200000000"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-body text-muted mb-2">Precio máximo</label>
-                <input
-                  type="number"
-                  value={maxPrecio}
-                  onChange={(e) => setMaxPrecio(e.target.value)}
-                  placeholder="Ej: 800000000"
-                  className={inputClass}
-                />
-              </div>
-
               {/* Habitaciones */}
               <div>
-                <label className="block text-sm font-body text-muted mb-2">Habitaciones mín.</label>
+                <label className="block text-xs font-body text-muted mb-1.5">Habitaciones</label>
                 <select value={habitaciones} onChange={(e) => setHabitaciones(e.target.value)} className={selectClass}>
                   <option value="">Cualquiera</option>
                   <option value="1">1+</option>
@@ -157,7 +150,7 @@ export default function PropertiesClient({
 
               {/* Baños */}
               <div>
-                <label className="block text-sm font-body text-muted mb-2">Baños mín.</label>
+                <label className="block text-xs font-body text-muted mb-1.5">Baños</label>
                 <select value={banos} onChange={(e) => setBanos(e.target.value)} className={selectClass}>
                   <option value="">Cualquiera</option>
                   <option value="1">1+</option>
@@ -167,93 +160,119 @@ export default function PropertiesClient({
                 </select>
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={applyFilters}
-                  className="flex-1 py-2.5 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm rounded-lg transition-colors"
-                >
-                  Aplicar
-                </button>
+              {/* Precio mínimo */}
+              <div>
+                <label className="block text-xs font-body text-muted mb-1.5">Precio mín.</label>
+                <input
+                  type="number"
+                  value={minPrecio}
+                  onChange={(e) => setMinPrecio(e.target.value)}
+                  placeholder="$ Mínimo"
+                  className={inputClass}
+                />
+              </div>
+
+              {/* Precio máximo */}
+              <div>
+                <label className="block text-xs font-body text-muted mb-1.5">Precio máx.</label>
+                <input
+                  type="number"
+                  value={maxPrecio}
+                  onChange={(e) => setMaxPrecio(e.target.value)}
+                  placeholder="$ Máximo"
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-border">
+              {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="px-4 py-2.5 border border-border text-muted hover:text-foreground font-body text-sm rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-body text-muted hover:text-foreground transition-colors"
                 >
-                  Limpiar
+                  Limpiar filtros
                 </button>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        {/* Properties grid */}
-        <div className="flex-1">
-          {initialProperties.length === 0 ? (
-            <div className="text-center py-20">
-              <svg className="w-16 h-16 text-faint mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M21 10H3V7a2 2 0 012-2h14a2 2 0 012 2v3z" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <h3 className="text-xl font-display text-foreground mb-2">No se encontraron propiedades</h3>
-              <p className="text-muted font-body mb-6">Intente ajustar los filtros de búsqueda</p>
+              )}
               <button
-                onClick={clearFilters}
-                className="px-6 py-2.5 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm rounded-lg transition-colors"
+                onClick={applyFilters}
+                className="px-6 py-2 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm rounded-lg transition-colors"
               >
-                Limpiar filtros
+                Buscar
               </button>
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {initialProperties.map((property) => (
-                  <PropertyCard key={property.id_property} property={property} />
-                ))}
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-12">
-                  <button
-                    onClick={() => goToPage(currentPage - 1)}
-                    disabled={currentPage <= 1}
-                    className="px-3 py-2 text-sm font-body text-muted hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    ← Anterior
-                  </button>
-
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
-                    .map((p, idx, arr) => (
-                      <span key={p}>
-                        {idx > 0 && arr[idx - 1] !== p - 1 && (
-                          <span className="px-1 text-faint">...</span>
-                        )}
-                        <button
-                          onClick={() => goToPage(p)}
-                          className={`w-10 h-10 rounded-lg text-sm font-body transition-colors ${
-                            p === currentPage
-                              ? 'bg-gold text-[#0D0D0D] font-semibold'
-                              : 'text-muted hover:text-gold hover:bg-surface'
-                          }`}
-                        >
-                          {p}
-                        </button>
-                      </span>
-                    ))}
-
-                  <button
-                    onClick={() => goToPage(currentPage + 1)}
-                    disabled={currentPage >= totalPages}
-                    className="px-3 py-2 text-sm font-body text-muted hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Siguiente →
-                  </button>
-                </div>
-              )}
-            </>
-          )}
+          </div>
         </div>
+      </div>
+
+      {/* Properties grid */}
+      <div>
+        {initialProperties.length === 0 ? (
+          <div className="text-center py-20">
+            <svg className="w-16 h-16 text-faint mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M21 10H3V7a2 2 0 012-2h14a2 2 0 012 2v3z" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <h3 className="text-xl font-display text-foreground mb-2">No se encontraron propiedades</h3>
+            <p className="text-muted font-body mb-6">Intente ajustar los filtros de búsqueda</p>
+            <button
+              onClick={clearFilters}
+              className="px-6 py-2.5 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm rounded-lg transition-colors"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {initialProperties.map((property) => (
+                <PropertyCard key={property.id_property} property={property} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-12">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                  className="px-3 py-2 text-sm font-body text-muted hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  ← Anterior
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+                  .map((p, idx, arr) => (
+                    <span key={p}>
+                      {idx > 0 && arr[idx - 1] !== p - 1 && (
+                        <span className="px-1 text-faint">...</span>
+                      )}
+                      <button
+                        onClick={() => goToPage(p)}
+                        className={`w-10 h-10 rounded-lg text-sm font-body transition-colors ${
+                          p === currentPage
+                            ? 'bg-gold text-[#0D0D0D] font-semibold'
+                            : 'text-muted hover:text-gold hover:bg-surface'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    </span>
+                  ))}
+
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                  className="px-3 py-2 text-sm font-body text-muted hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

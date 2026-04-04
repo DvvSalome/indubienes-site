@@ -1,6 +1,8 @@
 import { searchProperties, getPropertyTypes } from '@/lib/wasi';
 import PropertiesClient from './PropertiesClient';
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   searchParams: {
     tipo?: string;

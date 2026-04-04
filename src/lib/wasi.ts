@@ -184,35 +184,68 @@ export async function getPropertyTypes(): Promise<PropertyType[]> {
   return mockPropertyTypes;
 }
 
+// WASI sometimes returns objects like {id, nombre, name, own} instead of plain strings
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractLabel(val: any): string {
+  if (!val) return '';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object') return val.nombre || val.name || val.label || String(val.id || '');
+  return String(val);
+}
+
+// WASI features can be objects {id, nombre, name} or strings — normalize to string[]
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeFeatures(raw: any): { internal: string[]; external: string[] } {
+  const normalize = (arr: unknown): string[] => {
+    if (!arr) return [];
+    // Could be an array or an object with numeric keys
+    const items = Array.isArray(arr) ? arr : Object.values(arr);
+    return items.map((item: unknown) => {
+      if (typeof item === 'string') return item;
+      if (item && typeof item === 'object') {
+        const obj = item as Record<string, unknown>;
+        return String(obj.nombre || obj.name || obj.label || '');
+      }
+      return String(item || '');
+    }).filter(Boolean);
+  };
+
+  if (!raw) return { internal: [], external: [] };
+  return {
+    internal: normalize(raw.internal || raw.internals),
+    external: normalize(raw.external || raw.externals),
+  };
+}
+
 // Normalize property data from WASI API
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeProperty(raw: any): Property {
   return {
     id_property: raw.id_property || 0,
-    title: raw.title || '',
-    address: raw.address || '',
+    title: extractLabel(raw.title),
+    address: extractLabel(raw.address),
     area: Number(raw.area) || 0,
     built_area: Number(raw.built_area) || 0,
     sale_price: Number(raw.sale_price) || 0,
-    sale_price_label: raw.sale_price_label || (raw.sale_price ? formatPrice(Number(raw.sale_price)) : ''),
+    sale_price_label: extractLabel(raw.sale_price_label) || (raw.sale_price ? formatPrice(Number(raw.sale_price)) : ''),
     rent_price: Number(raw.rent_price) || 0,
-    rent_price_label: raw.rent_price_label || (raw.rent_price ? formatPrice(Number(raw.rent_price)) : ''),
+    rent_price_label: extractLabel(raw.rent_price_label) || (raw.rent_price ? formatPrice(Number(raw.rent_price)) : ''),
     bedrooms: Number(raw.bedrooms) || 0,
     bathrooms: Number(raw.bathrooms) || 0,
     garages: Number(raw.garages) || 0,
     floor: Number(raw.floor) || 0,
-    country_label: raw.country_label || 'Colombia',
-    region_label: raw.region_label || 'Antioquia',
-    city_label: raw.city_label || '',
-    zone_label: raw.zone_label || '',
-    location_label: raw.location_label || '',
+    country_label: extractLabel(raw.country_label) || 'Colombia',
+    region_label: extractLabel(raw.region_label) || 'Antioquia',
+    city_label: extractLabel(raw.city_label),
+    zone_label: extractLabel(raw.zone_label),
+    location_label: extractLabel(raw.location_label),
     main_image: raw.main_image || {
       url: '/placeholder-property.jpg',
       url_big: '/placeholder-property.jpg',
       url_original: '/placeholder-property.jpg',
     },
-    galleries: raw.galleries || [],
-    features: raw.features || { internal: [], external: [] },
+    galleries: normalizeGalleries(raw.galleries),
+    features: normalizeFeatures(raw.features),
     latitude: Number(raw.latitude) || 0,
     longitude: Number(raw.longitude) || 0,
     for_sale: Boolean(raw.for_sale),
@@ -220,6 +253,30 @@ function normalizeProperty(raw: any): Property {
     observations: raw.observations || '',
     video: raw.video || '',
     id_property_type: Number(raw.id_property_type) || 0,
-    property_type_label: raw.property_type_label || raw.id_property_type_label || '',
+    property_type_label: extractLabel(raw.property_type_label) || extractLabel(raw.id_property_type_label),
   };
+}
+
+// WASI galleries can be an object with numeric keys instead of an array
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeGalleries(raw: any): Property['galleries'] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  // Object with numeric keys: {"0": {id_gallery, title, images: {"0": img, "1": img}}, ...}
+  return Object.entries(raw)
+    .filter(([key]) => !isNaN(Number(key)))
+    .map(([, val]) => {
+      const g = val as Record<string, unknown>;
+      let images = g.images;
+      if (images && !Array.isArray(images) && typeof images === 'object') {
+        images = Object.entries(images as Record<string, unknown>)
+          .filter(([k]) => !isNaN(Number(k)))
+          .map(([, v]) => v);
+      }
+      return {
+        id_gallery: Number(g.id_gallery) || 0,
+        title: extractLabel(g.title),
+        images: (images as Property['galleries'][0]['images']) || [],
+      };
+    });
 }

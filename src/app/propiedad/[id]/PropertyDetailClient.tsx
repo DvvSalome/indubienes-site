@@ -143,7 +143,7 @@ export default function PropertyDetailClient({ property }: Props) {
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  {property.property_type_label && (
+                  {property.property_type_label && typeof property.property_type_label === 'string' && (
                     <span className="text-xs font-body text-gold uppercase tracking-wider">{property.property_type_label}</span>
                   )}
                 </div>
@@ -155,7 +155,9 @@ export default function PropertyDetailClient({ property }: Props) {
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
-                  {property.address || property.location_label || `${property.zone_label}, ${property.city_label}`}
+                  {(typeof property.address === 'string' ? property.address : '') ||
+                   (typeof property.location_label === 'string' ? property.location_label : '') ||
+                   `${typeof property.zone_label === 'string' ? property.zone_label : ''}, ${typeof property.city_label === 'string' ? property.city_label : ''}`}
                 </p>
               </div>
               <div className="text-right">
@@ -213,7 +215,7 @@ export default function PropertyDetailClient({ property }: Props) {
                             <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
-                            {f}
+                            {typeof f === 'string' ? f : (f as Record<string, unknown>)?.nombre || (f as Record<string, unknown>)?.name || ''}
                           </li>
                         ))}
                       </ul>
@@ -228,7 +230,7 @@ export default function PropertyDetailClient({ property }: Props) {
                             <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
-                            {f}
+                            {typeof f === 'string' ? f : (f as Record<string, unknown>)?.nombre || (f as Record<string, unknown>)?.name || ''}
                           </li>
                         ))}
                       </ul>

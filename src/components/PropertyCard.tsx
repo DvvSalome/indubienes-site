@@ -15,11 +15,11 @@ export default function PropertyCard({ property }: { property: Property }) {
     <Link href={`/propiedad/${property.id_property}`} className="block group">
       <div className="property-card bg-card rounded-xl overflow-hidden border border-border">
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden bg-surface">
           <img
             src={imageUrl}
-            alt={property.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            alt={property.title || ''}
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {/* Overlay gradient */}
           <div className="absolute inset-0 image-overlay opacity-60" />
@@ -29,7 +29,7 @@ export default function PropertyCard({ property }: { property: Property }) {
             <span className="px-3 py-1 bg-gold text-[#0D0D0D] text-xs font-body font-semibold rounded-full tracking-wide uppercase">
               {businessType}
             </span>
-            {property.property_type_label && (
+            {property.property_type_label && typeof property.property_type_label === 'string' && (
               <span className="px-3 py-1 bg-black/60 backdrop-blur-sm text-white text-xs font-body rounded-full">
                 {property.property_type_label}
               </span>
@@ -55,7 +55,8 @@ export default function PropertyCard({ property }: { property: Property }) {
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
-            {property.location_label || `${property.zone_label}, ${property.city_label}`}
+            {(typeof property.location_label === 'string' ? property.location_label : '') ||
+             `${typeof property.zone_label === 'string' ? property.zone_label : ''}, ${typeof property.city_label === 'string' ? property.city_label : ''}`}
           </p>
 
           {/* Specs */}
