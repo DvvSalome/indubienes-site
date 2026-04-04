@@ -24,7 +24,6 @@ interface FormState {
 
 export default function FunnelForm({
   propertyId,
-  propertyType,
   utmSource,
   utmMedium,
   utmCampaign,
@@ -80,7 +79,7 @@ export default function FunnelForm({
       setTimeout(() => {
         setState({ status: 'idle' });
       }, 5000);
-    } catch (error) {
+    } catch {
       setState({
         status: 'error',
         message: 'Ocurrió un error al enviar el formulario. Por favor intenta de nuevo.',

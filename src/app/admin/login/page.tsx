@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
         setError(data.error || 'Error al iniciar sesión. Intenta de nuevo.');
         setIsLoading(false);
       }
-    } catch (err) {
+    } catch {
       setError('Error de conexión. Por favor, intenta de nuevo.');
       setIsLoading(false);
     }

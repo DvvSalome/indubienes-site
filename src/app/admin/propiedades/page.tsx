@@ -59,7 +59,7 @@ export default function PropiedadesPage() {
     currentPage * itemsPerPage
   );
 
-  const handleCopyLink = (propertyId: number, title: string) => {
+  const handleCopyLink = (propertyId: number) => {
     const baseUrl =
       typeof window !== 'undefined'
         ? window.location.origin
@@ -201,7 +201,7 @@ export default function PropiedadesPage() {
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-2">
                     <button
-                      onClick={() => handleCopyLink(property.id, property.title)}
+                      onClick={() => handleCopyLink(property.id)}
                       className="flex-1 bg-[#222] hover:bg-[#C9A962]/20 text-[#C9A962] text-xs font-medium py-2 rounded transition-colors flex items-center justify-center gap-1"
                     >
                       {copiedId === property.id ? (

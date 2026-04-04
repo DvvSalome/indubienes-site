@@ -16,7 +16,6 @@ interface LeadStats {
 export default function MarketingPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [stats, setStats] = useState<LeadStats | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedPropertyId, setSelectedPropertyId] = useState<number | ''>('');
   const [utmSource, setUtmSource] = useState('');
   const [utmMedium, setUtmMedium] = useState('');
@@ -37,8 +36,6 @@ export default function MarketingPage() {
       setProperties(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

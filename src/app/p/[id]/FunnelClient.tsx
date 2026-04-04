@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
@@ -14,7 +13,6 @@ interface FunnelClientProps {
 
 export default function FunnelClient({ property }: FunnelClientProps) {
   const [scrolled, setScrolled] = useState(false);
-  const [showLightbox, setShowLightbox] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
