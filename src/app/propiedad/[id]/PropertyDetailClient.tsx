@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
-import SmartImage from '@/components/SmartImage';
 
 interface Props {
   property: Property;
@@ -14,7 +13,7 @@ export default function PropertyDetailClient({ property }: Props) {
   const allImages = [
     property.main_image,
     ...(property.galleries?.flatMap(g => g.images) || []),
-  ].filter(img => img?.url);
+  ].filter(img => img?.url || img?.url_original);
 
   const [currentImage, setCurrentImage] = useState(0);
   const [formData, setFormData] = useState({
@@ -76,10 +75,10 @@ export default function PropertyDetailClient({ property }: Props) {
             <div className="mb-8">
               <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-surface mb-3">
                 {allImages.length > 0 ? (
-                  <SmartImage
-                    src={allImages[currentImage]?.url_big || allImages[currentImage]?.url}
+                  <img
+                    src={allImages[currentImage]?.url_original || allImages[currentImage]?.url_big || allImages[currentImage]?.url || '/placeholder-property.jpg'}
                     alt={property.title}
-                    className="group-hover:scale-105 transition-transform duration-300"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-faint">
@@ -137,7 +136,7 @@ export default function PropertyDetailClient({ property }: Props) {
                         idx === currentImage ? 'border-gold' : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
                     >
-                      <img src={img.url} alt="" className="w-full h-full object-cover" />
+                      <img src={img.url_original || img.url} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
