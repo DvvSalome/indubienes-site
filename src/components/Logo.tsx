@@ -1,24 +1,22 @@
 'use client';
 
-import Image from 'next/image';
-
 export default function Logo({ className = '', height = 56 }: { className?: string; height?: number }) {
-  // HD source is 1000x360 (4x of original 250x90)
+  // SVG vector logo — scales infinitely without quality loss
+  const aspectRatio = 580 / 110; // matches SVG viewBox
+  const width = Math.round(height * aspectRatio);
 
   return (
-    <Image
-      src="/logo-hd.png"
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/logo.svg"
       alt="Inmobiliaria Indubienes"
-      width={1000}
-      height={360}
+      width={width}
+      height={height}
       className={`drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)] ${className}`}
       style={{
-        maxHeight: `${height}px`,
-        width: 'auto',
         height: `${height}px`,
+        width: 'auto',
       }}
-      priority
-      quality={95}
     />
   );
 }

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 110" fill="none">
+  <!-- === LEFT: I [Building] B icon block === -->
+  <g transform="translate(0, 0)">
+    <!-- Letter I -->
+    <text x="2" y="72" font-family="Georgia, 'Times New Roman', serif" font-size="46" font-weight="bold" fill="#3B6FA0">I</text>
+
+    <!-- Building -->
+    <g transform="translate(22, 4)">
+      <rect x="9" y="14" width="30" height="48" fill="#6B7B8D" opacity="0.85"/>
+      <!-- Windows -->
+      <rect x="13" y="18" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="19" y="18" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="25" y="18" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="31" y="18" width="4" height="4" fill="#C0CDD6" opacity="0.5"/>
+      <rect x="13" y="25" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="19" y="25" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="25" y="25" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="31" y="25" width="4" height="4" fill="#C0CDD6" opacity="0.5"/>
+      <rect x="13" y="32" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="19" y="32" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="25" y="32" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="31" y="32" width="4" height="4" fill="#C0CDD6" opacity="0.5"/>
+      <rect x="13" y="39" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="19" y="39" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="25" y="39" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="31" y="39" width="4" height="4" fill="#C0CDD6" opacity="0.5"/>
+      <rect x="13" y="46" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="19" y="46" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <rect x="25" y="46" width="4" height="4" fill="#C0CDD6" opacity="0.7"/>
+      <!-- Roof -->
+      <polygon points="9,14 24,2 39,14" fill="#7B8D9E" opacity="0.8"/>
+      <!-- Left wing -->
+      <rect x="0" y="30" width="9" height="32" fill="#8494A5" opacity="0.7"/>
+      <rect x="2" y="33" width="3" height="3" fill="#C0CDD6" opacity="0.55"/>
+      <rect x="2" y="39" width="3" height="3" fill="#C0CDD6" opacity="0.55"/>
+      <rect x="2" y="45" width="3" height="3" fill="#C0CDD6" opacity="0.55"/>
+      <rect x="2" y="51" width="3" height="3" fill="#C0CDD6" opacity="0.55"/>
+      <rect x="2" y="57" width="3" height="3" fill="#C0CDD6" opacity="0.55"/>
+      <!-- Right wing -->
+      <rect x="39" y="26" width="9" height="36" fill="#8494A5" opacity="0.6"/>
+      <rect x="41" y="30" width="3" height="3" fill="#C0CDD6" opacity="0.45"/>
+      <rect x="41" y="36" width="3" height="3" fill="#C0CDD6" opacity="0.45"/>
+      <rect x="41" y="42" width="3" height="3" fill="#C0CDD6" opacity="0.45"/>
+      <rect x="41" y="48" width="3" height="3" fill="#C0CDD6" opacity="0.45"/>
+      <rect x="41" y="54" width="3" height="3" fill="#C0CDD6" opacity="0.45"/>
+      <!-- Base -->
+      <rect x="-4" y="62" width="56" height="4" rx="1" fill="#5A6A7A" opacity="0.7"/>
+    </g>
+
+    <!-- Letter B -->
+    <text x="76" y="72" font-family="Georgia, 'Times New Roman', serif" font-size="46" font-weight="bold" fill="#3B6FA0">B</text>
+  </g>
+
+  <!-- Subtle vertical separator -->
+  <line x1="115" y1="15" x2="115" y2="85" stroke="#8494A5" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- === RIGHT: INMOBILIARIA / INDUBIENES === -->
+
+  <!-- INMOBILIARIA -->
+  <text x="130" y="32" font-family="'Trebuchet MS', 'Segoe UI', Arial, sans-serif" font-size="16" font-weight="600" fill="#8494A5" letter-spacing="3">INMOBILIARIA</text>
+
+  <!-- Gold accent line -->
+  <line x1="130" y1="38" x2="325" y2="38" stroke="#C9A962" stroke-width="0.7" opacity="0.35"/>
+
+  <!-- INDUBIENES as one word, two colors -->
+  <text x="126" y="76" font-family="Georgia, 'Times New Roman', serif" font-size="50" font-weight="bold" letter-spacing="1">
+    <tspan fill="#3B6FA0">INDU</tspan><tspan fill="#8494A5">BIENES</tspan>
+  </text>
+
+  <!-- S.A.S -->
+  <text x="130" y="92" font-family="'Trebuchet MS', Arial, sans-serif" font-size="8" fill="#8494A5" letter-spacing="5" opacity="0.55">S . A . S</text>
+</svg>
