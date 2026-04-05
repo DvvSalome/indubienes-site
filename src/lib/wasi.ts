@@ -284,7 +284,11 @@ function normalizeProperty(raw: any): Property {
     stratum: Number(raw.stratum) || 0,
     maintenance_fee: Number(raw.maintenance_fee) || 0,
     maintenance_fee_label: extractLabel(raw.maintenance_fee_label),
-    property_condition_label: extractLabel(raw.property_condition_label),
+    property_condition_label: (() => {
+      const lbl = extractLabel(raw.property_condition_label);
+      const map: Record<string, string> = { 'New': 'Nuevo', 'Used': 'Usado', 'Remodeled': 'Remodelado', 'Under Construction': 'En construcción' };
+      return map[lbl] || lbl;
+    })(),
     visits: Number(raw.visits) || 0,
     private_area: Number(raw.private_area) || 0,
     reference: raw.reference || '',

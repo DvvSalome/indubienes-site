@@ -147,18 +147,29 @@ export default function PropertyDetailClient({ property }: Props) {
           <div className="lg:col-span-2">
             {/* Image Gallery */}
             <div className="mb-8">
-              <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-surface mb-3">
+              <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-[#1a1a1a] mb-3">
                 {allImages.length > 0 ? (
-                  <img
-                    key={currentImage}
-                    src={bestImageUrl(allImages[currentImage]) || '/placeholder-property.jpg'}
-                    alt={property.title}
-                    className="absolute inset-0 w-full h-full object-cover animate-fade-in"
-                    onError={() => {
-                      const dedupIdx = dedupedImages.indexOf(allImages[currentImage]);
-                      if (dedupIdx !== -1) handleImageError(dedupIdx);
-                    }}
-                  />
+                  <>
+                    {/* Blurred background fill — eliminates white/empty sides on vertical or small images */}
+                    <img
+                      key={`bg-${currentImage}`}
+                      src={bestImageUrl(allImages[currentImage]) || '/placeholder-property.jpg'}
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60"
+                    />
+                    {/* Main sharp image */}
+                    <img
+                      key={currentImage}
+                      src={bestImageUrl(allImages[currentImage]) || '/placeholder-property.jpg'}
+                      alt={property.title}
+                      className="absolute inset-0 w-full h-full object-contain animate-fade-in z-[1]"
+                      onError={() => {
+                        const dedupIdx = dedupedImages.indexOf(allImages[currentImage]);
+                        if (dedupIdx !== -1) handleImageError(dedupIdx);
+                      }}
+                    />
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-faint">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -174,7 +185,7 @@ export default function PropertyDetailClient({ property }: Props) {
                   <>
                     <button
                       onClick={() => handleUserNav((currentImage - 1 + allImages.length) % allImages.length)}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors z-[5]"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="15 18 9 12 15 6" />
@@ -182,7 +193,7 @@ export default function PropertyDetailClient({ property }: Props) {
                     </button>
                     <button
                       onClick={() => handleUserNav((currentImage + 1) % allImages.length)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors z-[5]"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="9 18 15 12 9 6" />
@@ -192,12 +203,12 @@ export default function PropertyDetailClient({ property }: Props) {
                 )}
 
                 {/* Image counter */}
-                <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-3 py-1 rounded-full font-body">
+                <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-full font-body z-[5]">
                   {currentImage + 1} / {allImages.length}
                 </div>
 
                 {/* Badge */}
-                <div className="absolute top-3 left-3">
+                <div className="absolute top-3 left-3 z-[5]">
                   <span className="px-3 py-1 bg-gold text-[#0D0D0D] text-xs font-body font-semibold rounded-full tracking-wide uppercase">
                     {businessType}
                   </span>

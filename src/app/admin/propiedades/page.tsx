@@ -64,9 +64,153 @@ function formatCOP(value: number): string {
   return new Intl.NumberFormat('es-CO').format(value);
 }
 
-// Parse formatted price string back to number
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for potential future use
 function parseCOP(str: string): number {
   return Number(str.replace(/\./g, '').replace(/,/g, '')) || 0;
+}
+
+// Compress image client-side: resize to max dimension, convert to JPEG with quality
+async function compressImage(file: File, maxDim = 1600, quality = 0.82): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        // Scale down if larger than maxDim
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ─── IMAGE UPLOAD COMPONENT ───────────────────────────────────────────────
+function ImageUploader({ propertyId, onUploaded }: { propertyId: number; onUploaded: () => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [progress, setProgress] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files?.length) return;
+
+    setUploading(true);
+    setError('');
+    setSuccess('');
+
+    const totalFiles = files.length;
+    let uploaded = 0;
+
+    for (let i = 0; i < totalFiles; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) continue;
+
+      setProgress(`Comprimiendo ${i + 1}/${totalFiles}...`);
+
+      try {
+        // Compress image
+        const compressed = await compressImage(file);
+        setPreview(compressed);
+
+        setProgress(`Subiendo ${i + 1}/${totalFiles}...`);
+
+        // Upload to WASI via our API
+        const res = await fetch(`/api/properties/${propertyId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ main_image: compressed }),
+        });
+
+        if (res.ok) {
+          uploaded++;
+        } else {
+          const data = await res.json();
+          setError(data.error || `Error al subir imagen ${i + 1}`);
+        }
+      } catch {
+        setError(`Error procesando imagen ${i + 1}`);
+      }
+    }
+
+    if (uploaded > 0) {
+      setSuccess(`${uploaded} imagen${uploaded > 1 ? 'es subidas' : ' subida'} correctamente`);
+      onUploaded();
+    }
+
+    setUploading(false);
+    setProgress('');
+    // Reset file input
+    e.target.value = '';
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="relative">
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          capture="environment"
+          onChange={handleFileSelect}
+          disabled={uploading}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 disabled:cursor-not-allowed"
+          id="image-upload"
+        />
+        <label
+          htmlFor="image-upload"
+          className={`flex flex-col items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed transition-all ${
+            uploading
+              ? 'border-[#C9A962]/50 bg-[#C9A962]/5'
+              : 'border-[#333] hover:border-[#C9A962]/40 bg-[#111] hover:bg-[#C9A962]/5 cursor-pointer'
+          }`}
+        >
+          {uploading ? (
+            <>
+              <svg className="w-6 h-6 text-[#C9A962] animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>
+              <span className="text-xs text-[#C9A962]">{progress}</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-8 h-8 text-[#666]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              <span className="text-xs text-[#888]">Toca para subir fotos</span>
+              <span className="text-[10px] text-[#555]">Se comprimen automáticamente sin perder calidad</span>
+            </>
+          )}
+        </label>
+      </div>
+
+      {/* Preview */}
+      {preview && (
+        <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-[#333]">
+          <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+        </div>
+      )}
+
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      {success && <p className="text-xs text-green-400">{success}</p>}
+    </div>
+  );
 }
 
 // ─── COUNTER COMPONENT ────────────────────────────────────────────────────
@@ -473,6 +617,17 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
                   />
                   <p className="text-[10px] text-[#555] mt-1">{form.observations.length} caracteres</p>
                 </div>
+
+                {/* Image Upload — only for existing properties */}
+                {isEditing && property && (
+                  <>
+                    <SectionHeader
+                      icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                      title="Foto principal"
+                    />
+                    <ImageUploader propertyId={property.id_property} onUploaded={() => {}} />
+                  </>
+                )}
 
                 <SectionHeader
                   icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
