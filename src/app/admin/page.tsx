@@ -225,12 +225,15 @@ export default function AdminDashboard() {
       <div className="space-y-4">
         <h2 className="text-xl font-display font-bold text-white">Acciones rápidas</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <button className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#C9A962]/30 transition-all flex items-center gap-3 group">
+          <Link
+            href="/admin/marketing"
+            className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#C9A962]/30 transition-all flex items-center gap-3 group"
+          >
             <svg className="w-5 h-5 text-[#C9A962] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
             <span className="font-medium">Generar link de propiedad</span>
-          </button>
+          </Link>
 
           <Link
             href="/admin/propiedades"
