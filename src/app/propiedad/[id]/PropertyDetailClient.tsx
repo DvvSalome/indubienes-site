@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
@@ -39,6 +39,26 @@ export default function PropertyDetailClient({ property }: Props) {
   });
 
   const [currentImage, setCurrentImage] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const pauseTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-slide carousel every 4 seconds
+  useEffect(() => {
+    if (isPaused || allImages.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentImage(prev => (prev + 1) % allImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isPaused, allImages.length]);
+
+  // Pause autoplay when user interacts, resume after 10 seconds
+  const handleUserNav = useCallback((newIndex: number) => {
+    setCurrentImage(newIndex);
+    setIsPaused(true);
+    if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+    pauseTimerRef.current = setTimeout(() => setIsPaused(false), 10000);
+  }, []);
+
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -102,9 +122,10 @@ export default function PropertyDetailClient({ property }: Props) {
               <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-surface mb-3">
                 {allImages.length > 0 ? (
                   <img
+                    key={currentImage}
                     src={allImages[currentImage]?.url_original || allImages[currentImage]?.url_big || allImages[currentImage]?.url || '/placeholder-property.jpg'}
                     alt={property.title}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover animate-fade-in"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-faint">
@@ -120,7 +141,7 @@ export default function PropertyDetailClient({ property }: Props) {
                 {allImages.length > 1 && (
                   <>
                     <button
-                      onClick={() => setCurrentImage(i => (i - 1 + allImages.length) % allImages.length)}
+                      onClick={() => handleUserNav((currentImage - 1 + allImages.length) % allImages.length)}
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -128,7 +149,7 @@ export default function PropertyDetailClient({ property }: Props) {
                       </svg>
                     </button>
                     <button
-                      onClick={() => setCurrentImage(i => (i + 1) % allImages.length)}
+                      onClick={() => handleUserNav((currentImage + 1) % allImages.length)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -157,7 +178,7 @@ export default function PropertyDetailClient({ property }: Props) {
                   {allImages.map((img, idx) => (
                     <button
                       key={idx}
-                      onClick={() => setCurrentImage(idx)}
+                      onClick={() => handleUserNav(idx)}
                       className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
                         idx === currentImage ? 'border-gold' : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
