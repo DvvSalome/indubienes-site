@@ -6,11 +6,6 @@ import PropertyCard from '@/components/PropertyCard';
 import CustomSelect from '@/components/CustomSelect';
 import { Property, PropertyType } from '@/lib/types';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 interface Props {
   initialProperties: Property[];
@@ -40,21 +35,24 @@ export default function PropertiesClient({
 
   const totalPages = Math.ceil(total / 12);
 
-  // Animate cards on mount
+  // Animate cards on mount — quick fade-in, no scroll dependency
   useEffect(() => {
     if (!gridRef.current) return;
     const cards = gridRef.current.querySelectorAll('.prop-card-anim');
     if (!cards.length) return;
 
-    gsap.fromTo(cards, {
-      y: 60,
-      opacity: 0,
-    }, {
-      y: 0,
-      opacity: 1,
-      duration: 0.7,
-      stagger: 0.08,
-      ease: 'power3.out',
+    // Set initial state immediately
+    gsap.set(cards, { y: 30, opacity: 0 });
+
+    // Animate in after a tiny delay for paint
+    requestAnimationFrame(() => {
+      gsap.to(cards, {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.06,
+        ease: 'power2.out',
+      });
     });
   }, [initialProperties]);
 

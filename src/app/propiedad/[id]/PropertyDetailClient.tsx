@@ -233,6 +233,11 @@ export default function PropertyDetailClient({ property }: Props) {
                     Arriendo: {property.rent_price_label || formatPrice(property.rent_price)}
                   </p>
                 )}
+                {property.maintenance_fee > 0 && (
+                  <p className="text-sm text-muted font-body mt-1">
+                    Administración: {property.maintenance_fee_label || formatPrice(property.maintenance_fee)}
+                  </p>
+                )}
               </div>
             </div>
 

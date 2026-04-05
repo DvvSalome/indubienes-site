@@ -89,16 +89,13 @@ export default function PropiedadesPage() {
   };
 
   const formatPrice = (price: number) => {
-    if (price >= 1000000000) {
-      return `$${(price / 1000000000).toFixed(1)}B`;
-    }
-    if (price >= 1000000) {
-      return `$${(price / 1000000).toFixed(1)}M`;
-    }
-    if (price >= 1000) {
-      return `$${(price / 1000).toFixed(0)}K`;
-    }
-    return `$${price}`;
+    if (!price) return '';
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
   };
 
   return (

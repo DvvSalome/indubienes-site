@@ -135,14 +135,14 @@ export default function MarketingPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-white line-clamp-2">{selectedProperty.title}</h3>
-                    <p className="text-[#C9A962] font-bold mt-2">${selectedProperty.price.toLocaleString('es-CO')}</p>
+                    <p className="text-[#C9A962] font-bold mt-2">{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(selectedProperty.price)}</p>
                     <p className="text-xs text-[#888] mt-1">indubienes.com</p>
                   </div>
                 </div>
                 <div className="pt-4 border-t border-[#222]">
                   <p className="text-xs font-medium text-[#888] mb-3">Compartir en</p>
                   <div className="grid grid-cols-2 gap-3">
-                    <a href={`https://wa.me/?text=${encodeURIComponent(`${selectedProperty.title}\n\n$${selectedProperty.price.toLocaleString('es-CO')}\n\n${generatedLink || 'https://indubienes.com'}`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 rounded-lg py-2 text-green-300 text-sm font-medium transition-colors">
+                    <a href={`https://wa.me/?text=${encodeURIComponent(`${selectedProperty.title}\n\n${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(selectedProperty.price)}\n\n${generatedLink || 'https://indubienes.com'}`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 rounded-lg py-2 text-green-300 text-sm font-medium transition-colors">
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371 0-.57 0-.198 0-.52.075-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-9.746 9.798c0 2.734.732 5.41 2.115 7.737L3.329 23.994l8.23-2.161c2.261 1.23 4.787 1.878 7.465 1.878 5.37 0 9.957-4.587 9.957-10.007 0-2.679-.551-5.212-1.589-7.663-1.038-2.451-2.506-4.617-4.383-6.36-1.877-1.743-4.061-3.085-6.499-3.973C13.322.75 10.557 0 7.589 0 2.218 0-2.242 4.587-2.242 10.007c0 1.71.35 3.34 1.007 4.828L.292 23.994l8.23-2.161c2.261 1.23 4.787 1.878 7.465 1.878 5.37 0 9.957-4.587 9.957-10.007 0-2.679-.551-5.212-1.589-7.663-1.038-2.451-2.506-4.617-4.383-6.36-1.877-1.743-4.061-3.085-6.499-3.973C13.322.75 10.557 0 7.589 0 2.218 0-2.242 4.587-2.242 10.007z" /></svg>
                       WhatsApp
                     </a>
@@ -187,7 +187,7 @@ export default function MarketingPage() {
               {topProperties.map((prop) => (
                 <div key={prop.id} className="flex items-center justify-between p-3 bg-[#222] rounded-lg">
                   <span className="text-sm text-[#888] line-clamp-1">{prop.title}</span>
-                  <span className="text-[#C9A962] font-bold text-sm">${(prop.price / 1000000).toFixed(1)}M</span>
+                  <span className="text-[#C9A962] font-bold text-sm">{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(prop.price)}</span>
                 </div>
               ))}
             </div>
