@@ -338,6 +338,101 @@ export async function getClientStats(): Promise<{ total: number; newThisMonth: n
   return { total, newThisMonth };
 }
 
+// ─── WRITE OPERATIONS ───────────────────────────────────────────────────────
+
+// Create a new property in WASI
+export async function createProperty(data: Record<string, unknown>): Promise<{ status: string; id_property?: number; message?: string }> {
+  const result = await wasiRequest<Record<string, unknown>>('/property/add', {
+    method: 'POST',
+    body: { ...data, id_user: 11368 },
+  });
+  if (result?.status === 'success') {
+    return { status: 'success', id_property: Number(result.id_property || 0) };
+  }
+  return { status: 'error', message: String(result?.message || 'Error al crear propiedad') };
+}
+
+// Update an existing property in WASI
+export async function updateProperty(id: number, data: Record<string, unknown>): Promise<{ status: string; message?: string }> {
+  const result = await wasiRequest<Record<string, unknown>>(`/property/update/${id}`, {
+    method: 'POST',
+    body: data,
+  });
+  if (result?.status === 'success') {
+    return { status: 'success' };
+  }
+  return { status: 'error', message: String(result?.message || 'Error al actualizar propiedad') };
+}
+
+// Add a new client in WASI
+export async function createClient(data: Record<string, unknown>): Promise<{ status: string; id_client?: number; message?: string }> {
+  const result = await wasiRequest<Record<string, unknown>>('/client/add', {
+    method: 'POST',
+    body: data,
+  });
+  if (result?.status === 'success') {
+    return { status: 'success', id_client: Number(result.id_client || 0) };
+  }
+  return { status: 'error', message: String(result?.message || 'Error al crear cliente') };
+}
+
+// Update an existing client in WASI
+export async function updateClient(id: number, data: Record<string, unknown>): Promise<{ status: string; message?: string }> {
+  const result = await wasiRequest<Record<string, unknown>>(`/client/update/${id}`, {
+    method: 'POST',
+    body: data,
+  });
+  if (result?.status === 'success') {
+    return { status: 'success' };
+  }
+  return { status: 'error', message: String(result?.message || 'Error al actualizar cliente') };
+}
+
+// Get regions for a country from WASI
+export async function getRegions(countryId: number = 1): Promise<Array<{ id: number; name: string }>> {
+  const result = await wasiRequest<Record<string, unknown>>('/location/regions-by-country', {
+    method: 'POST',
+    body: { id_country: countryId },
+  });
+  if (!result) return [];
+  return Object.entries(result)
+    .filter(([key]) => !isNaN(Number(key)))
+    .map(([, val]) => {
+      const v = val as Record<string, unknown>;
+      return { id: Number(v.id_region || v.id), name: String(v.name || v.label || '') };
+    });
+}
+
+// Get cities for a region from WASI
+export async function getCities(regionId: number): Promise<Array<{ id: number; name: string }>> {
+  const result = await wasiRequest<Record<string, unknown>>('/location/cities-by-region', {
+    method: 'POST',
+    body: { id_region: regionId },
+  });
+  if (!result) return [];
+  return Object.entries(result)
+    .filter(([key]) => !isNaN(Number(key)))
+    .map(([, val]) => {
+      const v = val as Record<string, unknown>;
+      return { id: Number(v.id_city || v.id), name: String(v.name || v.label || '') };
+    });
+}
+
+// Get zones for a city from WASI
+export async function getZones(cityId: number): Promise<Array<{ id: number; name: string }>> {
+  const result = await wasiRequest<Record<string, unknown>>('/location/zones-by-city', {
+    method: 'POST',
+    body: { id_city: cityId },
+  });
+  if (!result) return [];
+  return Object.entries(result)
+    .filter(([key]) => !isNaN(Number(key)))
+    .map(([, val]) => {
+      const v = val as Record<string, unknown>;
+      return { id: Number(v.id_zone || v.id), name: String(v.name || v.label || '') };
+    });
+}
+
 // Normalize client data from WASI API
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeClient(raw: any): WasiClient {

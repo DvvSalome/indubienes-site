@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { searchClients, getClientStats } from '@/lib/wasi';
+import { searchClients, getClientStats, createClient } from '@/lib/wasi';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,5 +30,22 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       { error: 'Internal server error' },
       { status: 500 }
     );
+  }
+}
+
+// POST /api/clients — Create a new client in WASI
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    const body = await request.json();
+    const result = await createClient(body);
+
+    if (result.status === 'success') {
+      return NextResponse.json({ status: 'success', id_client: result.id_client });
+    }
+
+    return NextResponse.json({ error: result.message }, { status: 400 });
+  } catch (error) {
+    console.error('POST /api/clients error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
