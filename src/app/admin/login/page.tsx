@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Logo from '@/components/Logo';
 
 interface LoginFormData {
@@ -16,7 +15,6 @@ interface LoginResponse {
 }
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [formData, setFormData] = useState<LoginFormData>({
     company_id: '',
     wasi_token: '',
