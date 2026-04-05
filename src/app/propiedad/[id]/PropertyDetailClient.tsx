@@ -23,24 +23,52 @@ interface Props {
   property: Property;
 }
 
+// Pick the best working URL for an image.
+// WASI token URLs (image.wasi.co/eyJ...) are more reliable than direct URLs (images.wasi.co/inmuebles/...)
+function bestImageUrl(img: { url?: string; url_big?: string; url_original?: string }): string {
+  // Prefer url_big (higher quality token URL), then url (smaller token URL), then url_original (direct, sometimes 403)
+  return img?.url_big || img?.url || img?.url_original || '';
+}
+
 export default function PropertyDetailClient({ property }: Props) {
-  // Combine main_image + gallery images, deduplicate by url_original or url
+  // Combine main_image + gallery images, deduplicate
   const rawImages = [
     property.main_image,
     ...(property.galleries?.flatMap(g => g.images) || []),
-  ].filter(img => img?.url || img?.url_original);
+  ].filter(img => img?.url || img?.url_big || img?.url_original);
 
   const seen = new Set<string>();
-  const allImages = rawImages.filter(img => {
-    const key = img.url_original || img.url || '';
+  const dedupedImages = rawImages.filter(img => {
+    // Use the token URL (url_big or url) for dedup since url_original can differ but point to same image
+    const key = bestImageUrl(img);
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 
+  // Track which images have errored so we can skip them
+  const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
+  const allImages = dedupedImages.filter((_, idx) => !brokenImages.has(idx));
+
   const [currentImage, setCurrentImage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const pauseTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // When an image fails to load, mark it as broken
+  const handleImageError = useCallback((dedupedIndex: number) => {
+    setBrokenImages(prev => {
+      const next = new Set(prev);
+      next.add(dedupedIndex);
+      return next;
+    });
+  }, []);
+
+  // Reset current image if it goes out of bounds after removing broken images
+  useEffect(() => {
+    if (currentImage >= allImages.length && allImages.length > 0) {
+      setCurrentImage(0);
+    }
+  }, [allImages.length, currentImage]);
 
   // Auto-slide carousel every 4 seconds
   useEffect(() => {
@@ -123,9 +151,13 @@ export default function PropertyDetailClient({ property }: Props) {
                 {allImages.length > 0 ? (
                   <img
                     key={currentImage}
-                    src={allImages[currentImage]?.url_original || allImages[currentImage]?.url_big || allImages[currentImage]?.url || '/placeholder-property.jpg'}
+                    src={bestImageUrl(allImages[currentImage]) || '/placeholder-property.jpg'}
                     alt={property.title}
                     className="absolute inset-0 w-full h-full object-cover animate-fade-in"
+                    onError={() => {
+                      const dedupIdx = dedupedImages.indexOf(allImages[currentImage]);
+                      if (dedupIdx !== -1) handleImageError(dedupIdx);
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-faint">
@@ -183,7 +215,15 @@ export default function PropertyDetailClient({ property }: Props) {
                         idx === currentImage ? 'border-gold' : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
                     >
-                      <img src={img.url_original || img.url} alt="" className="w-full h-full object-cover" />
+                      <img
+                        src={bestImageUrl(img)}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        onError={() => {
+                          const dedupIdx = dedupedImages.indexOf(img);
+                          if (dedupIdx !== -1) handleImageError(dedupIdx);
+                        }}
+                      />
                     </button>
                   ))}
                 </div>
