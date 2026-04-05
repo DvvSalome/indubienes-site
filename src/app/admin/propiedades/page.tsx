@@ -166,7 +166,7 @@ export default function PropiedadesPage() {
         ) : filteredProperties.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredProperties.map((property) => {
-              const imageUrl = property.main_image?.url_big || property.main_image?.url_original || property.main_image?.url;
+              const imageUrl = property.main_image?.url_original || property.main_image?.url_big || property.main_image?.url;
               const isSale = property.for_sale || property.sale_price > 0;
               const price = isSale
                 ? (property.sale_price_label || formatPrice(property.sale_price))

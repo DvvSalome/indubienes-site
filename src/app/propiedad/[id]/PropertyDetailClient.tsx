@@ -167,6 +167,40 @@ export default function PropertyDetailClient({ property }: Props) {
                   ))}
                 </div>
               )}
+
+              {/* Video Section */}
+              {videoEmbed && (
+                <div className="mt-4">
+                  <h3 className="text-sm font-body font-semibold text-gold uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    Video
+                  </h3>
+                  <div className="relative aspect-video rounded-xl overflow-hidden bg-surface border border-border">
+                    {videoEmbed.type === 'direct' ? (
+                      <video
+                        src={videoEmbed.embedUrl}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        controls
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <iframe
+                        src={videoEmbed.embedUrl}
+                        className="w-full h-full"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowFullScreen
+                        title="Video de la propiedad"
+                        style={{ border: 0 }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Title & Price */}
