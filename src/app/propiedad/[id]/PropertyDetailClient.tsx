@@ -1,9 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
+
+// Extract embed URL from YouTube/Vimeo links
+function getVideoEmbed(url: string): { embedUrl: string; type: 'youtube' | 'vimeo' | 'direct' } | null {
+  if (!url) return null;
+  // YouTube
+  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) return { embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&rel=0`, type: 'youtube' };
+  // Vimeo
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeoMatch) return { embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&muted=1`, type: 'vimeo' };
+  // Direct video file (mp4, webm, etc)
+  if (url.match(/\.(mp4|webm|ogg|mov)(\?|$)/i)) return { embedUrl: url, type: 'direct' };
+  return null;
+}
 
 interface Props {
   property: Property;
@@ -31,6 +45,9 @@ export default function PropertyDetailClient({ property }: Props) {
     telefono: '',
     mensaje: `Hola, estoy interesado en la propiedad "${property.title}" (ID: ${property.id_property}). Me gustaría recibir más información.`,
   });
+
+  // Video embed
+  const videoEmbed = useMemo(() => getVideoEmbed(property.video || ''), [property.video]);
 
   // Determine business type using multiple signals
   const titleLower = (property.title || '').toLowerCase();

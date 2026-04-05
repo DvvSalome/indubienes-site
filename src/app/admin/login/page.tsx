@@ -55,9 +55,10 @@ export default function AdminLoginPage() {
 
       if (response.ok && data.success) {
         setSuccess(true);
-        // Redirect after brief success animation
+        // Hard redirect to ensure the new cookie is sent with the request
+        // router.push does soft navigation which may not pick up the fresh cookie
         setTimeout(() => {
-          router.push('/admin');
+          window.location.href = '/admin';
         }, 800);
       } else {
         setError(data.error || 'Error al iniciar sesión. Intenta de nuevo.');
