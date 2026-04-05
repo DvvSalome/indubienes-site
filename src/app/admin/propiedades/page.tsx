@@ -39,6 +39,67 @@ interface LocationOption {
   name: string;
 }
 
+// Strip HTML tags and decode HTML entities for clean text display
+function stripHtml(html: string): string {
+  if (!html) return '';
+  // Remove HTML tags
+  let text = html.replace(/<[^>]*>/g, '\n');
+  // Decode common HTML entities
+  text = text.replace(/&ndash;/g, '–').replace(/&mdash;/g, '—')
+    .replace(/&oacute;/g, 'ó').replace(/&aacute;/g, 'á').replace(/&eacute;/g, 'é')
+    .replace(/&iacute;/g, 'í').replace(/&uacute;/g, 'ú').replace(/&ntilde;/g, 'ñ')
+    .replace(/&Oacute;/g, 'Ó').replace(/&Aacute;/g, 'Á').replace(/&Eacute;/g, 'É')
+    .replace(/&Iacute;/g, 'Í').replace(/&Uacute;/g, 'Ú').replace(/&Ntilde;/g, 'Ñ')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/&sup2;/g, '²').replace(/&sup3;/g, '³');
+  // Collapse multiple newlines
+  text = text.replace(/\n{3,}/g, '\n\n').trim();
+  return text;
+}
+
+// Format number with Colombian thousand separators
+function formatCOP(value: number): string {
+  if (!value) return '';
+  return new Intl.NumberFormat('es-CO').format(value);
+}
+
+// Parse formatted price string back to number
+function parseCOP(str: string): number {
+  return Number(str.replace(/\./g, '').replace(/,/g, '')) || 0;
+}
+
+// ─── COUNTER COMPONENT ────────────────────────────────────────────────────
+function CounterInput({ label, icon, value, onChange, min = 0, max = 99 }: {
+  label: string; icon: string; value: number;
+  onChange: (v: number) => void; min?: number; max?: number;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <span className="text-xs text-[#888] uppercase tracking-wider">{label}</span>
+      <div className="flex items-center gap-1">
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))}
+          className="w-8 h-8 rounded-lg bg-[#222] hover:bg-[#333] text-white flex items-center justify-center transition-colors text-lg font-bold">−</button>
+        <div className="w-12 h-10 bg-[#111] border border-[#333] rounded-lg flex items-center justify-center">
+          <span className="text-white font-bold text-sm">{icon} {value}</span>
+        </div>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))}
+          className="w-8 h-8 rounded-lg bg-[#222] hover:bg-[#333] text-white flex items-center justify-center transition-colors text-lg font-bold">+</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── SECTION HEADER ───────────────────────────────────────────────────────
+function SectionHeader({ icon, title }: { icon: React.ReactNode; title: string }) {
+  return (
+    <div className="flex items-center gap-2 pb-2 border-b border-[#222]">
+      <span className="text-[#C9A962]">{icon}</span>
+      <h3 className="text-sm font-bold text-white uppercase tracking-wider">{title}</h3>
+    </div>
+  );
+}
+
 // ─── FORM MODAL ────────────────────────────────────────────────────────────
 interface PropertyFormProps {
   property?: Property | null;
@@ -64,7 +125,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
     floor: property?.floor || 0,
     stratum: property?.stratum || 0,
     address: property?.address || '',
-    observations: property?.observations || '',
+    observations: stripHtml(property?.observations || ''),
     id_country: 1,
     id_region: 2,
     id_city: 496,
@@ -73,6 +134,11 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
     id_status_on_page: 1,
   });
 
+  // Formatted price display strings
+  const [salePriceDisplay, setSalePriceDisplay] = useState(formatCOP(property?.sale_price || 0));
+  const [rentPriceDisplay, setRentPriceDisplay] = useState(formatCOP(property?.rent_price || 0));
+
+  const [activeTab, setActiveTab] = useState<'info' | 'specs' | 'location' | 'details'>('info');
   const [propertyTypes, setPropertyTypes] = useState<PropertyType[]>([]);
   const [regions, setRegions] = useState<LocationOption[]>([]);
   const [cities, setCities] = useState<LocationOption[]>([]);
@@ -102,11 +168,17 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
     const { name, value, type } = e.target;
     if (type === 'checkbox') {
       setForm(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
-    } else if (type === 'number') {
-      setForm(prev => ({ ...prev, [name]: Number(value) }));
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handlePriceChange = (field: 'sale_price' | 'rent_price', raw: string) => {
+    const digits = raw.replace(/\D/g, '');
+    const num = Number(digits) || 0;
+    const formatted = formatCOP(num);
+    if (field === 'sale_price') { setSalePriceDisplay(formatted); setForm(prev => ({ ...prev, sale_price: num })); }
+    else { setRentPriceDisplay(formatted); setForm(prev => ({ ...prev, rent_price: num })); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -137,7 +209,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
 
       const data = await res.json();
       if (res.ok && data.status === 'success') {
-        setSuccess(isEditing ? 'Propiedad actualizada exitosamente' : `Propiedad creada exitosamente (ID: ${data.id_property})`);
+        setSuccess(isEditing ? 'Propiedad actualizada exitosamente' : `Propiedad creada (ID: ${data.id_property})`);
         setTimeout(() => { onSaved(); onClose(); }, 1500);
       } else {
         setError(data.error || 'Error al guardar');
@@ -149,165 +221,302 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
     }
   };
 
+  const imageUrl = property?.main_image?.url_big || property?.main_image?.url || property?.main_image?.url_original;
   const inputClass = 'w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C9A962]/60 transition-colors';
   const labelClass = 'block text-xs font-medium text-[#888] mb-1.5 uppercase tracking-wider';
 
+  const tabs = [
+    { id: 'info' as const, label: 'Información', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+    { id: 'specs' as const, label: 'Características', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg> },
+    { id: 'location' as const, label: 'Ubicación', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
+    { id: 'details' as const, label: 'Detalles', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> },
+  ];
+
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start justify-center overflow-y-auto py-8 px-4">
-      <div className="bg-[#1a1a1a] border border-[#333] rounded-2xl w-full max-w-3xl shadow-2xl">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[#222]">
-          <div>
-            <h2 className="text-xl font-bold text-white">{isEditing ? 'Editar Propiedad' : 'Nueva Propiedad'}</h2>
-            {isEditing && <p className="text-xs text-[#666] mt-1">ID: {property?.id_property}</p>}
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start justify-center overflow-y-auto py-6 px-4">
+      <div className="bg-[#1a1a1a] border border-[#333] rounded-2xl w-full max-w-2xl shadow-2xl">
+        {/* Header with property image preview */}
+        <div className="relative">
+          {isEditing && imageUrl && (
+            <div className="h-32 rounded-t-2xl overflow-hidden relative">
+              <img src={imageUrl} alt="" className="w-full h-full object-cover opacity-40" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1a1a1a]" />
+            </div>
+          )}
+          <div className={`flex items-center justify-between px-6 ${isEditing && imageUrl ? 'absolute bottom-0 left-0 right-0 pb-4' : 'pt-6 pb-4 border-b border-[#222]'}`}>
+            <div>
+              <h2 className="text-xl font-bold text-white">{isEditing ? 'Editar Propiedad' : 'Nueva Propiedad'}</h2>
+              {isEditing && <p className="text-xs text-[#999] mt-0.5">ID: {property?.id_property} • Sincronizado con WASI</p>}
+            </div>
+            <button onClick={onClose} className="text-[#666] hover:text-white transition-colors p-2 bg-black/30 rounded-lg backdrop-blur-sm">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
           </div>
-          <button onClick={onClose} className="text-[#666] hover:text-white transition-colors p-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {error && <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm">{error}</div>}
-          {success && <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-lg text-sm">{success}</div>}
+        {/* Tabs */}
+        <div className="flex border-b border-[#222] px-6 gap-1">
+          {tabs.map(tab => (
+            <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1.5 px-4 py-3 text-xs font-medium transition-colors border-b-2 ${
+                activeTab === tab.id
+                  ? 'border-[#C9A962] text-[#C9A962]'
+                  : 'border-transparent text-[#666] hover:text-white'
+              }`}>
+              {tab.icon}
+              <span className="hidden sm:inline">{tab.label}</span>
+            </button>
+          ))}
+        </div>
 
-          {/* Title */}
-          <div>
-            <label className={labelClass}>Título</label>
-            <input name="title" value={form.title} onChange={handleChange} required className={inputClass} placeholder="Ej: Apartamento en Laureles" />
+        <form onSubmit={handleSubmit}>
+          {/* Messages */}
+          <div className="px-6 pt-4">
+            {error && <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
+            {success && <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-lg text-sm mb-4">{success}</div>}
           </div>
 
-          {/* Business type */}
-          <div className="grid grid-cols-2 gap-4">
-            <label className="flex items-center gap-3 bg-[#111] border border-[#333] rounded-lg px-4 py-3 cursor-pointer hover:border-[#C9A962]/40 transition-colors">
-              <input type="checkbox" name="for_sale" checked={form.for_sale} onChange={handleChange} className="accent-[#C9A962] w-4 h-4" />
-              <span className="text-sm text-white">En Venta</span>
-            </label>
-            <label className="flex items-center gap-3 bg-[#111] border border-[#333] rounded-lg px-4 py-3 cursor-pointer hover:border-[#C9A962]/40 transition-colors">
-              <input type="checkbox" name="for_rent" checked={form.for_rent} onChange={handleChange} className="accent-[#C9A962] w-4 h-4" />
-              <span className="text-sm text-white">En Arriendo</span>
-            </label>
+          <div className="px-6 pb-6 space-y-5 min-h-[320px]">
+            {/* ─── TAB: INFO ─── */}
+            {activeTab === 'info' && (
+              <>
+                <div>
+                  <label className={labelClass}>Título del inmueble</label>
+                  <input name="title" value={form.title} onChange={handleChange} required className={inputClass + ' text-base'} placeholder="Ej: Hermoso apartamento en Laureles" />
+                </div>
+
+                {/* Business type — big toggle buttons */}
+                <div>
+                  <label className={labelClass}>Tipo de negocio</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button type="button" onClick={() => setForm(prev => ({ ...prev, for_sale: !prev.for_sale }))}
+                      className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-bold transition-all ${
+                        form.for_sale ? 'border-[#C9A962] bg-[#C9A962]/10 text-[#C9A962]' : 'border-[#333] bg-[#111] text-[#666] hover:border-[#444]'
+                      }`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      En Venta
+                    </button>
+                    <button type="button" onClick={() => setForm(prev => ({ ...prev, for_rent: !prev.for_rent }))}
+                      className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-bold transition-all ${
+                        form.for_rent ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-[#333] bg-[#111] text-[#666] hover:border-[#444]'
+                      }`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      En Arriendo
+                    </button>
+                  </div>
+                </div>
+
+                {/* Prices with formatted display */}
+                <div className="grid grid-cols-2 gap-4">
+                  {form.for_sale && (
+                    <div>
+                      <label className={labelClass}>Precio venta</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#C9A962] text-sm font-bold">$</span>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={salePriceDisplay}
+                          onChange={(e) => handlePriceChange('sale_price', e.target.value)}
+                          className={inputClass + ' pl-7 text-base font-semibold'}
+                          placeholder="0"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] text-xs">COP</span>
+                      </div>
+                    </div>
+                  )}
+                  {form.for_rent && (
+                    <div>
+                      <label className={labelClass}>Canon mensual</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-400 text-sm font-bold">$</span>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={rentPriceDisplay}
+                          onChange={(e) => handlePriceChange('rent_price', e.target.value)}
+                          className={inputClass + ' pl-7 text-base font-semibold'}
+                          placeholder="0"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] text-xs">COP/mes</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Property type + condition */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Tipo de inmueble</label>
+                    <select name="id_property_type" value={form.id_property_type} onChange={handleChange} className={inputClass}>
+                      {propertyTypes.map(pt => (
+                        <option key={pt.id_property_type} value={pt.id_property_type}>{pt.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Condición</label>
+                    <div className="flex gap-2">
+                      {[{ v: 1, l: 'Nuevo' }, { v: 2, l: 'Usado' }, { v: 3, l: 'Remodelado' }].map(opt => (
+                        <button key={opt.v} type="button"
+                          onClick={() => setForm(prev => ({ ...prev, id_property_condition: opt.v }))}
+                          className={`flex-1 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                            form.id_property_condition === opt.v
+                              ? 'bg-[#C9A962]/20 border border-[#C9A962]/50 text-[#C9A962]'
+                              : 'bg-[#111] border border-[#333] text-[#888] hover:border-[#444]'
+                          }`}>{opt.l}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ─── TAB: SPECS ─── */}
+            {activeTab === 'specs' && (
+              <>
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
+                  title="Espacios"
+                />
+                <div className="flex justify-around py-2">
+                  <CounterInput label="Habitaciones" icon="🛏" value={form.bedrooms} onChange={v => setForm(prev => ({ ...prev, bedrooms: v }))} />
+                  <CounterInput label="Baños" icon="🚿" value={form.bathrooms} onChange={v => setForm(prev => ({ ...prev, bathrooms: v }))} />
+                  <CounterInput label="Garajes" icon="🚗" value={form.garages} onChange={v => setForm(prev => ({ ...prev, garages: v }))} />
+                  <CounterInput label="Estrato" icon="⭐" value={form.stratum} onChange={v => setForm(prev => ({ ...prev, stratum: v }))} max={6} />
+                </div>
+
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>}
+                  title="Áreas y dimensiones"
+                />
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className={labelClass}>Área total</label>
+                    <div className="relative">
+                      <input type="number" name="area" value={form.area || ''} onChange={(e) => setForm(prev => ({ ...prev, area: Number(e.target.value) || 0 }))} min={0} className={inputClass + ' pr-10'} placeholder="0" />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] text-xs">m²</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Área construida</label>
+                    <div className="relative">
+                      <input type="number" name="built_area" value={form.built_area || ''} onChange={(e) => setForm(prev => ({ ...prev, built_area: Number(e.target.value) || 0 }))} min={0} className={inputClass + ' pr-10'} placeholder="0" />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] text-xs">m²</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Piso</label>
+                    <input type="number" name="floor" value={form.floor || ''} onChange={(e) => setForm(prev => ({ ...prev, floor: Number(e.target.value) || 0 }))} min={0} className={inputClass} placeholder="0" />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ─── TAB: LOCATION ─── */}
+            {activeTab === 'location' && (
+              <>
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>}
+                  title="Ubicación del inmueble"
+                />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className={labelClass}>Departamento</label>
+                      <select name="id_region" value={form.id_region} onChange={(e) => { handleChange(e); setForm(prev => ({ ...prev, id_city: 0, id_zone: 0 })); }} className={inputClass}>
+                        <option value={0}>Seleccionar...</option>
+                        {regions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Ciudad</label>
+                      <select name="id_city" value={form.id_city} onChange={(e) => { handleChange(e); setForm(prev => ({ ...prev, id_zone: 0 })); }} className={inputClass}>
+                        <option value={0}>Seleccionar...</option>
+                        {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Zona / Barrio</label>
+                      <select name="id_zone" value={form.id_zone} onChange={handleChange} className={inputClass}>
+                        <option value={0}>Seleccionar...</option>
+                        {zones.map(z => <option key={z.id} value={z.id}>{z.name}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Dirección exacta</label>
+                    <div className="relative">
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                      <input name="address" value={form.address} onChange={handleChange} className={inputClass + ' pl-9'} placeholder="Ej: Cra 76 #35-20, Laureles" />
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ─── TAB: DETAILS ─── */}
+            {activeTab === 'details' && (
+              <>
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
+                  title="Descripción"
+                />
+                <div>
+                  <textarea
+                    name="observations"
+                    value={form.observations}
+                    onChange={handleChange}
+                    rows={6}
+                    className={inputClass + ' resize-none leading-relaxed'}
+                    placeholder="Describe las cualidades del inmueble, acabados, vistas, amenidades..."
+                  />
+                  <p className="text-[10px] text-[#555] mt-1">{form.observations.length} caracteres</p>
+                </div>
+
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
+                  title="Configuración"
+                />
+                <div>
+                  <label className={labelClass}>Estado en página web</label>
+                  <div className="flex gap-2">
+                    {[
+                      { v: 1, l: 'Publicado', color: 'green' },
+                      { v: 2, l: 'Oculto', color: 'gray' },
+                      { v: 3, l: 'Destacado', color: 'amber' },
+                    ].map(opt => (
+                      <button key={opt.v} type="button"
+                        onClick={() => setForm(prev => ({ ...prev, id_status_on_page: opt.v }))}
+                        className={`flex-1 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                          form.id_status_on_page === opt.v
+                            ? opt.color === 'green' ? 'bg-green-500/20 border border-green-500/50 text-green-400'
+                              : opt.color === 'amber' ? 'bg-amber-500/20 border border-amber-500/50 text-amber-400'
+                              : 'bg-gray-500/20 border border-gray-500/50 text-gray-400'
+                            : 'bg-[#111] border border-[#333] text-[#888] hover:border-[#444]'
+                        }`}>
+                        {opt.v === 1 && '🟢 '}{opt.v === 2 && '⚫ '}{opt.v === 3 && '⭐ '}{opt.l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Prices */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Precio Venta (COP)</label>
-              <input type="number" name="sale_price" value={form.sale_price} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Precio Arriendo (COP)</label>
-              <input type="number" name="rent_price" value={form.rent_price} onChange={handleChange} className={inputClass} />
-            </div>
-          </div>
-
-          {/* Property type + condition */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Tipo de propiedad</label>
-              <select name="id_property_type" value={form.id_property_type} onChange={handleChange} className={inputClass}>
-                {propertyTypes.map(pt => (
-                  <option key={pt.id_property_type} value={pt.id_property_type}>{pt.name}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Condición</label>
-              <select name="id_property_condition" value={form.id_property_condition} onChange={handleChange} className={inputClass}>
-                <option value={1}>Nuevo</option>
-                <option value={2}>Usado</option>
-                <option value={3}>Remodelado</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Specs */}
-          <div className="grid grid-cols-4 gap-4">
-            <div>
-              <label className={labelClass}>Habitaciones</label>
-              <input type="number" name="bedrooms" value={form.bedrooms} onChange={handleChange} min={0} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Baños</label>
-              <input type="number" name="bathrooms" value={form.bathrooms} onChange={handleChange} min={0} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Garajes</label>
-              <input type="number" name="garages" value={form.garages} onChange={handleChange} min={0} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Estrato</label>
-              <input type="number" name="stratum" value={form.stratum} onChange={handleChange} min={0} max={6} className={inputClass} />
-            </div>
-          </div>
-
-          {/* Area + floor */}
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className={labelClass}>Área total (m²)</label>
-              <input type="number" name="area" value={form.area} onChange={handleChange} min={0} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Área construida (m²)</label>
-              <input type="number" name="built_area" value={form.built_area} onChange={handleChange} min={0} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Piso</label>
-              <input type="number" name="floor" value={form.floor} onChange={handleChange} min={0} className={inputClass} />
-            </div>
-          </div>
-
-          {/* Location */}
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className={labelClass}>Departamento</label>
-              <select name="id_region" value={form.id_region} onChange={(e) => { handleChange(e); setForm(prev => ({ ...prev, id_city: 0, id_zone: 0 })); }} className={inputClass}>
-                <option value={0}>Seleccionar...</option>
-                {regions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Ciudad</label>
-              <select name="id_city" value={form.id_city} onChange={(e) => { handleChange(e); setForm(prev => ({ ...prev, id_zone: 0 })); }} className={inputClass}>
-                <option value={0}>Seleccionar...</option>
-                {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Zona</label>
-              <select name="id_zone" value={form.id_zone} onChange={handleChange} className={inputClass}>
-                <option value={0}>Seleccionar...</option>
-                {zones.map(z => <option key={z.id} value={z.id}>{z.name}</option>)}
-              </select>
-            </div>
-          </div>
-
-          {/* Address */}
-          <div>
-            <label className={labelClass}>Dirección</label>
-            <input name="address" value={form.address} onChange={handleChange} className={inputClass} placeholder="Ej: Cra 76 #35-20" />
-          </div>
-
-          {/* Observations */}
-          <div>
-            <label className={labelClass}>Descripción / Observaciones</label>
-            <textarea name="observations" value={form.observations} onChange={handleChange} rows={4} className={inputClass + ' resize-none'} placeholder="Descripción detallada de la propiedad..." />
-          </div>
-
-          {/* Status on page */}
-          <div>
-            <label className={labelClass}>Estado en página</label>
-            <select name="id_status_on_page" value={form.id_status_on_page} onChange={handleChange} className={inputClass}>
-              <option value={1}>Publicado</option>
-              <option value={2}>No publicado</option>
-              <option value={3}>Destacado</option>
-            </select>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 bg-[#222] hover:bg-[#333] text-white py-3 rounded-lg text-sm font-medium transition-colors">Cancelar</button>
-            <button type="submit" disabled={saving} className="flex-1 bg-[#C9A962] hover:bg-[#b89952] disabled:opacity-50 text-black py-3 rounded-lg text-sm font-bold transition-colors">
-              {saving ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear propiedad'}
+          {/* Footer Actions — always visible */}
+          <div className="flex gap-3 px-6 py-4 border-t border-[#222] bg-[#151515] rounded-b-2xl">
+            <button type="button" onClick={onClose} className="flex-1 bg-[#222] hover:bg-[#333] text-white py-3 rounded-xl text-sm font-medium transition-colors">
+              Cancelar
+            </button>
+            <button type="submit" disabled={saving} className="flex-[2] bg-[#C9A962] hover:bg-[#b89952] disabled:opacity-50 text-black py-3 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
+              {saving ? (
+                <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg> Guardando...</>
+              ) : isEditing ? (
+                <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Guardar cambios</>
+              ) : (
+                <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg> Crear propiedad</>
+              )}
             </button>
           </div>
         </form>
