@@ -367,27 +367,50 @@ function normalizeClient(raw: any): WasiClient {
   };
 }
 
-// WASI galleries can be an object with numeric keys instead of an array
+// WASI galleries come in multiple formats:
+// 1. Array of objects with numeric keys for images: [{ id: X, "0": img, "1": img, ... }]
+// 2. Object with numeric keys: {"0": {id_gallery, images: {"0": img}}, ...}
+// 3. Array with proper images key: [{ id_gallery, images: [img, img] }]
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeGalleries(raw: any): Property['galleries'] {
   if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
-  // Object with numeric keys: {"0": {id_gallery, title, images: {"0": img, "1": img}}, ...}
-  return Object.entries(raw)
-    .filter(([key]) => !isNaN(Number(key)))
-    .map(([, val]) => {
-      const g = val as Record<string, unknown>;
-      let images = g.images;
-      if (images && !Array.isArray(images) && typeof images === 'object') {
-        images = Object.entries(images as Record<string, unknown>)
-          .filter(([k]) => !isNaN(Number(k)))
-          .map(([, v]) => v);
+
+  // Convert to array if it's an object with numeric keys
+  const galleries: Record<string, unknown>[] = Array.isArray(raw)
+    ? raw
+    : Object.entries(raw)
+        .filter(([key]) => !isNaN(Number(key)))
+        .map(([, val]) => val as Record<string, unknown>);
+
+  return galleries.map((g) => {
+    // Try to get images from "images" property first
+    let images = g.images;
+
+    // If no "images" property, extract from numeric keys on the gallery object itself
+    // WASI format: { id: 123, "0": {url, url_big, ...}, "1": {url, ...}, ... }
+    if (!images || (typeof images === 'object' && !Array.isArray(images) && Object.keys(images as object).length === 0)) {
+      const numericEntries = Object.entries(g)
+        .filter(([k]) => !isNaN(Number(k)))
+        .sort(([a], [b]) => Number(a) - Number(b))
+        .map(([, v]) => v);
+      if (numericEntries.length > 0) {
+        images = numericEntries;
       }
-      const imgArray = ((images as unknown[]) || []).map((img: unknown) => fixImageObject(img));
-      return {
-        id_gallery: Number(g.id_gallery) || 0,
-        title: extractLabel(g.title),
-        images: imgArray,
-      };
-    });
+    }
+
+    // If images is an object with numeric keys, convert to array
+    if (images && !Array.isArray(images) && typeof images === 'object') {
+      images = Object.entries(images as Record<string, unknown>)
+        .filter(([k]) => !isNaN(Number(k)))
+        .sort(([a], [b]) => Number(a) - Number(b))
+        .map(([, v]) => v);
+    }
+
+    const imgArray = ((images as unknown[]) || []).map((img: unknown) => fixImageObject(img));
+    return {
+      id_gallery: Number(g.id_gallery || g.id) || 0,
+      title: extractLabel(g.title),
+      images: imgArray,
+    };
+  });
 }

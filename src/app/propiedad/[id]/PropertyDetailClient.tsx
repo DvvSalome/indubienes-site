@@ -10,10 +10,19 @@ interface Props {
 }
 
 export default function PropertyDetailClient({ property }: Props) {
-  const allImages = [
+  // Combine main_image + gallery images, deduplicate by url_original or url
+  const rawImages = [
     property.main_image,
     ...(property.galleries?.flatMap(g => g.images) || []),
   ].filter(img => img?.url || img?.url_original);
+
+  const seen = new Set<string>();
+  const allImages = rawImages.filter(img => {
+    const key = img.url_original || img.url || '';
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   const [currentImage, setCurrentImage] = useState(0);
   const [formData, setFormData] = useState({
