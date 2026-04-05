@@ -1,22 +1,29 @@
 'use client';
 
-export default function Logo({ className = '', height = 56 }: { className?: string; height?: number }) {
-  // SVG vector logo — scales infinitely without quality loss
-  const aspectRatio = 580 / 110; // matches SVG viewBox
-  const width = Math.round(height * aspectRatio);
+import Image from 'next/image';
+
+export default function Logo({ className = '', height = 45 }: { className?: string; height?: number }) {
+  // Original GIF is 250x90 with transparency — same asset used on indubienes.com
+  // We display at native size or smaller to keep it crisp (no upscaling)
+  const nativeW = 250;
+  const nativeH = 90;
+  const aspectRatio = nativeW / nativeH;
+  const displayHeight = Math.min(height, nativeH);
+  const displayWidth = Math.round(displayHeight * aspectRatio);
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src="/logo.svg"
+    <Image
+      src="/logo.gif"
       alt="Inmobiliaria Indubienes"
-      width={width}
-      height={height}
-      className={`drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)] ${className}`}
+      width={nativeW}
+      height={nativeH}
+      className={`drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)] ${className}`}
       style={{
-        height: `${height}px`,
-        width: 'auto',
+        height: `${displayHeight}px`,
+        width: `${displayWidth}px`,
       }}
+      priority
+      unoptimized
     />
   );
 }
