@@ -142,7 +142,7 @@ export default async function HomePage() {
               </p>
 
               {/* Features */}
-              <div className="about-features-grid grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 sm:gap-y-5 mb-10 sm:mb-12">
+              <div className="about-features-grid grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 sm:gap-y-5 mb-8 sm:mb-12">
                 {[
                   'Asesoría personalizada',
                   'Avalúos profesionales',
@@ -160,16 +160,18 @@ export default async function HomePage() {
                 ))}
               </div>
 
-              <Link
-                href="/contacto"
-                className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
-              >
-                Contáctenos
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </Link>
+              <div className="text-center sm:text-left">
+                <Link
+                  href="/contacto"
+                  className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
+                >
+                  Contáctenos
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
