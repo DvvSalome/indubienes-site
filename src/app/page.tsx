@@ -3,6 +3,7 @@ import PropertyCard from '@/components/PropertyCard';
 import { getHighlightedProperties } from '@/lib/wasi';
 import HeroSearch from '@/components/HeroSearch';
 import HomeAnimations from '@/components/HomeAnimations';
+import HeroRotatingLine from '@/components/HeroRotatingLine';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,11 +44,7 @@ export default async function HomePage() {
               <span className="hero-word inline-block" >tu</span>{' '}
               <span className="hero-word inline-block" >lugar</span>
             </span>
-            <span className="block overflow-hidden mt-2">
-              <span className="hero-word inline-block gold-text" style={{ filter: 'drop-shadow(0 2px 8px rgba(59,111,160,0.4))' }}>ideal</span>{' '}
-              <span className="hero-word inline-block gold-text" style={{ filter: 'drop-shadow(0 2px 8px rgba(59,111,160,0.4))' }}>para</span>{' '}
-              <span className="hero-word inline-block gold-text" style={{ filter: 'drop-shadow(0 2px 8px rgba(59,111,160,0.4))' }}>vivir</span>
-            </span>
+            <HeroRotatingLine />
           </h1>
 
           <p className="hero-subtitle text-lg sm:text-xl text-white/80 font-body font-medium max-w-2xl mx-auto mb-12" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>
@@ -138,7 +135,7 @@ export default async function HomePage() {
                 Somos una inmobiliaria especializada en <span className="text-foreground font-medium">venta, arriendo y administración</span> de propiedades en las zonas más cotizadas de Medellín y el Área Metropolitana.
               </p>
               <p className="text-sm sm:text-base lg:text-lg text-muted/90 font-body leading-relaxed sm:leading-[1.8] mb-10 sm:tracking-wide break-words">
-                Desde <span className="text-foreground font-medium">Laureles y El Poblado</span> hasta Envigado y Sabaneta — nuestro compromiso es un servicio personalizado, transparente y profesional para cada cliente.
+                Con presencia en <span className="text-foreground font-medium">Laureles, El Poblado, Envigado y Sabaneta</span>, ofrecemos un servicio personalizado, transparente y profesional en cada etapa del proceso.
               </p>
 
               {/* Features */}
