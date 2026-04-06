@@ -242,7 +242,7 @@ export default function PropertyDetailClient({ property }: Props) {
           <div className="lg:col-span-2">
             {/* Image Gallery */}
             <div className="mb-8">
-              <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-[#1a1a1a] mb-3">
+              <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-[#1a1a1a] mb-3 image-shine">
                 {allImages.length > 0 ? (
                   <>
                     {/* Blurred background fill — eliminates white/empty sides on vertical or small images */}
