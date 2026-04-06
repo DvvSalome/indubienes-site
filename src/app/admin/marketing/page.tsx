@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface Property {
   id_property: number;
@@ -27,10 +27,24 @@ export default function MarketingPage() {
   const [generatedLink, setGeneratedLink] = useState('');
   const [copiedLink, setCopiedLink] = useState(false);
   const [propertiesLoading, setPropertiesLoading] = useState(true);
+  const [propertySearch, setPropertySearch] = useState('');
+  const [showPropertyDropdown, setShowPropertyDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchProperties();
     fetchStats();
+  }, []);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowPropertyDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const fetchProperties = async () => {
@@ -137,18 +151,104 @@ export default function MarketingPage() {
             {propertiesLoading ? (
               <div className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-3 text-[#555] animate-pulse">Cargando propiedades...</div>
             ) : (
-              <select
-                value={selectedPropertyId}
-                onChange={(e) => { setSelectedPropertyId(e.target.value ? Number(e.target.value) : ''); setGeneratedLink(''); }}
-                className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#4A8BC2]/50 transition-colors cursor-pointer"
-              >
-                <option value="">-- Selecciona una propiedad --</option>
-                {properties.map((prop) => (
-                  <option key={prop.id_property} value={prop.id_property}>
-                    {prop.title}
-                  </option>
-                ))}
-              </select>
+              <div className="relative" ref={dropdownRef}>
+                {/* Search input */}
+                <div className="relative">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  <input
+                    type="text"
+                    value={propertySearch}
+                    onChange={(e) => { setPropertySearch(e.target.value); setShowPropertyDropdown(true); }}
+                    onFocus={() => setShowPropertyDropdown(true)}
+                    placeholder={selectedPropertyId ? properties.find(p => p.id_property === selectedPropertyId)?.title || 'Buscar propiedad...' : 'Buscar por nombre, tipo o zona...'}
+                    className="w-full bg-[#222] border border-[#333] rounded-lg pl-10 pr-10 py-3 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors"
+                  />
+                  {selectedPropertyId && (
+                    <button
+                      type="button"
+                      onClick={() => { setSelectedPropertyId(''); setPropertySearch(''); setGeneratedLink(''); }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  )}
+                </div>
+
+                {/* Selected property chip */}
+                {selectedPropertyId && !showPropertyDropdown && (
+                  <div className="mt-2 flex items-center gap-2 bg-[#4A8BC2]/10 border border-[#4A8BC2]/30 rounded-lg px-3 py-2">
+                    <svg className="w-4 h-4 text-[#4A8BC2] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <span className="text-sm text-[#4A8BC2] truncate">{properties.find(p => p.id_property === selectedPropertyId)?.title}</span>
+                  </div>
+                )}
+
+                {/* Dropdown list */}
+                {showPropertyDropdown && (
+                  <div className="absolute z-50 mt-1 w-full bg-[#1a1a1a] border border-[#333] rounded-lg shadow-2xl max-h-64 overflow-y-auto">
+                    {(() => {
+                      const searchLower = propertySearch.toLowerCase().trim();
+                      const filtered = searchLower
+                        ? properties.filter(p => p.title.toLowerCase().includes(searchLower))
+                        : properties;
+
+                      if (filtered.length === 0) {
+                        return (
+                          <div className="px-4 py-6 text-center">
+                            <svg className="w-6 h-6 text-[#444] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <p className="text-xs text-[#555]">No se encontraron propiedades</p>
+                            <p className="text-[10px] text-[#444] mt-1">Intenta con otro término</p>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <>
+                          <div className="px-3 py-2 border-b border-[#222]">
+                            <p className="text-[10px] text-[#555] uppercase tracking-wider">{filtered.length} propiedad{filtered.length !== 1 ? 'es' : ''}</p>
+                          </div>
+                          {filtered.map((prop) => {
+                            const price = getPropertyPrice(prop);
+                            const isSelected = prop.id_property === selectedPropertyId;
+                            return (
+                              <button
+                                key={prop.id_property}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedPropertyId(prop.id_property);
+                                  setPropertySearch('');
+                                  setShowPropertyDropdown(false);
+                                  setGeneratedLink('');
+                                }}
+                                className={`w-full text-left px-3 py-2.5 flex items-center gap-3 transition-colors border-b border-[#222]/50 last:border-0 ${
+                                  isSelected ? 'bg-[#4A8BC2]/10 text-[#4A8BC2]' : 'text-white hover:bg-[#222]'
+                                }`}
+                              >
+                                {/* Thumbnail */}
+                                <div className="w-10 h-10 rounded-lg bg-[#222] overflow-hidden shrink-0 border border-[#333]">
+                                  {prop.main_image?.url ? (
+                                    <img src={prop.main_image.url} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                      <svg className="w-4 h-4 text-[#444]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium truncate">{prop.title}</p>
+                                  {price && <p className="text-[11px] text-[#888] mt-0.5">{price}</p>}
+                                </div>
+                                {isSelected && (
+                                  <svg className="w-4 h-4 text-[#4A8BC2] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
