@@ -13,7 +13,7 @@ export default function HeroRotatingLine() {
         <RotatingText
           words={['vivir', 'invertir', 'disfrutar', 'crecer']}
           interval={3200}
-          className="gold-text"
+          gradient
         />
       </span>
     </span>
