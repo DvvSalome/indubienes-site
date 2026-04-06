@@ -97,7 +97,7 @@ export default function CustomSelect({
     },
     hero: {
       trigger: 'bg-white/[0.07] border border-white/[0.12] text-white hover:border-gold/40 hover:bg-white/[0.1]',
-      dropdown: 'bg-[#1A1A1A] border border-white/[0.15] shadow-[0_8px_32px_rgba(0,0,0,0.5)]',
+      dropdown: 'bg-[#1A1A1A]/95 border border-white/[0.12] shadow-[0_12px_40px_rgba(0,0,0,0.6)] ring-1 ring-black/20',
       option: 'text-white/70 hover:text-white hover:bg-white/[0.08]',
       optionActive: 'text-gold bg-gold/10',
     },
@@ -111,6 +111,8 @@ export default function CustomSelect({
 
   const s = baseStyles[variant];
 
+  const isHero = variant === 'hero';
+
   const dropdownContent = (
     <div
       ref={dropdownRef}
@@ -122,12 +124,14 @@ export default function CustomSelect({
         zIndex: 9999,
       }}
       className={`rounded-xl overflow-hidden shadow-2xl transition-all duration-200 origin-top ${s.dropdown} ${
+        isHero ? 'backdrop-blur-xl' : ''
+      } ${
         isOpen
           ? 'opacity-100 scale-y-100'
           : 'opacity-0 scale-y-95 pointer-events-none'
       }`}
     >
-      <div className="max-h-60 overflow-y-auto py-1 custom-scrollbar">
+      <div className={`${isHero ? 'max-h-44' : 'max-h-60'} overflow-y-auto py-1 custom-scrollbar`}>
         {options.map((opt) => (
           <button
             key={opt.value}
@@ -136,14 +140,14 @@ export default function CustomSelect({
               onChange(opt.value);
               setIsOpen(false);
             }}
-            className={`w-full text-left px-4 py-2.5 text-sm font-body transition-all duration-200 ${
+            className={`w-full text-left px-4 ${isHero ? 'py-2 text-[13px]' : 'py-2.5 text-sm'} font-body transition-all duration-200 ${
               opt.value === value ? s.optionActive : s.option
             }`}
           >
             <span className="flex items-center justify-between">
               {opt.label}
               {opt.value === value && (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gold">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gold">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               )}
