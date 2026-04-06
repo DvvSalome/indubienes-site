@@ -107,9 +107,9 @@ export default async function HomePage() {
       {/* About Section */}
       <section className="about-section py-24 sm:py-32 px-4 bg-surface overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24 items-center">
             {/* Image */}
-            <div className="about-animate about-image scroll-reveal reveal-left relative">
+            <div className="about-animate about-image scroll-reveal reveal-left relative overflow-hidden sm:overflow-visible">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
@@ -130,19 +130,19 @@ export default async function HomePage() {
             <div className="about-animate about-content scroll-reveal reveal-right" data-delay="150">
               <p className="text-gold text-xs sm:text-sm font-body font-semibold tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
               <div className="w-12 h-[1px] bg-gold mb-8" />
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-10 leading-tight tracking-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-display font-bold text-foreground mb-8 sm:mb-10 leading-tight tracking-tight">
                 Su aliado inmobiliario<br />
                 <span className="text-gold">en Medellín</span>
               </h2>
-              <p className="text-base sm:text-lg text-muted/90 font-body leading-[1.8] mb-6 tracking-wide">
+              <p className="text-sm sm:text-base lg:text-lg text-muted/90 font-body leading-relaxed sm:leading-[1.8] mb-6 sm:tracking-wide">
                 Somos una inmobiliaria especializada en <span className="text-foreground font-medium">venta, arriendo y administración</span> de propiedades en las zonas más cotizadas de Medellín y el Área Metropolitana.
               </p>
-              <p className="text-base sm:text-lg text-muted/90 font-body leading-[1.8] mb-10 tracking-wide">
+              <p className="text-sm sm:text-base lg:text-lg text-muted/90 font-body leading-relaxed sm:leading-[1.8] mb-10 sm:tracking-wide">
                 Desde <span className="text-foreground font-medium">Laureles y El Poblado</span> hasta Envigado y Sabaneta — nuestro compromiso es un servicio personalizado, transparente y profesional para cada cliente.
               </p>
 
               {/* Features */}
-              <div className="about-features-grid grid grid-cols-2 gap-x-6 gap-y-5 mb-12">
+              <div className="about-features-grid grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 sm:gap-y-5 mb-10 sm:mb-12">
                 {[
                   'Asesoría personalizada',
                   'Avalúos profesionales',
