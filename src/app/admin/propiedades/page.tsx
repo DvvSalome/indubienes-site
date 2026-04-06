@@ -249,9 +249,10 @@ interface PropertyFormProps {
   property?: Property | null;
   onClose: () => void;
   onSaved: () => void;
+  onCreated?: (id: number) => void;
 }
 
-function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
+function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFormProps) {
   const isEditing = !!property;
 
   const [form, setForm] = useState({
@@ -353,8 +354,14 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
 
       const data = await res.json();
       if (res.ok && data.status === 'success') {
-        setSuccess(isEditing ? 'Propiedad actualizada exitosamente' : `Propiedad creada (ID: ${data.id_property})`);
-        setTimeout(() => { onSaved(); onClose(); }, 1500);
+        setSuccess(isEditing ? 'Propiedad actualizada exitosamente' : `Propiedad creada (ID: ${data.id_property}) — Abriendo editor para subir fotos...`);
+        setTimeout(() => {
+          onSaved();
+          onClose();
+          if (!isEditing && data.id_property && onCreated) {
+            onCreated(data.id_property);
+          }
+        }, 1500);
       } else {
         setError(data.error || 'Error al guardar');
       }
@@ -618,15 +625,19 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
                   <p className="text-[10px] text-[#555] mt-1">{form.observations.length} caracteres</p>
                 </div>
 
-                {/* Image Upload — only for existing properties */}
-                {isEditing && property && (
-                  <>
-                    <SectionHeader
-                      icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
-                      title="Foto principal"
-                    />
-                    <ImageUploader propertyId={property.id_property} onUploaded={() => {}} />
-                  </>
+                {/* Image Upload */}
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                  title="Foto principal"
+                />
+                {isEditing && property ? (
+                  <ImageUploader propertyId={property.id_property} onUploaded={() => {}} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed border-[#333] bg-[#111]">
+                    <svg className="w-8 h-8 text-[#444]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    <span className="text-xs text-[#888] text-center px-4">Primero guarda la propiedad, luego podrás subir fotos editándola</span>
+                    <span className="text-[10px] text-[#555]">Se abrirá el editor automáticamente</span>
+                  </div>
                 )}
 
                 <SectionHeader
@@ -970,6 +981,25 @@ export default function PropiedadesPage() {
           property={editingProperty}
           onClose={() => { setShowForm(false); setEditingProperty(null); }}
           onSaved={fetchProperties}
+          onCreated={async (newId) => {
+            // After creation, fetch the new property and reopen editor so user can upload photos
+            try {
+              const res = await fetch(`/api/properties/${newId}`);
+              const data = await res.json();
+              if (data && data.id_property) {
+                setTimeout(() => {
+                  setEditingProperty(data);
+                  setShowForm(true);
+                }, 300);
+              }
+            } catch {
+              // Fallback: just reopen with minimal data so user can upload
+              setTimeout(() => {
+                setEditingProperty({ id_property: newId, title: '', sale_price: 0, rent_price: 0, bedrooms: 0, bathrooms: 0, area: 0, garages: 0 } as Property);
+                setShowForm(true);
+              }, 300);
+            }
+          }}
         />
       )}
     </div>
