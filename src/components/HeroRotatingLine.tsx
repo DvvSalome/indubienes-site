@@ -9,10 +9,11 @@ export default function HeroRotatingLine() {
     <span className="block overflow-hidden mt-2">
       <span className="hero-word inline-block gold-text" style={goldFilter}>ideal</span>{' '}
       <span className="hero-word inline-block gold-text" style={goldFilter}>para</span>{' '}
-      <span className="hero-word inline-block gold-text" style={goldFilter}>
+      <span className="hero-word inline-block" style={goldFilter}>
         <RotatingText
           words={['vivir', 'invertir', 'disfrutar', 'crecer']}
           interval={3200}
+          className="gold-text"
         />
       </span>
     </span>

@@ -38,9 +38,9 @@ export default function RotatingText({
   }, [mounted, rotate, interval]);
 
   return (
-    <span className={`rotating-text-wrapper inline-block relative ${className}`}>
+    <span className={`rotating-text-wrapper inline-block relative`}>
       <span
-        className={`inline-block transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] ${
+        className={`inline-block transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] ${className} ${
           isAnimating
             ? 'opacity-0 translate-y-[30%] blur-[4px]'
             : 'opacity-100 translate-y-0 blur-0'
