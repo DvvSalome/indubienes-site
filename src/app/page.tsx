@@ -127,9 +127,9 @@ export default async function HomePage() {
             </div>
 
             {/* Content */}
-            <div className="about-animate about-content scroll-reveal reveal-right min-w-0" data-delay="150">
+            <div className="about-animate about-content scroll-reveal reveal-right min-w-0 text-center sm:text-left" data-delay="150">
               <p className="text-gold text-xs sm:text-sm font-body font-semibold tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
-              <div className="w-12 h-[1px] bg-gold mb-8" />
+              <div className="w-12 h-[1px] bg-gold mb-8 mx-auto sm:mx-0" />
               <h2 className="text-2xl sm:text-3xl lg:text-5xl font-display font-bold text-foreground mb-8 sm:mb-10 leading-tight tracking-tight">
                 Su aliado inmobiliario<br />
                 <span className="text-gold">en Medellín</span>
@@ -142,7 +142,7 @@ export default async function HomePage() {
               </p>
 
               {/* Features */}
-              <div className="about-features-grid grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 sm:gap-y-5 mb-8 sm:mb-12">
+              <div className="about-features-grid grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 sm:gap-y-5 mb-8 sm:mb-12 justify-items-center sm:justify-items-start">
                 {[
                   'Asesoría personalizada',
                   'Avalúos profesionales',
