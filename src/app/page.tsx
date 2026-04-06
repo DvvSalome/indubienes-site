@@ -121,41 +121,41 @@ export default async function HomePage() {
               <div className="absolute -bottom-4 -right-4 w-32 h-32 border border-gold/20 rounded-2xl -z-10 hidden sm:block" />
               {/* Floating stat card */}
               <div className="stat-animate about-stat-card scroll-reveal reveal-scale absolute -bottom-6 -right-6 bg-card rounded-xl p-6 shadow-2xl border border-border hidden sm:block" data-delay="300">
-                <p className="text-3xl font-display text-gold mb-1">10+</p>
-                <p className="text-sm text-muted font-body">Años de experiencia</p>
+                <p className="text-3xl font-display font-bold text-gold mb-1">10+</p>
+                <p className="text-sm text-muted font-body font-medium">Años de experiencia</p>
               </div>
             </div>
 
             {/* Content */}
             <div className="about-animate about-content scroll-reveal reveal-right" data-delay="150">
-              <p className="text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
-              <div className="w-12 h-[1px] bg-gold mb-6" />
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-8 leading-tight">
+              <p className="text-gold text-xs sm:text-sm font-body font-semibold tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
+              <div className="w-12 h-[1px] bg-gold mb-8" />
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-10 leading-tight tracking-tight">
                 Su aliado inmobiliario<br />
                 <span className="text-gold">en Medellín</span>
               </h2>
-              <p className="text-muted font-body leading-relaxed mb-5">
-                Indubienes es una inmobiliaria en Medellín especializada en venta, arriendo y administración de propiedades. Trabajamos con apartamentos, casas, fincas, lotes y locales comerciales, en zonas como Laureles, El Poblado, Belén, Envigado, Sabaneta y otros municipios del Área Metropolitana.
+              <p className="text-base sm:text-lg text-muted/90 font-body leading-[1.8] mb-6 tracking-wide">
+                Somos una inmobiliaria especializada en <span className="text-foreground font-medium">venta, arriendo y administración</span> de propiedades en las zonas más cotizadas de Medellín y el Área Metropolitana.
               </p>
-              <p className="text-muted font-body leading-relaxed mb-10">
-                Nuestro compromiso es brindarle un servicio personalizado, transparente y profesional, ayudándole a encontrar la propiedad perfecta para sus necesidades o a obtener la mejor rentabilidad de su inversión inmobiliaria.
+              <p className="text-base sm:text-lg text-muted/90 font-body leading-[1.8] mb-10 tracking-wide">
+                Desde <span className="text-foreground font-medium">Laureles y El Poblado</span> hasta Envigado y Sabaneta — nuestro compromiso es un servicio personalizado, transparente y profesional para cada cliente.
               </p>
 
               {/* Features */}
-              <div className="about-features-grid grid grid-cols-2 gap-4 mb-10">
+              <div className="about-features-grid grid grid-cols-2 gap-x-6 gap-y-5 mb-12">
                 {[
                   'Asesoría personalizada',
                   'Avalúos profesionales',
                   'Administración de inmuebles',
                   'Gestión legal completa',
                 ].map((feature) => (
-                  <div key={feature} className="about-feature flex items-center gap-2.5 group">
-                    <div className="w-5 h-5 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors duration-300">
-                      <svg className="w-3 h-3 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <div key={feature} className="about-feature flex items-center gap-3 group">
+                    <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors duration-300">
+                      <svg className="w-3.5 h-3.5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </div>
-                    <span className="text-sm font-body text-foreground">{feature}</span>
+                    <span className="text-sm sm:text-base font-body font-medium text-foreground">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -188,7 +188,7 @@ export default async function HomePage() {
           <h2 className="cta-animate text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white mb-8 leading-tight">
             ¿Busca vender o arrendar<br />su propiedad?
           </h2>
-          <p className="text-white/50 font-body mb-12 max-w-lg mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-white/60 font-body font-medium mb-12 max-w-lg mx-auto leading-[1.8] tracking-wide">
             Confíe en nuestra experiencia para obtener el mejor resultado. Le acompañamos en cada paso del proceso.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
