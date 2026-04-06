@@ -140,7 +140,7 @@ export default function AdminSidebar() {
         }`}
       >
         {/* Gold accent line */}
-        <div className="h-1 bg-[#C9A962]" />
+        <div className="h-1 bg-[#4A8BC2]" />
 
         {/* Logo section */}
         <div className="px-6 py-8 border-b border-[#222]">
@@ -156,7 +156,7 @@ export default function AdminSidebar() {
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 isActiveLink(link.href)
-                  ? 'bg-[#1a1a1a] text-[#C9A962] border-l-2 border-[#C9A962]'
+                  ? 'bg-[#1a1a1a] text-[#4A8BC2] border-l-2 border-[#4A8BC2]'
                   : 'text-[#888] hover:text-white hover:bg-[#1a1a1a]/50'
               }`}
             >

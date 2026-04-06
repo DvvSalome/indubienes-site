@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
 :root {
-  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-display: 'Montserrat', system-ui, sans-serif;
   --font-body: 'Switzer', system-ui, sans-serif;
 
   /* Light mode — warm palette, no stark whites */
@@ -16,8 +16,8 @@
   --surface-hover: #E2DED6;
   --card: #FAFAF7;
   --card-hover: #F2F0EB;
-  --gold: #B8943D;
-  --gold-hover: #A68335;
+  --gold: #3B6FA0;
+  --gold-hover: #2D5A85;
   --muted: #5A5A5A;
   --faint: #8A8A8A;
   --border-color: #D8D4CB;
@@ -30,8 +30,8 @@
   --surface-hover: #222222;
   --card: #242424;
   --card-hover: #2A2A2A;
-  --gold: #C9A962;
-  --gold-hover: #B8943D;
+  --gold: #4A8BC2;
+  --gold-hover: #3B6FA0;
   --muted: #B0B0B0;
   --faint: #707070;
   --border-color: #333333;
@@ -105,9 +105,9 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Gold gradient text */
+/* Brand gradient text */
 .gold-text {
-  background: linear-gradient(135deg, #C9A962 0%, #E8D5A3 40%, #D4B978 60%, #C9A962 100%);
+  background: linear-gradient(135deg, #4A8BC2 0%, #7AB8E8 40%, #5A9BD4 60%, #3B6FA0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -129,7 +129,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dark .property-card:hover {
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(201, 169, 98, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(59, 111, 160, 0.15);
 }
 
 /* Image overlay gradient */
@@ -144,11 +144,11 @@ h1, h2, h3, h4, h5, h6 {
     linear-gradient(to bottom, rgba(13, 13, 13, 0.3) 0%, rgba(13, 13, 13, 0.6) 50%, rgba(13, 13, 13, 0.85) 100%);
 }
 
-/* Input focus ring — premium gold glow */
+/* Input focus ring — brand blue glow */
 input:focus, textarea:focus {
   outline: none;
   border-color: var(--gold) !important;
-  box-shadow: 0 0 0 2px rgba(201, 169, 98, 0.15), 0 0 20px rgba(201, 169, 98, 0.05);
+  box-shadow: 0 0 0 2px rgba(59, 111, 160, 0.2), 0 0 20px rgba(59, 111, 160, 0.08);
 }
 
 /* Smooth page transitions */
@@ -205,7 +205,7 @@ main {
 }
 
 .gold-glow-hover:hover {
-  box-shadow: 0 0 30px rgba(201, 169, 98, 0.1), 0 0 0 1px rgba(201, 169, 98, 0.15);
+  box-shadow: 0 0 30px rgba(59, 111, 160, 0.1), 0 0 0 1px rgba(59, 111, 160, 0.15);
 }
 
 /* Hero animation initial states — CSS fallback if GSAP is slow */
@@ -302,8 +302,8 @@ main {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(201, 169, 98, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(201, 169, 98, 0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 50%, rgba(59, 111, 160, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(59, 111, 160, 0.02) 0%, transparent 50%),
     linear-gradient(135deg, #0d0d0d 0%, #111111 100%);
   pointer-events: none;
   z-index: 0;
@@ -323,7 +323,7 @@ main {
   border-radius: 24px;
   box-shadow:
     0 25px 50px rgba(0, 0, 0, 0.3),
-    0 0 1px rgba(201, 169, 98, 0.1),
+    0 0 1px rgba(59, 111, 160, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   animation: loginCardEnter 0.6s ease-out;
 }
@@ -409,7 +409,7 @@ main {
 .admin-login-accent-line {
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, transparent 0%, #C9A962 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, #4A8BC2 50%, transparent 100%);
   border-radius: 2px;
   animation: accentLineGrow 0.8s ease-out 0.3s backwards;
 }
@@ -566,15 +566,15 @@ main {
 
 .admin-login-input:hover:not(:disabled) {
   border-color: #444444;
-  box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.05);
+  box-shadow: 0 0 0 3px rgba(59, 111, 160, 0.05);
 }
 
 .admin-login-input:focus {
   outline: none;
-  border-color: #C9A962;
+  border-color: #4A8BC2;
   box-shadow:
-    0 0 0 3px rgba(201, 169, 98, 0.1),
-    inset 0 0 0 1px rgba(201, 169, 98, 0.1);
+    0 0 0 3px rgba(59, 111, 160, 0.1),
+    inset 0 0 0 1px rgba(59, 111, 160, 0.1);
   background-color: rgba(13, 13, 13, 0.8);
 }
 
@@ -626,8 +626,8 @@ main {
 .admin-login-button {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #C9A962 0%, #B8943D 100%);
-  color: #0d0d0d;
+  background: linear-gradient(135deg, #4A8BC2 0%, #3B6FA0 100%);
+  color: #ffffff;
   border: none;
   border-radius: 10px;
   font-size: 1rem;
@@ -658,16 +658,16 @@ main {
 
 .admin-login-button:hover:not(:disabled) {
   box-shadow:
-    0 12px 24px rgba(201, 169, 98, 0.25),
-    0 0 0 1px rgba(201, 169, 98, 0.2);
+    0 12px 24px rgba(59, 111, 160, 0.25),
+    0 0 0 1px rgba(59, 111, 160, 0.2);
   transform: translateY(-2px);
 }
 
 .admin-login-button:active:not(:disabled) {
   transform: translateY(0);
   box-shadow:
-    0 4px 12px rgba(201, 169, 98, 0.15),
-    0 0 0 1px rgba(201, 169, 98, 0.2);
+    0 4px 12px rgba(59, 111, 160, 0.15),
+    0 0 0 1px rgba(59, 111, 160, 0.2);
 }
 
 .admin-login-button:disabled {
@@ -684,8 +684,8 @@ main {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(13, 13, 13, 0.3);
-  border-top-color: #0d0d0d;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: spinnerRotate 0.8s linear infinite;
 }
@@ -729,7 +729,7 @@ main {
   height: 300px;
   top: -100px;
   left: -100px;
-  background: radial-gradient(circle, rgba(201, 169, 98, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 111, 160, 0.4) 0%, transparent 70%);
   animation: floatLeft 15s ease-in-out infinite;
 }
 
@@ -738,7 +738,7 @@ main {
   height: 400px;
   bottom: -150px;
   right: -150px;
-  background: radial-gradient(circle, rgba(201, 169, 98, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 111, 160, 0.2) 0%, transparent 70%);
   animation: floatRight 20s ease-in-out infinite;
 }
 
@@ -829,6 +829,6 @@ main {
 /* Focus visible for keyboard navigation */
 .admin-login-input:focus-visible,
 .admin-login-button:focus-visible {
-  outline: 2px solid #C9A962;
+  outline: 2px solid #4A8BC2;
   outline-offset: 2px;
 }

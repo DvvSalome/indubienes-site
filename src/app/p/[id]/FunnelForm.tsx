@@ -116,7 +116,7 @@ export default function FunnelForm({
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#C9A962] transition"
+          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition"
           placeholder="Tu nombre"
         />
       </div>
@@ -133,7 +133,7 @@ export default function FunnelForm({
           value={formData.phone}
           onChange={handleChange}
           required
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#C9A962] transition"
+          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition"
           placeholder="+57 3XX XXX XXXX"
         />
       </div>
@@ -150,7 +150,7 @@ export default function FunnelForm({
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#C9A962] transition"
+          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition"
           placeholder="tu@email.com"
         />
       </div>
@@ -166,7 +166,7 @@ export default function FunnelForm({
           value={formData.message}
           onChange={handleChange}
           rows={4}
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#C9A962] transition resize-none"
+          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition resize-none"
           placeholder="Cuéntanos más sobre tu interés en esta propiedad..."
         />
       </div>
@@ -185,7 +185,7 @@ export default function FunnelForm({
         className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition transform ${
           state.status === 'loading'
             ? 'bg-[#707070] text-[#B0B0B0] cursor-not-allowed'
-            : 'bg-[#C9A962] text-[#0D0D0D] hover:bg-[#B8943D] hover:scale-105'
+            : 'bg-[#4A8BC2] text-white hover:bg-[#3B6FA0] hover:scale-105'
         }`}
       >
         {state.status === 'loading' ? 'Enviando...' : 'Enviar solicitud'}

@@ -140,7 +140,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${
               businessType === 'Arriendo'
                 ? 'bg-emerald-500/90 text-white'
-                : 'bg-[#C9A962] text-[#0A0A0A]'
+                : 'bg-[#4A8BC2] text-white'
             }`}>
               {property.property_type_label} en {businessType}
             </span>
@@ -153,7 +153,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
 
           {/* Location */}
           <p className="text-white/70 text-sm sm:text-base mb-6 flex items-center gap-2">
-            <svg className="w-4 h-4 text-[#C9A962] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <svg className="w-4 h-4 text-[#4A8BC2] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
             </svg>
             {location}
@@ -162,7 +162,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
           {/* Price + CTA row */}
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-8">
             <div>
-              <p className="text-[#C9A962] text-3xl sm:text-4xl lg:text-5xl font-display font-bold">
+              <p className="text-[#4A8BC2] text-3xl sm:text-4xl lg:text-5xl font-display font-bold">
                 {price}
               </p>
               {businessType === 'Arriendo' && (
@@ -183,7 +183,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
               </a>
               <button
                 onClick={scrollToForm}
-                className="bg-[#C9A962] hover:bg-[#B8943D] text-[#0A0A0A] font-semibold py-3 px-6 rounded-lg transition-all text-sm"
+                className="bg-[#4A8BC2] hover:bg-[#3B6FA0] text-white font-semibold py-3 px-6 rounded-lg transition-all text-sm"
               >
                 Solicitar info
               </button>
@@ -248,7 +248,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {videoEmbed && (
               <div>
                 <h2 className="text-xl font-display font-bold text-white mb-5 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#C9A962]" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-5 h-5 text-[#4A8BC2]" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
                   Video del inmueble
@@ -307,11 +307,11 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {property.features?.internal?.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-bold text-[#C9A962] uppercase tracking-widest mb-3">Internas</h3>
+                      <h3 className="text-xs font-bold text-[#4A8BC2] uppercase tracking-widest mb-3">Internas</h3>
                       <div className="space-y-2">
                         {property.features.internal.map((f, i) => (
                           <div key={i} className="flex items-center gap-2 text-sm text-white/60">
-                            <svg className="w-4 h-4 text-[#C9A962] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <svg className="w-4 h-4 text-[#4A8BC2] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
                             {typeof f === 'string' ? f : String((f as Record<string, string>)?.nombre || '')}
@@ -322,11 +322,11 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                   )}
                   {property.features?.external?.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-bold text-[#C9A962] uppercase tracking-widest mb-3">Externas</h3>
+                      <h3 className="text-xs font-bold text-[#4A8BC2] uppercase tracking-widest mb-3">Externas</h3>
                       <div className="space-y-2">
                         {property.features.external.map((f, i) => (
                           <div key={i} className="flex items-center gap-2 text-sm text-white/60">
-                            <svg className="w-4 h-4 text-[#C9A962] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <svg className="w-4 h-4 text-[#4A8BC2] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
                             {typeof f === 'string' ? f : String((f as Record<string, string>)?.nombre || '')}
@@ -365,12 +365,12 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase ${
                     businessType === 'Arriendo'
                       ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-[#C9A962]/20 text-[#C9A962]'
+                      : 'bg-[#4A8BC2]/20 text-[#4A8BC2]'
                   }`}>
                     {businessType}
                   </span>
                 </div>
-                <p className="text-[#C9A962] text-2xl sm:text-3xl font-display font-bold mb-1">
+                <p className="text-[#4A8BC2] text-2xl sm:text-3xl font-display font-bold mb-1">
                   {price}
                 </p>
                 {businessType === 'Arriendo' && (
@@ -498,7 +498,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
           </a>
           <button
             onClick={scrollToForm}
-            className="flex-1 bg-[#C9A962] text-[#0A0A0A] font-semibold py-3 rounded-lg text-sm"
+            className="flex-1 bg-[#4A8BC2] text-white font-semibold py-3 rounded-lg text-sm"
           >
             Solicitar info
           </button>

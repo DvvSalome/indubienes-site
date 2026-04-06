@@ -125,7 +125,7 @@ export default function MarketingPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-4xl font-display font-bold text-white mb-2">Marketing</h1>
-          <div className="h-1 w-16 bg-[#C9A962] rounded-full" />
+          <div className="h-1 w-16 bg-[#4A8BC2] rounded-full" />
         </div>
       </div>
 
@@ -140,7 +140,7 @@ export default function MarketingPage() {
               <select
                 value={selectedPropertyId}
                 onChange={(e) => { setSelectedPropertyId(e.target.value ? Number(e.target.value) : ''); setGeneratedLink(''); }}
-                className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#C9A962]/50 transition-colors cursor-pointer"
+                className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#4A8BC2]/50 transition-colors cursor-pointer"
               >
                 <option value="">-- Selecciona una propiedad --</option>
                 {properties.map((prop) => (
@@ -156,26 +156,26 @@ export default function MarketingPage() {
             <h3 className="text-sm font-bold text-white">Parámetros UTM</h3>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[#888]">UTM Source</label>
-              <input type="text" value={utmSource} onChange={(e) => setUtmSource(e.target.value)} placeholder="ej: facebook, google" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#C9A962]/50 transition-colors" />
+              <input type="text" value={utmSource} onChange={(e) => setUtmSource(e.target.value)} placeholder="ej: facebook, google" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors" />
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[#888]">UTM Medium</label>
-              <input type="text" value={utmMedium} onChange={(e) => setUtmMedium(e.target.value)} placeholder="ej: cpc, organic, email" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#C9A962]/50 transition-colors" />
+              <input type="text" value={utmMedium} onChange={(e) => setUtmMedium(e.target.value)} placeholder="ej: cpc, organic, email" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors" />
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[#888]">UTM Campaign</label>
-              <input type="text" value={utmCampaign} onChange={(e) => setUtmCampaign(e.target.value)} placeholder="ej: spring_sale" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#C9A962]/50 transition-colors" />
+              <input type="text" value={utmCampaign} onChange={(e) => setUtmCampaign(e.target.value)} placeholder="ej: spring_sale" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors" />
             </div>
           </div>
 
-          <button onClick={handleGenerateLink} disabled={!selectedPropertyId} className="w-full bg-[#C9A962] hover:bg-[#D4B875] disabled:bg-[#555] disabled:cursor-not-allowed text-black font-bold py-3 rounded-lg transition-colors">Generar link</button>
+          <button onClick={handleGenerateLink} disabled={!selectedPropertyId} className="w-full bg-[#4A8BC2] hover:bg-[#D4B875] disabled:bg-[#555] disabled:cursor-not-allowed text-black font-bold py-3 rounded-lg transition-colors">Generar link</button>
 
           {generatedLink && (
             <div className="pt-4 border-t border-[#222] space-y-3">
               <p className="text-xs font-medium text-[#888]">Link generado:</p>
               <div className="bg-[#222] border border-[#333] rounded-lg p-3 flex items-center gap-2">
-                <input type="text" value={generatedLink} readOnly className="flex-1 bg-transparent text-[#C9A962] text-xs font-mono outline-none" />
-                <button onClick={handleCopyLink} className="px-3 py-1 bg-[#C9A962]/20 hover:bg-[#C9A962]/30 text-[#C9A962] rounded text-xs font-medium transition-colors">{copiedLink ? 'Copiado' : 'Copiar'}</button>
+                <input type="text" value={generatedLink} readOnly className="flex-1 bg-transparent text-[#4A8BC2] text-xs font-mono outline-none" />
+                <button onClick={handleCopyLink} className="px-3 py-1 bg-[#4A8BC2]/20 hover:bg-[#4A8BC2]/30 text-[#4A8BC2] rounded text-xs font-medium transition-colors">{copiedLink ? 'Copiado' : 'Copiar'}</button>
               </div>
             </div>
           )}
@@ -200,7 +200,7 @@ export default function MarketingPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-white line-clamp-2">{selectedProperty.title}</h3>
-                    <p className="text-[#C9A962] font-bold mt-2">{getPropertyPrice(selectedProperty)}</p>
+                    <p className="text-[#4A8BC2] font-bold mt-2">{getPropertyPrice(selectedProperty)}</p>
                     <p className="text-xs text-[#888] mt-1">indubienes.com</p>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export default function MarketingPage() {
               {Object.entries(stats.bySource).map(([source, count]) => (
                 <div key={source} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-[#C9A962]" />
+                    <div className="w-3 h-3 rounded-full bg-[#4A8BC2]" />
                     <span className="text-sm text-[#888] capitalize">{source}</span>
                   </div>
                   <span className="font-bold text-white">{count}</span>
@@ -268,7 +268,7 @@ export default function MarketingPage() {
               {topProperties.map((prop) => (
                 <div key={prop.id_property} className="flex items-center justify-between p-3 bg-[#222] rounded-lg">
                   <span className="text-sm text-[#888] line-clamp-1 flex-1 mr-3">{prop.title}</span>
-                  <span className="text-[#C9A962] font-bold text-sm whitespace-nowrap">{getPropertyPrice(prop)}</span>
+                  <span className="text-[#4A8BC2] font-bold text-sm whitespace-nowrap">{getPropertyPrice(prop)}</span>
                 </div>
               ))}
             </div>

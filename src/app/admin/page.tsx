@@ -169,7 +169,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-display font-bold text-white mb-2">Dashboard</h1>
-          <div className="h-1 w-16 bg-[#C9A962] rounded-full" />
+          <div className="h-1 w-16 bg-[#4A8BC2] rounded-full" />
         </div>
         <div className="text-right text-sm text-[#888]">
           <p>Panel sincronizado con WASI</p>
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
               className="bg-[#1a1a1a] rounded-xl p-6 border border-[#222] hover:border-[#333] transition-colors"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-[#C9A962]/10 rounded-full flex items-center justify-center text-[#C9A962]">
+                <div className="w-12 h-12 bg-[#4A8BC2]/10 rounded-full flex items-center justify-center text-[#4A8BC2]">
                   {stat.icon}
                 </div>
                 {stat.trend && (
@@ -227,9 +227,9 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
             href="/admin/marketing"
-            className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#C9A962]/30 transition-all flex items-center gap-3 group"
+            className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#4A8BC2]/30 transition-all flex items-center gap-3 group"
           >
-            <svg className="w-5 h-5 text-[#C9A962] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-[#4A8BC2] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
             <span className="font-medium">Generar link de propiedad</span>
@@ -237,9 +237,9 @@ export default function AdminDashboard() {
 
           <Link
             href="/admin/propiedades"
-            className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#C9A962]/30 transition-all flex items-center gap-3 group"
+            className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#4A8BC2]/30 transition-all flex items-center gap-3 group"
           >
-            <svg className="w-5 h-5 text-[#C9A962] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-[#4A8BC2] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11v-5m0 0V9m0 5h.01" />
             </svg>
             <span className="font-medium">Ver propiedades</span>
@@ -247,9 +247,9 @@ export default function AdminDashboard() {
 
           <Link
             href="/admin/leads"
-            className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#C9A962]/30 transition-all flex items-center gap-3 group"
+            className="bg-[#1a1a1a] border border-[#222] rounded-lg px-6 py-4 text-white hover:bg-[#222] hover:border-[#4A8BC2]/30 transition-all flex items-center gap-3 group"
           >
-            <svg className="w-5 h-5 text-[#C9A962] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-[#4A8BC2] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             <span className="font-medium">Ver clientes / leads</span>
@@ -261,12 +261,12 @@ export default function AdminDashboard() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-display font-bold text-white flex items-center gap-2">
-            <svg className="w-5 h-5 text-[#C9A962]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-[#4A8BC2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
             Últimos clientes (WASI)
           </h2>
-          <Link href="/admin/leads" className="text-sm text-[#C9A962] hover:text-[#B8943D] transition-colors">
+          <Link href="/admin/leads" className="text-sm text-[#4A8BC2] hover:text-[#3B6FA0] transition-colors">
             Ver todos →
           </Link>
         </div>

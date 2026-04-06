@@ -55,7 +55,7 @@ export default function HeroSearch() {
           </div>
           <button
             onClick={handleSearch}
-            className="group flex items-center justify-center gap-2 px-8 py-3 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm tracking-wide rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
+            className="group flex items-center justify-center gap-2 px-8 py-3 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm tracking-wide rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:scale-110">
               <circle cx="11" cy="11" r="8" />

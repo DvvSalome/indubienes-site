@@ -87,7 +87,7 @@ function ClientFormModal({ client, onClose, onSaved }: ClientFormProps) {
     }
   };
 
-  const inputClass = 'w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C9A962]/60 transition-colors';
+  const inputClass = 'w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#4A8BC2]/60 transition-colors';
   const labelClass = 'block text-xs font-medium text-[#888] mb-1.5 uppercase tracking-wider';
 
   return (
@@ -161,7 +161,7 @@ function ClientFormModal({ client, onClose, onSaved }: ClientFormProps) {
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 bg-[#222] hover:bg-[#333] text-white py-3 rounded-lg text-sm font-medium transition-colors">Cancelar</button>
-            <button type="submit" disabled={saving} className="flex-1 bg-[#C9A962] hover:bg-[#b89952] disabled:opacity-50 text-black py-3 rounded-lg text-sm font-bold transition-colors">
+            <button type="submit" disabled={saving} className="flex-1 bg-[#4A8BC2] hover:bg-[#b89952] disabled:opacity-50 text-black py-3 rounded-lg text-sm font-bold transition-colors">
               {saving ? 'Guardando...' : isEditing ? 'Actualizar en WASI' : 'Crear en WASI'}
             </button>
           </div>
@@ -247,7 +247,7 @@ export default function LeadsPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-4xl font-display font-bold text-white mb-2">Clientes & Leads</h1>
-          <div className="h-1 w-16 bg-[#C9A962] rounded-full" />
+          <div className="h-1 w-16 bg-[#4A8BC2] rounded-full" />
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right text-sm text-[#888] hidden sm:block">
@@ -256,7 +256,7 @@ export default function LeadsPage() {
           </div>
           <button
             onClick={() => { setEditingClient(null); setShowForm(true); }}
-            className="bg-[#C9A962] hover:bg-[#b89952] text-black font-bold px-5 py-3 rounded-xl text-sm transition-colors flex items-center gap-2"
+            className="bg-[#4A8BC2] hover:bg-[#b89952] text-black font-bold px-5 py-3 rounded-xl text-sm transition-colors flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
             Nuevo Cliente
@@ -268,7 +268,7 @@ export default function LeadsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#222]">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-[#C9A962]/10 rounded-full flex items-center justify-center text-[#C9A962]">
+            <div className="w-12 h-12 bg-[#4A8BC2]/10 rounded-full flex items-center justify-center text-[#4A8BC2]">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             </div>
             <span className="text-xs text-green-400">WASI</span>
@@ -307,10 +307,10 @@ export default function LeadsPage() {
             placeholder="Buscar por nombre, email o teléfono..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full bg-[#1a1a1a] border border-[#222] rounded-lg pl-11 pr-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-[#C9A962]/50 transition-colors"
+            className="w-full bg-[#1a1a1a] border border-[#222] rounded-lg pl-11 pr-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors"
           />
         </div>
-        <button type="submit" className="bg-[#C9A962] hover:bg-[#B8943D] text-[#0D0D0D] font-semibold px-6 py-3 rounded-lg transition-colors">Buscar</button>
+        <button type="submit" className="bg-[#4A8BC2] hover:bg-[#3B6FA0] text-white font-semibold px-6 py-3 rounded-lg transition-colors">Buscar</button>
         {searchQuery && (
           <button type="button" onClick={() => { setSearchInput(''); setSearchQuery(''); setPage(0); }} className="bg-[#222] hover:bg-[#333] text-white px-4 py-3 rounded-lg transition-colors">Limpiar</button>
         )}
@@ -357,7 +357,7 @@ export default function LeadsPage() {
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="space-y-1">
-                          {client.email && <a href={`mailto:${client.email}`} className="text-[#C9A962] hover:underline block truncate max-w-[200px]">{client.email}</a>}
+                          {client.email && <a href={`mailto:${client.email}`} className="text-[#4A8BC2] hover:underline block truncate max-w-[200px]">{client.email}</a>}
                           {phone && <a href={`https://wa.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline text-xs block">{phone}</a>}
                         </div>
                       </td>
@@ -390,7 +390,7 @@ export default function LeadsPage() {
                             </a>
                           )}
                           {client.email && (
-                            <a href={`mailto:${client.email}`} className="p-2 rounded-lg bg-[#C9A962]/20 text-[#C9A962] hover:bg-[#C9A962]/30 transition-colors" title="Email">
+                            <a href={`mailto:${client.email}`} className="p-2 rounded-lg bg-[#4A8BC2]/20 text-[#4A8BC2] hover:bg-[#4A8BC2]/30 transition-colors" title="Email">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             </a>
                           )}
@@ -424,25 +424,25 @@ export default function LeadsPage() {
             Mostrando {page * itemsPerPage + 1}–{Math.min((page + 1) * itemsPerPage, total)} de {total.toLocaleString('es-CO')}
           </p>
           <div className="flex gap-2">
-            <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#C9A962]/30 transition-colors">Anterior</button>
+            <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#4A8BC2]/30 transition-colors">Anterior</button>
             <div className="flex items-center gap-1">
               {page > 1 && (
                 <>
-                  <button onClick={() => setPage(0)} className="w-10 h-10 rounded-lg bg-[#1a1a1a] border border-[#222] text-white hover:border-[#C9A962]/30 transition-colors text-sm">1</button>
+                  <button onClick={() => setPage(0)} className="w-10 h-10 rounded-lg bg-[#1a1a1a] border border-[#222] text-white hover:border-[#4A8BC2]/30 transition-colors text-sm">1</button>
                   {page > 2 && <span className="text-[#666] px-1">...</span>}
                 </>
               )}
               {[page - 1, page, page + 1].filter(p => p >= 0 && p < totalPages).map(p => (
-                <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-lg transition-colors text-sm ${p === page ? 'bg-[#C9A962] text-black font-bold' : 'bg-[#1a1a1a] border border-[#222] text-white hover:border-[#C9A962]/30'}`}>{p + 1}</button>
+                <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-lg transition-colors text-sm ${p === page ? 'bg-[#4A8BC2] text-black font-bold' : 'bg-[#1a1a1a] border border-[#222] text-white hover:border-[#4A8BC2]/30'}`}>{p + 1}</button>
               ))}
               {page < totalPages - 2 && (
                 <>
                   {page < totalPages - 3 && <span className="text-[#666] px-1">...</span>}
-                  <button onClick={() => setPage(totalPages - 1)} className="w-10 h-10 rounded-lg bg-[#1a1a1a] border border-[#222] text-white hover:border-[#C9A962]/30 transition-colors text-sm">{totalPages}</button>
+                  <button onClick={() => setPage(totalPages - 1)} className="w-10 h-10 rounded-lg bg-[#1a1a1a] border border-[#222] text-white hover:border-[#4A8BC2]/30 transition-colors text-sm">{totalPages}</button>
                 </>
               )}
             </div>
-            <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#C9A962]/30 transition-colors">Siguiente</button>
+            <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#4A8BC2]/30 transition-colors">Siguiente</button>
           </div>
         </div>
       )}

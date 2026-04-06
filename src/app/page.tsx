@@ -92,7 +92,7 @@ export default async function HomePage() {
           <div className="featured-cta scroll-reveal text-center mt-14">
             <Link
               href="/propiedades"
-              className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
+              className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
             >
               Ver todas las propiedades
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
@@ -162,7 +162,7 @@ export default async function HomePage() {
 
               <Link
                 href="/contacto"
-                className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
+                className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
               >
                 Contáctenos
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">

@@ -147,7 +147,7 @@ export default function PropertiesClient({
             </svg>
             <span className="tracking-wide">Filtros</span>
             {hasActiveFilters && (
-              <span className="bg-gold text-[#0D0D0D] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Activos</span>
+              <span className="bg-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Activos</span>
             )}
           </span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`}>
@@ -199,7 +199,7 @@ export default function PropertiesClient({
               )}
               <button
                 onClick={applyFilters}
-                className="group px-8 py-2.5 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm rounded-xl transition-all duration-300 tracking-wide flex items-center gap-2"
+                className="group px-8 py-2.5 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm rounded-xl transition-all duration-300 tracking-wide flex items-center gap-2"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:scale-110">
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -224,7 +224,7 @@ export default function PropertiesClient({
             <p className="text-muted font-body mb-8 max-w-md mx-auto">Intente ajustar los filtros de búsqueda para encontrar más opciones</p>
             <button
               onClick={clearFilters}
-              className="px-8 py-3 bg-gold hover:bg-gold-hover text-[#0D0D0D] font-body font-semibold text-sm rounded-xl transition-all duration-300"
+              className="px-8 py-3 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm rounded-xl transition-all duration-300"
             >
               Limpiar filtros
             </button>
@@ -261,7 +261,7 @@ export default function PropertiesClient({
                         onClick={() => goToPage(p)}
                         className={`w-10 h-10 rounded-xl text-sm font-body transition-all duration-300 ${
                           p === currentPage
-                            ? 'bg-gold text-[#0D0D0D] font-semibold shadow-lg shadow-gold/20'
+                            ? 'bg-gold text-white font-semibold shadow-lg shadow-gold/20'
                             : 'text-muted hover:text-gold hover:bg-surface'
                         }`}
                       >

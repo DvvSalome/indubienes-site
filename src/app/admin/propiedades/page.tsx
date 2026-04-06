@@ -181,14 +181,14 @@ function ImageUploader({ propertyId, onUploaded }: { propertyId: number; onUploa
           htmlFor="image-upload"
           className={`flex flex-col items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed transition-all ${
             uploading
-              ? 'border-[#C9A962]/50 bg-[#C9A962]/5'
-              : 'border-[#333] hover:border-[#C9A962]/40 bg-[#111] hover:bg-[#C9A962]/5 cursor-pointer'
+              ? 'border-[#4A8BC2]/50 bg-[#4A8BC2]/5'
+              : 'border-[#333] hover:border-[#4A8BC2]/40 bg-[#111] hover:bg-[#4A8BC2]/5 cursor-pointer'
           }`}
         >
           {uploading ? (
             <>
-              <svg className="w-6 h-6 text-[#C9A962] animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>
-              <span className="text-xs text-[#C9A962]">{progress}</span>
+              <svg className="w-6 h-6 text-[#4A8BC2] animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>
+              <span className="text-xs text-[#4A8BC2]">{progress}</span>
             </>
           ) : (
             <>
@@ -238,7 +238,7 @@ function CounterInput({ label, icon, value, onChange, min = 0, max = 99 }: {
 function SectionHeader({ icon, title }: { icon: React.ReactNode; title: string }) {
   return (
     <div className="flex items-center gap-2 pb-2 border-b border-[#222]">
-      <span className="text-[#C9A962]">{icon}</span>
+      <span className="text-[#4A8BC2]">{icon}</span>
       <h3 className="text-sm font-bold text-white uppercase tracking-wider">{title}</h3>
     </div>
   );
@@ -366,7 +366,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
   };
 
   const imageUrl = property?.main_image?.url_big || property?.main_image?.url || property?.main_image?.url_original;
-  const inputClass = 'w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C9A962]/60 transition-colors';
+  const inputClass = 'w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#4A8BC2]/60 transition-colors';
   const labelClass = 'block text-xs font-medium text-[#888] mb-1.5 uppercase tracking-wider';
 
   const tabs = [
@@ -404,7 +404,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
             <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-3 text-xs font-medium transition-colors border-b-2 ${
                 activeTab === tab.id
-                  ? 'border-[#C9A962] text-[#C9A962]'
+                  ? 'border-[#4A8BC2] text-[#4A8BC2]'
                   : 'border-transparent text-[#666] hover:text-white'
               }`}>
               {tab.icon}
@@ -435,7 +435,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <button type="button" onClick={() => setForm(prev => ({ ...prev, for_sale: !prev.for_sale }))}
                       className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-bold transition-all ${
-                        form.for_sale ? 'border-[#C9A962] bg-[#C9A962]/10 text-[#C9A962]' : 'border-[#333] bg-[#111] text-[#666] hover:border-[#444]'
+                        form.for_sale ? 'border-[#4A8BC2] bg-[#4A8BC2]/10 text-[#4A8BC2]' : 'border-[#333] bg-[#111] text-[#666] hover:border-[#444]'
                       }`}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       En Venta
@@ -456,7 +456,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
                     <div>
                       <label className={labelClass}>Precio venta</label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#C9A962] text-sm font-bold">$</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4A8BC2] text-sm font-bold">$</span>
                         <input
                           type="text"
                           inputMode="numeric"
@@ -506,7 +506,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
                           onClick={() => setForm(prev => ({ ...prev, id_property_condition: opt.v }))}
                           className={`flex-1 py-2.5 rounded-lg text-xs font-medium transition-all ${
                             form.id_property_condition === opt.v
-                              ? 'bg-[#C9A962]/20 border border-[#C9A962]/50 text-[#C9A962]'
+                              ? 'bg-[#4A8BC2]/20 border border-[#4A8BC2]/50 text-[#4A8BC2]'
                               : 'bg-[#111] border border-[#333] text-[#888] hover:border-[#444]'
                           }`}>{opt.l}</button>
                       ))}
@@ -664,7 +664,7 @@ function PropertyFormModal({ property, onClose, onSaved }: PropertyFormProps) {
             <button type="button" onClick={onClose} className="flex-1 bg-[#222] hover:bg-[#333] text-white py-3 rounded-xl text-sm font-medium transition-colors">
               Cancelar
             </button>
-            <button type="submit" disabled={saving} className="flex-[2] bg-[#C9A962] hover:bg-[#b89952] disabled:opacity-50 text-black py-3 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
+            <button type="submit" disabled={saving} className="flex-[2] bg-[#4A8BC2] hover:bg-[#b89952] disabled:opacity-50 text-black py-3 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
               {saving ? (
                 <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg> Guardando...</>
               ) : isEditing ? (
@@ -797,7 +797,7 @@ export default function PropiedadesPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-4xl font-display font-bold text-white mb-2">Propiedades</h1>
-          <div className="h-1 w-16 bg-[#C9A962] rounded-full" />
+          <div className="h-1 w-16 bg-[#4A8BC2] rounded-full" />
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right text-sm text-[#888] hidden sm:block">
@@ -806,7 +806,7 @@ export default function PropiedadesPage() {
           </div>
           <button
             onClick={() => { setEditingProperty(null); setShowForm(true); }}
-            className="bg-[#C9A962] hover:bg-[#b89952] text-black font-bold px-5 py-3 rounded-xl text-sm transition-colors flex items-center gap-2"
+            className="bg-[#4A8BC2] hover:bg-[#b89952] text-black font-bold px-5 py-3 rounded-xl text-sm transition-colors flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
             Nueva Propiedad
@@ -821,12 +821,12 @@ export default function PropiedadesPage() {
           placeholder="Buscar por título, ubicación o ID..."
           value={searchTerm}
           onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-          className="flex-1 bg-[#1a1a1a] border border-[#222] rounded-lg px-4 py-3 text-white placeholder:text-[#555] focus:outline-none focus:border-[#C9A962]/50 transition-colors"
+          className="flex-1 bg-[#1a1a1a] border border-[#222] rounded-lg px-4 py-3 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors"
         />
         <select
           value={filterType}
           onChange={(e) => { setFilterType(e.target.value as 'all' | 'sale' | 'rent'); setCurrentPage(1); }}
-          className="bg-[#1a1a1a] border border-[#222] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#C9A962]/50 transition-colors cursor-pointer"
+          className="bg-[#1a1a1a] border border-[#222] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#4A8BC2]/50 transition-colors cursor-pointer"
         >
           <option value="all">Todas las propiedades</option>
           <option value="sale">En venta</option>
@@ -860,7 +860,7 @@ export default function PropiedadesPage() {
               const location = property.location_label || `${property.zone_label || ''}, ${property.city_label || ''}`;
 
               return (
-                <div key={property.id_property} className="bg-[#1a1a1a] border border-[#222] rounded-xl overflow-hidden hover:border-[#C9A962]/30 transition-all group">
+                <div key={property.id_property} className="bg-[#1a1a1a] border border-[#222] rounded-xl overflow-hidden hover:border-[#4A8BC2]/30 transition-all group">
                   {/* Image */}
                   <div className="relative h-40 bg-[#222] overflow-hidden">
                     {imageUrl ? (
@@ -873,7 +873,7 @@ export default function PropiedadesPage() {
                       </div>
                     )}
                     <div className="absolute top-3 left-3 flex gap-2">
-                      <span className={`text-xs font-bold px-2 py-1 rounded ${isSale ? 'bg-[#C9A962] text-black' : 'bg-green-500/80 text-white'}`}>
+                      <span className={`text-xs font-bold px-2 py-1 rounded ${isSale ? 'bg-[#4A8BC2] text-black' : 'bg-green-500/80 text-white'}`}>
                         {isSale ? 'Venta' : 'Arriendo'}
                       </span>
                       {property.property_type_label && (
@@ -887,7 +887,7 @@ export default function PropiedadesPage() {
 
                   <div className="p-4 space-y-3">
                     <div>
-                      <h3 className="text-sm font-bold text-white truncate group-hover:text-[#C9A962] transition-colors">{property.title}</h3>
+                      <h3 className="text-sm font-bold text-white truncate group-hover:text-[#4A8BC2] transition-colors">{property.title}</h3>
                       <p className="text-xs text-[#888] mt-1 truncate">{location}</p>
                     </div>
                     <div className="flex gap-3 text-xs text-[#888]">
@@ -897,7 +897,7 @@ export default function PropiedadesPage() {
                       {property.garages > 0 && <span>{property.garages} gar</span>}
                     </div>
                     <div className="pt-2 border-t border-[#222]">
-                      <p className="text-lg font-bold text-[#C9A962]">{price}</p>
+                      <p className="text-lg font-bold text-[#4A8BC2]">{price}</p>
                     </div>
 
                     {/* CRUD Actions */}
@@ -905,14 +905,14 @@ export default function PropiedadesPage() {
                       <button onClick={() => handleEdit(property)} className="bg-[#222] hover:bg-blue-500/20 text-blue-400 text-xs py-2 rounded transition-colors flex items-center justify-center" title="Editar">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                       </button>
-                      <button onClick={() => handleCopyLink(property.id_property)} className="bg-[#222] hover:bg-[#C9A962]/20 text-[#C9A962] text-xs py-2 rounded transition-colors flex items-center justify-center" title="Copiar link">
+                      <button onClick={() => handleCopyLink(property.id_property)} className="bg-[#222] hover:bg-[#4A8BC2]/20 text-[#4A8BC2] text-xs py-2 rounded transition-colors flex items-center justify-center" title="Copiar link">
                         {copiedId === property.id_property ? (
                           <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                         ) : (
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                         )}
                       </button>
-                      <a href={`/propiedad/${property.id_property}`} target="_blank" rel="noopener noreferrer" className="bg-[#222] hover:bg-[#C9A962]/20 text-[#C9A962] text-xs py-2 rounded transition-colors flex items-center justify-center" title="Ver">
+                      <a href={`/propiedad/${property.id_property}`} target="_blank" rel="noopener noreferrer" className="bg-[#222] hover:bg-[#4A8BC2]/20 text-[#4A8BC2] text-xs py-2 rounded transition-colors flex items-center justify-center" title="Ver">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                       </a>
                       <button onClick={() => handleDeactivate(property)} disabled={deactivating === property.id_property} className="bg-[#222] hover:bg-red-500/20 text-red-400 text-xs py-2 rounded transition-colors flex items-center justify-center disabled:opacity-50" title="Desactivar">
@@ -941,7 +941,7 @@ export default function PropiedadesPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2">
-          <button onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#C9A962]/30 transition-colors">
+          <button onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#4A8BC2]/30 transition-colors">
             Anterior
           </button>
           <div className="flex gap-1">
@@ -952,13 +952,13 @@ export default function PropiedadesPage() {
               else if (currentPage >= totalPages - 3) { pageNum = totalPages - 6 + i; }
               else { pageNum = currentPage - 3 + i; }
               return (
-                <button key={pageNum} onClick={() => setCurrentPage(pageNum)} className={`w-10 h-10 rounded-lg transition-colors ${currentPage === pageNum ? 'bg-[#C9A962] text-black font-bold' : 'bg-[#1a1a1a] border border-[#222] text-white hover:border-[#C9A962]/30'}`}>
+                <button key={pageNum} onClick={() => setCurrentPage(pageNum)} className={`w-10 h-10 rounded-lg transition-colors ${currentPage === pageNum ? 'bg-[#4A8BC2] text-black font-bold' : 'bg-[#1a1a1a] border border-[#222] text-white hover:border-[#4A8BC2]/30'}`}>
                   {pageNum}
                 </button>
               );
             })}
           </div>
-          <button onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#C9A962]/30 transition-colors">
+          <button onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="px-4 py-2 bg-[#1a1a1a] border border-[#222] rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#4A8BC2]/30 transition-colors">
             Siguiente
           </button>
         </div>

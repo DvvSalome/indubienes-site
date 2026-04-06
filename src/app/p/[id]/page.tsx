@@ -50,7 +50,7 @@ export default async function FunnelPage({ params }: Props) {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Propiedad no encontrada</h1>
           <p className="text-[#B0B0B0] mb-8">Lo sentimos, la propiedad que buscas no está disponible.</p>
-          <a href="/" className="inline-block bg-[#C9A962] text-[#0D0D0D] px-8 py-3 rounded-lg font-semibold hover:bg-[#B8943D] transition">
+          <a href="/" className="inline-block bg-[#4A8BC2] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#3B6FA0] transition">
             Volver al inicio
           </a>
         </div>

@@ -66,7 +66,7 @@ export default function FunnelGallery({ property }: FunnelGalleryProps) {
           {/* Close Button */}
           <button
             onClick={() => setSelectedImageIndex(null)}
-            className="absolute top-4 right-4 z-10 bg-[#C9A962] hover:bg-[#B8943D] text-[#0D0D0D] rounded-full p-2 transition"
+            className="absolute top-4 right-4 z-10 bg-[#4A8BC2] hover:bg-[#3B6FA0] text-white rounded-full p-2 transition"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -93,7 +93,7 @@ export default function FunnelGallery({ property }: FunnelGalleryProps) {
                     e.stopPropagation();
                     setSelectedImageIndex(selectedImageIndex === 0 ? allImages.length - 1 : selectedImageIndex - 1);
                   }}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-[#C9A962] hover:bg-[#B8943D] text-[#0D0D0D] rounded-full p-3 transition"
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-[#4A8BC2] hover:bg-[#3B6FA0] text-white rounded-full p-3 transition"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -106,7 +106,7 @@ export default function FunnelGallery({ property }: FunnelGalleryProps) {
                     e.stopPropagation();
                     setSelectedImageIndex(selectedImageIndex === allImages.length - 1 ? 0 : selectedImageIndex + 1);
                   }}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-[#C9A962] hover:bg-[#B8943D] text-[#0D0D0D] rounded-full p-3 transition"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-[#4A8BC2] hover:bg-[#3B6FA0] text-white rounded-full p-3 transition"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

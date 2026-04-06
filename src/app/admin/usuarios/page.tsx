@@ -35,7 +35,7 @@ export default function UsuariosPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-4xl font-display font-bold text-white mb-2">Usuarios</h1>
-          <div className="h-1 w-16 bg-[#C9A962] rounded-full" />
+          <div className="h-1 w-16 bg-[#4A8BC2] rounded-full" />
         </div>
       </div>
 
@@ -49,8 +49,8 @@ export default function UsuariosPage() {
         ) : sessionInfo?.isValid ? (
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-[#C9A962]/20 flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#C9A962]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              <div className="w-16 h-16 rounded-full bg-[#4A8BC2]/20 flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#4A8BC2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">{sessionInfo?.companyId || 'Usuario Administrador'}</h3>
@@ -80,9 +80,9 @@ export default function UsuariosPage() {
         )}
       </div>
 
-      <div className="bg-gradient-to-br from-[#1a1a1a] to-[#222] border border-[#C9A962]/30 rounded-xl p-8 space-y-6">
+      <div className="bg-gradient-to-br from-[#1a1a1a] to-[#222] border border-[#4A8BC2]/30 rounded-xl p-8 space-y-6">
         <div className="flex items-center gap-3">
-          <svg className="w-6 h-6 text-[#C9A962]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+          <svg className="w-6 h-6 text-[#4A8BC2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
           <h2 className="text-xl font-bold text-white">Próximamente</h2>
         </div>
         <p className="text-[#888] text-sm">Estamos trabajando en nuevas funcionalidades:</p>

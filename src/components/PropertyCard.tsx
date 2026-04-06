@@ -54,7 +54,7 @@ export default function PropertyCard({ property }: { property: Property }) {
             <span className={`px-3 py-1 text-xs font-body font-semibold rounded-full tracking-wide uppercase backdrop-blur-sm ${
               businessType === 'Arriendo'
                 ? 'bg-emerald-500/90 text-white'
-                : 'bg-gold/90 text-[#0D0D0D]'
+                : 'bg-gold/90 text-white'
             }`}>
               {businessType}
             </span>
