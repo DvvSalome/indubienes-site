@@ -38,10 +38,16 @@ interface Props {
 }
 
 // Pick the best working URL for an image.
-// WASI token URLs (image.wasi.co/eyJ...) are more reliable than direct URLs (images.wasi.co/inmuebles/...)
+// url_original = raw photo without WASI letterboxing (no white borders on vertical photos)
+// url_big = WASI processed thumbnail with contain+whiteBg (adds white bars on portrait images)
+// url = smaller WASI thumbnail (same letterboxing issue)
 function bestImageUrl(img: { url?: string; url_big?: string; url_original?: string }): string {
-  // Prefer url_big (higher quality token URL), then url (smaller token URL), then url_original (direct, sometimes 403)
-  return img?.url_big || img?.url || img?.url_original || '';
+  return img?.url_original || img?.url_big || img?.url || '';
+}
+
+// Fallback URL when url_original gives 403
+function fallbackImageUrl(img: { url?: string; url_big?: string; url_original?: string }): string {
+  return img?.url_big || img?.url || '';
 }
 
 export default function PropertyDetailClient({ property }: Props) {
@@ -246,6 +252,11 @@ export default function PropertyDetailClient({ property }: Props) {
                       alt=""
                       aria-hidden="true"
                       className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60"
+                      onError={(e) => {
+                        // If url_original fails (403), fallback to url_big for the blur bg
+                        const fb = fallbackImageUrl(allImages[currentImage]);
+                        if (fb && (e.target as HTMLImageElement).src !== fb) (e.target as HTMLImageElement).src = fb;
+                      }}
                     />
                     {/* Main sharp image */}
                     <img
@@ -253,9 +264,15 @@ export default function PropertyDetailClient({ property }: Props) {
                       src={bestImageUrl(allImages[currentImage]) || '/placeholder-property.jpg'}
                       alt={property.title}
                       className="absolute inset-0 w-full h-full object-contain animate-fade-in z-[1]"
-                      onError={() => {
-                        const dedupIdx = dedupedImages.indexOf(allImages[currentImage]);
-                        if (dedupIdx !== -1) handleImageError(dedupIdx);
+                      onError={(e) => {
+                        // Try fallback URL first before removing image entirely
+                        const fb = fallbackImageUrl(allImages[currentImage]);
+                        if (fb && (e.target as HTMLImageElement).src !== fb) {
+                          (e.target as HTMLImageElement).src = fb;
+                        } else {
+                          const dedupIdx = dedupedImages.indexOf(allImages[currentImage]);
+                          if (dedupIdx !== -1) handleImageError(dedupIdx);
+                        }
                       }}
                     />
                   </>
@@ -319,9 +336,14 @@ export default function PropertyDetailClient({ property }: Props) {
                         src={bestImageUrl(img)}
                         alt=""
                         className="w-full h-full object-cover"
-                        onError={() => {
-                          const dedupIdx = dedupedImages.indexOf(img);
-                          if (dedupIdx !== -1) handleImageError(dedupIdx);
+                        onError={(e) => {
+                          const fb = fallbackImageUrl(img);
+                          if (fb && (e.target as HTMLImageElement).src !== fb) {
+                            (e.target as HTMLImageElement).src = fb;
+                          } else {
+                            const dedupIdx = dedupedImages.indexOf(img);
+                            if (dedupIdx !== -1) handleImageError(dedupIdx);
+                          }
                         }}
                       />
                     </button>
