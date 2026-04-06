@@ -4,6 +4,20 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+// Convert ALL-CAPS title to Title Case
+function toTitleCase(str: string): string {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .replace(/(?:^|\s|["'([{-])\S/g, (match) => match.toUpperCase());
+}
 
 // Extract embed URL from YouTube/Vimeo links
 function getVideoEmbed(url: string): { embedUrl: string; type: 'youtube' | 'vimeo' | 'direct' } | null {
@@ -128,6 +142,81 @@ export default function PropertyDetailClient({ property }: Props) {
     window.open(`https://wa.me/573177597155?text=${msg}`, '_blank');
   };
 
+  // GSAP Scroll Animations
+  const titleRef = useRef<HTMLDivElement>(null);
+  const specsRef = useRef<HTMLDivElement>(null);
+  const descRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Title & price fade in from below
+      if (titleRef.current) {
+        gsap.fromTo(titleRef.current,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: titleRef.current, start: 'top 90%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Spec cards stagger reveal
+      if (specsRef.current) {
+        const cards = specsRef.current.querySelectorAll('.spec-card');
+        gsap.fromTo(cards,
+          { y: 50, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.12, ease: 'power3.out',
+            scrollTrigger: { trigger: specsRef.current, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Description section
+      if (descRef.current) {
+        gsap.fromTo(descRef.current,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: descRef.current, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Features section
+      if (featuresRef.current) {
+        gsap.fromTo(featuresRef.current,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: featuresRef.current, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Map section
+      if (mapRef.current) {
+        gsap.fromTo(mapRef.current,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: mapRef.current, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Sidebar slide in from right
+      if (sidebarRef.current) {
+        gsap.fromTo(sidebarRef.current,
+          { x: 60, opacity: 0 },
+          { x: 0, opacity: 1, duration: 0.9, delay: 0.3, ease: 'power3.out',
+            scrollTrigger: { trigger: sidebarRef.current, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <div className="pt-20 sm:pt-24">
       {/* Breadcrumb */}
@@ -137,7 +226,7 @@ export default function PropertyDetailClient({ property }: Props) {
           <span>/</span>
           <Link href="/propiedades" className="hover:text-gold transition-colors">Propiedades</Link>
           <span>/</span>
-          <span className="text-foreground">{property.title}</span>
+          <span className="text-foreground">{toTitleCase(property.title)}</span>
         </nav>
       </div>
 
@@ -276,15 +365,15 @@ export default function PropertyDetailClient({ property }: Props) {
             </div>
 
             {/* Title & Price */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
+            <div ref={titleRef} className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   {property.property_type_label && typeof property.property_type_label === 'string' && (
-                    <span className="text-xs font-body text-gold uppercase tracking-wider">{property.property_type_label}</span>
+                    <span className="text-xs font-body font-semibold text-gold uppercase tracking-widest">{property.property_type_label}</span>
                   )}
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-display text-foreground mb-2">
-                  {property.title}
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold tracking-tight text-foreground mb-2 leading-tight">
+                  {toTitleCase(property.title)}
                 </h1>
                 <p className="text-muted font-body flex items-center gap-1.5">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -297,7 +386,7 @@ export default function PropertyDetailClient({ property }: Props) {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-2xl sm:text-3xl font-display text-gold">
+                <p className="text-3xl sm:text-4xl font-display font-bold text-gold tracking-tight">
                   {price}
                 </p>
                 {property.for_sale && property.for_rent && property.rent_price > 0 && (
@@ -314,27 +403,27 @@ export default function PropertyDetailClient({ property }: Props) {
             </div>
 
             {/* Quick specs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div ref={specsRef} className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
               {[
                 { label: 'Habitaciones', value: property.bedrooms, icon: 'M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7M21 10H3V7a2 2 0 012-2h14a2 2 0 012 2v3z' },
                 { label: 'Baños', value: property.bathrooms, icon: 'M4 12h16a1 1 0 011 1v3a4 4 0 01-4 4H7a4 4 0 01-4-4v-3a1 1 0 011-1zM6 12V5a2 2 0 012-2h3v2.25' },
                 { label: 'Área', value: property.area ? `${property.area} m²` : null, icon: 'M3 3h18v18H3zM3 9h18M9 21V9' },
                 { label: 'Parqueaderos', value: property.garages, icon: 'M3 21V8l9-5 9 5v13M3 21h18M9 21v-6h6v6' },
               ].filter(s => s.value).map((spec) => (
-                <div key={spec.label} className="bg-surface rounded-xl p-4 text-center">
-                  <svg className="w-6 h-6 text-gold mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <div key={spec.label} className="spec-card bg-surface rounded-xl p-5 text-center border border-border/60 shadow-sm hover:shadow-md hover:border-gold/30 transition-all duration-300">
+                  <svg className="w-7 h-7 text-gold mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d={spec.icon} />
                   </svg>
-                  <p className="text-lg font-display text-foreground">{spec.value}</p>
-                  <p className="text-xs text-muted font-body">{spec.label}</p>
+                  <p className="text-xl font-display font-bold text-foreground">{spec.value}</p>
+                  <p className="text-xs text-muted font-body mt-1">{spec.label}</p>
                 </div>
               ))}
             </div>
 
             {/* Description */}
             {property.observations && (
-              <div className="mb-8">
-                <h2 className="text-xl font-display text-foreground mb-4">Descripción</h2>
+              <div ref={descRef} className="mb-8">
+                <h2 className="text-xl font-display font-bold text-foreground mb-4">Descripción</h2>
                 <div
                   className="text-muted font-body leading-relaxed prose-invert prose-sm max-w-none [&_p]:mb-3 [&_br]:leading-loose"
                   dangerouslySetInnerHTML={{ __html: property.observations }}
@@ -344,8 +433,8 @@ export default function PropertyDetailClient({ property }: Props) {
 
             {/* Features */}
             {(property.features?.internal?.length > 0 || property.features?.external?.length > 0) && (
-              <div className="mb-8">
-                <h2 className="text-xl font-display text-foreground mb-4">Características</h2>
+              <div ref={featuresRef} className="mb-8">
+                <h2 className="text-xl font-display font-bold text-foreground mb-4">Características</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {property.features?.internal?.length > 0 && (
                     <div>
@@ -383,8 +472,8 @@ export default function PropertyDetailClient({ property }: Props) {
 
             {/* Map placeholder */}
             {property.latitude && property.longitude && (
-              <div className="mb-8">
-                <h2 className="text-xl font-display text-foreground mb-4">Ubicación</h2>
+              <div ref={mapRef} className="mb-8">
+                <h2 className="text-xl font-display font-bold text-foreground mb-4">Ubicación</h2>
                 <div className="aspect-[16/9] rounded-xl overflow-hidden border border-border">
                   <iframe
                     src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.01},${property.latitude - 0.005},${property.longitude + 0.01},${property.latitude + 0.005}&layer=mapnik&marker=${property.latitude},${property.longitude}`}
@@ -399,11 +488,11 @@ export default function PropertyDetailClient({ property }: Props) {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div ref={sidebarRef} className="lg:col-span-1">
             <div className="sticky top-28 space-y-6">
               {/* Actions */}
               <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="font-display text-lg text-foreground mb-4">¿Te interesa?</h3>
+                <h3 className="font-display font-bold text-lg text-foreground mb-4">¿Te interesa?</h3>
                 <div className="space-y-3">
                   <a
                     href={`https://wa.me/573177597155?text=${encodeURIComponent(`Hola, me interesa la propiedad "${property.title}" (ID: ${property.id_property}), ${price}. Me gustaría más información.`)}`}
@@ -443,7 +532,7 @@ export default function PropertyDetailClient({ property }: Props) {
 
               {/* Contact form */}
               <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="font-display text-lg text-foreground mb-4">Solicitar información</h3>
+                <h3 className="font-display font-bold text-lg text-foreground mb-4">Solicitar información</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <input
                     type="text"
@@ -486,7 +575,7 @@ export default function PropertyDetailClient({ property }: Props) {
 
               {/* Company info */}
               <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="font-display text-lg text-foreground mb-3">INDUBIENES SAS</h3>
+                <h3 className="font-display font-bold text-lg text-foreground mb-3">INDUBIENES SAS</h3>
                 <div className="space-y-2 text-sm text-muted font-body">
                   <p className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
