@@ -33,24 +33,24 @@ export default async function HomePage() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-          <p className="hero-tagline text-gold text-sm sm:text-base font-body tracking-[0.3em] uppercase mb-6" >
+          <p className="hero-tagline text-white/80 text-sm sm:text-base font-body font-medium tracking-[0.3em] uppercase mb-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
             Inmobiliaria en Medellín
           </p>
 
-          <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display text-white mb-8 leading-[1.1]" style={{ perspective: '600px' }}>
+          <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-8 leading-[1.1]" style={{ perspective: '600px', textShadow: '0 2px 16px rgba(0,0,0,0.4), 0 4px 32px rgba(0,0,0,0.2)' }}>
             <span className="block overflow-hidden">
               <span className="hero-word inline-block" >Encuentra</span>{' '}
               <span className="hero-word inline-block" >tu</span>{' '}
               <span className="hero-word inline-block" >lugar</span>
             </span>
             <span className="block overflow-hidden mt-2">
-              <span className="hero-word inline-block gold-text" >ideal</span>{' '}
-              <span className="hero-word inline-block gold-text" >para</span>{' '}
-              <span className="hero-word inline-block gold-text" >vivir</span>
+              <span className="hero-word inline-block gold-text" style={{ filter: 'drop-shadow(0 2px 8px rgba(59,111,160,0.4))' }}>ideal</span>{' '}
+              <span className="hero-word inline-block gold-text" style={{ filter: 'drop-shadow(0 2px 8px rgba(59,111,160,0.4))' }}>para</span>{' '}
+              <span className="hero-word inline-block gold-text" style={{ filter: 'drop-shadow(0 2px 8px rgba(59,111,160,0.4))' }}>vivir</span>
             </span>
           </h1>
 
-          <p className="hero-subtitle text-lg sm:text-xl text-white/60 font-body max-w-2xl mx-auto mb-12" >
+          <p className="hero-subtitle text-lg sm:text-xl text-white/80 font-body font-medium max-w-2xl mx-auto mb-12" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>
             Apartamentos, casas y propiedades en las mejores zonas de Medellín y el Área Metropolitana
           </p>
 
@@ -73,7 +73,7 @@ export default async function HomePage() {
           <div className="text-center mb-16">
             <p className="featured-tagline scroll-reveal text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Selección exclusiva</p>
             <div className="section-line scroll-reveal reveal-line w-12 h-[1px] bg-gold mx-auto mb-6 origin-left" data-delay="100" />
-            <h2 className="featured-title scroll-reveal text-3xl sm:text-4xl lg:text-5xl font-display text-foreground mb-5 leading-tight" data-delay="150">
+            <h2 className="featured-title scroll-reveal text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-5 leading-tight" data-delay="150">
               Propiedades Destacadas
             </h2>
             <p className="featured-desc scroll-reveal text-muted font-body max-w-xl mx-auto leading-relaxed" data-delay="250">
@@ -130,7 +130,7 @@ export default async function HomePage() {
             <div className="about-animate about-content scroll-reveal reveal-right" data-delay="150">
               <p className="text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
               <div className="w-12 h-[1px] bg-gold mb-6" />
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-foreground mb-8 leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-8 leading-tight">
                 Su aliado inmobiliario<br />
                 <span className="text-gold">en Medellín</span>
               </h2>
@@ -185,7 +185,7 @@ export default async function HomePage() {
         <div className="cta-content scroll-reveal relative z-10 max-w-3xl mx-auto text-center">
           <p className="cta-animate text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Trabajemos juntos</p>
           <div className="cta-animate gold-line-animate w-12 h-[1px] bg-gold/50 mx-auto mb-8 origin-left" />
-          <h2 className="cta-animate text-3xl sm:text-4xl lg:text-5xl font-display text-white mb-8 leading-tight">
+          <h2 className="cta-animate text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white mb-8 leading-tight">
             ¿Busca vender o arrendar<br />su propiedad?
           </h2>
           <p className="text-white/50 font-body mb-12 max-w-lg mx-auto leading-relaxed">
