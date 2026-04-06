@@ -30,7 +30,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://api.fontshare.com" />
       </head>
-      <body className="font-body antialiased min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+      <body className="font-body antialiased min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
         <ForceDarkMode />
         <Header />
         <main className="flex-1">{children}</main>

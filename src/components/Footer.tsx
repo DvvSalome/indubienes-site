@@ -4,11 +4,11 @@ import Logo from './Logo';
 export default function Footer() {
   return (
     <footer className="bg-surface border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* 4-column grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
           {/* Brand */}
-          <div className="col-span-2 sm:col-span-2 lg:col-span-1">
+          <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center mb-4">
               <Logo height={36} />
             </div>
@@ -117,11 +117,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-faint tracking-wide">
+        <div className="mt-10 pt-6 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-2 text-center">
+          <p className="text-[11px] sm:text-xs text-faint sm:tracking-wide">
             © {new Date().getFullYear()} INMOBILIARIA INDUBIENES SAS · NIT 900965649
           </p>
-          <p className="text-xs text-faint tracking-wide">
+          <p className="text-[11px] sm:text-xs text-faint sm:tracking-wide">
             Medellín, Colombia · Todos los derechos reservados
           </p>
         </div>
