@@ -45,6 +45,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -767,6 +768,16 @@ main {
 }
 .animate-fade-in {
   animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Mobile: reduce scroll-reveal translateX to prevent horizontal overflow */
+@media (max-width: 640px) {
+  .scroll-reveal.reveal-left {
+    transform: translateX(-15px);
+  }
+  .scroll-reveal.reveal-right {
+    transform: translateX(15px);
+  }
 }
 
 /* Responsive design */

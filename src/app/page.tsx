@@ -105,7 +105,7 @@ export default async function HomePage() {
       </section>
 
       {/* About Section */}
-      <section className="about-section py-20 sm:py-32 px-5 sm:px-6 lg:px-8 bg-surface overflow-x-hidden">
+      <section className="about-section py-20 sm:py-32 px-5 sm:px-6 lg:px-8 bg-surface">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24 items-center">
             {/* Image */}
@@ -127,7 +127,7 @@ export default async function HomePage() {
             </div>
 
             {/* Content */}
-            <div className="about-animate about-content scroll-reveal reveal-right min-w-0 overflow-hidden" data-delay="150">
+            <div className="about-animate about-content scroll-reveal reveal-right min-w-0" data-delay="150">
               <p className="text-gold text-xs sm:text-sm font-body font-semibold tracking-[0.3em] uppercase mb-4">Sobre nosotros</p>
               <div className="w-12 h-[1px] bg-gold mb-8" />
               <h2 className="text-2xl sm:text-3xl lg:text-5xl font-display font-bold text-foreground mb-8 sm:mb-10 leading-tight tracking-tight">
