@@ -86,7 +86,7 @@ export default async function PropiedadesPage({ searchParams }: Props) {
           <div className="flex items-center gap-2">
             <span className="inline-block w-8 h-[2px] bg-gold/80 rounded-full" />
             <p className="text-white/60 text-sm font-body">
-              {result.total} {result.total === 1 ? 'propiedad encontrada' : 'propiedades encontradas'}
+              {result.total}+ propiedades disponibles en Medellín y el Área Metropolitana
             </p>
           </div>
         </div>
