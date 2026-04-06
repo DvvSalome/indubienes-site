@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Logo from './Logo';
-import ThemeToggle from './ThemeToggle';
+// ThemeToggle removed — site is light mode by default, toggle hidden per client request
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -64,8 +64,6 @@ export default function Header() {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </Link>
-            <ThemeToggle />
-
             {/* Phone - desktop only */}
             <a
               href="tel:+576043220207"
