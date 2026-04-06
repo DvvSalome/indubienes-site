@@ -11,7 +11,7 @@ interface PropertyItem {
   city_label: string;
   zone_label: string;
   property_type_label: string;
-  main_image?: { url?: string; url_big?: string };
+  main_image?: { url?: string; url_big?: string; url_original?: string };
   for_sale: boolean;
   for_rent: boolean;
 }
@@ -245,7 +245,8 @@ export default function AdminDestacadas() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {paginated.map((p) => {
               const isFeatured = featuredIds.includes(p.id_property);
-              const imgUrl = p.main_image?.url_big || p.main_image?.url || '';
+              // url_original has no white letterboxing — url_big adds WASI contain+whiteBg padding
+              const imgUrl = p.main_image?.url_original || p.main_image?.url_big || p.main_image?.url || '';
               const price = p.for_sale ? formatCOP(p.sale_price) : formatCOP(p.rent_price);
               const tipo = p.for_sale ? 'Venta' : 'Arriendo';
 
@@ -260,11 +261,11 @@ export default function AdminDestacadas() {
                   }`}
                 >
                   {/* Image */}
-                  <div className="aspect-[16/10] bg-[#111] relative">
+                  <div className="aspect-[16/10] bg-[#111] relative overflow-hidden">
                     {imgUrl ? (
-                      <img src={imgUrl} alt={p.title} className="w-full h-full object-cover" />
+                      <img src={imgUrl} alt={p.title} className="absolute inset-0 w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#444]">
+                      <div className="absolute inset-0 flex items-center justify-center text-[#444]">
                         <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
                       </div>
                     )}
