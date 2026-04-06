@@ -29,8 +29,8 @@ export default function FunnelGallery({ property }: FunnelGalleryProps) {
 
   if (allImages.length === 0) {
     return (
-      <div className="bg-[#242424] rounded-lg h-96 flex items-center justify-center">
-        <p className="text-[#707070]">No hay imágenes disponibles</p>
+      <div className="bg-card rounded-lg h-96 flex items-center justify-center">
+        <p className="text-faint">No hay imágenes disponibles</p>
       </div>
     );
   }

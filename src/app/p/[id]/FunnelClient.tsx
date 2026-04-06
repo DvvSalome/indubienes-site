@@ -118,7 +118,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
   };
 
   return (
-    <div className="bg-[#0A0A0A] min-h-screen">
+    <div className="bg-background min-h-screen">
 
       {/* ═══ HERO ═══ */}
       <section className="relative h-[85vh] min-h-[600px] max-h-[900px] overflow-hidden">
@@ -130,18 +130,18 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             className="w-full h-full object-cover"
             style={{ transform: `translateY(${scrollY * 0.15}px)` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-black/30" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--background) 0%, var(--background, #0A0A0A) 10%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)' }} />
         </div>
 
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col justify-end pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
           {/* Badge */}
           <div className="mb-4">
-            <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${
+            <span className={`inline-block px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg border ${
               businessType === 'Arriendo'
-                ? 'bg-emerald-500/90 text-white'
-                : 'bg-[#4A8BC2] text-white'
-            }`}>
+                ? 'bg-emerald-500 text-white border-emerald-400/30'
+                : 'bg-[#3B6FA0] text-white border-[#4A8BC2]/30'
+            }`} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
               {property.property_type_label} en {businessType}
             </span>
           </div>
@@ -193,13 +193,13 @@ export default function FunnelClient({ property }: FunnelClientProps) {
       </section>
 
       {/* ═══ SPECS BAR ═══ */}
-      <section className="bg-[#111] border-y border-white/5">
+      <section className="bg-surface border-y border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
             {specs.slice(0, 6).map((spec, i) => (
               <div key={i} className="text-center min-w-[80px]">
-                <div className="text-xl sm:text-2xl font-bold text-white">{spec.value}</div>
-                <div className="text-xs text-white/40 mt-1">{spec.label}</div>
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{spec.value}</div>
+                <div className="text-xs text-faint mt-1">{spec.label}</div>
               </div>
             ))}
           </div>
@@ -216,7 +216,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {/* Gallery Grid */}
             {allImages.length > 0 && (
               <div>
-                <h2 className="text-xl font-display font-bold text-white mb-5">Galería</h2>
+                <h2 className="text-xl font-display font-bold text-foreground mb-5">Galería</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                   {allImages.slice(0, 9).map((img, idx) => (
                     <button
@@ -247,13 +247,13 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {/* Video Section */}
             {videoEmbed && (
               <div>
-                <h2 className="text-xl font-display font-bold text-white mb-5 flex items-center gap-2">
+                <h2 className="text-xl font-display font-bold text-foreground mb-5 flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#4A8BC2]" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
                   Video del inmueble
                 </h2>
-                <div className="aspect-video rounded-xl overflow-hidden bg-[#111] border border-white/5">
+                <div className="aspect-video rounded-xl overflow-hidden bg-[#111] border border-border">
                   <iframe
                     src={videoEmbed}
                     className="w-full h-full"
@@ -269,9 +269,9 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {/* Description */}
             {property.observations && (
               <div>
-                <h2 className="text-xl font-display font-bold text-white mb-5">Descripción</h2>
+                <h2 className="text-xl font-display font-bold text-foreground mb-5">Descripción</h2>
                 <div
-                  className="text-white/60 leading-relaxed text-sm [&_p]:mb-3 [&_br]:leading-loose [&_strong]:text-white/80 [&_b]:text-white/80"
+                  className="text-muted leading-relaxed text-sm [&_p]:mb-3 [&_br]:leading-loose [&_strong]:text-white/80 [&_b]:text-white/80"
                   dangerouslySetInnerHTML={{ __html: property.observations }}
                 />
               </div>
@@ -280,20 +280,20 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {/* Property Details Table */}
             {specs.length > 0 && (
               <div>
-                <h2 className="text-xl font-display font-bold text-white mb-5">Detalles del inmueble</h2>
-                <div className="bg-[#111] rounded-xl border border-white/5 overflow-hidden">
+                <h2 className="text-xl font-display font-bold text-foreground mb-5">Detalles del inmueble</h2>
+                <div className="bg-surface rounded-xl border border-border overflow-hidden">
                   {specs.map((spec, i) => (
                     <div
                       key={i}
                       className={`flex items-center justify-between px-5 py-3.5 ${
-                        i < specs.length - 1 ? 'border-b border-white/5' : ''
+                        i < specs.length - 1 ? 'border-b border-border' : ''
                       }`}
                     >
-                      <span className="text-white/50 text-sm flex items-center gap-2">
+                      <span className="text-faint text-sm flex items-center gap-2">
                         <span className="text-base">{spec.icon}</span>
                         {spec.label}
                       </span>
-                      <span className="text-white font-medium text-sm">{spec.value}</span>
+                      <span className="text-foreground font-medium text-sm">{spec.value}</span>
                     </div>
                   ))}
                 </div>
@@ -303,14 +303,14 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {/* Features */}
             {(property.features?.internal?.length > 0 || property.features?.external?.length > 0) && (
               <div>
-                <h2 className="text-xl font-display font-bold text-white mb-5">Características</h2>
+                <h2 className="text-xl font-display font-bold text-foreground mb-5">Características</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {property.features?.internal?.length > 0 && (
                     <div>
                       <h3 className="text-xs font-bold text-[#4A8BC2] uppercase tracking-widest mb-3">Internas</h3>
                       <div className="space-y-2">
                         {property.features.internal.map((f, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm text-white/60">
+                          <div key={i} className="flex items-center gap-2 text-sm text-muted">
                             <svg className="w-4 h-4 text-[#4A8BC2] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
@@ -325,7 +325,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                       <h3 className="text-xs font-bold text-[#4A8BC2] uppercase tracking-widest mb-3">Externas</h3>
                       <div className="space-y-2">
                         {property.features.external.map((f, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm text-white/60">
+                          <div key={i} className="flex items-center gap-2 text-sm text-muted">
                             <svg className="w-4 h-4 text-[#4A8BC2] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
@@ -342,8 +342,8 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {/* Map */}
             {property.latitude !== 0 && property.longitude !== 0 && (
               <div>
-                <h2 className="text-xl font-display font-bold text-white mb-5">Ubicación</h2>
-                <div className="aspect-[16/9] rounded-xl overflow-hidden border border-white/5">
+                <h2 className="text-xl font-display font-bold text-foreground mb-5">Ubicación</h2>
+                <div className="aspect-[16/9] rounded-xl overflow-hidden border border-border">
                   <iframe
                     src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.008},${property.latitude - 0.004},${property.longitude + 0.008},${property.latitude + 0.004}&layer=mapnik&marker=${property.latitude},${property.longitude}`}
                     className="w-full h-full"
@@ -360,7 +360,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
           <div className="lg:col-span-1" id="contact-section">
             <div className="lg:sticky lg:top-6 space-y-6">
               {/* Price card */}
-              <div className="bg-[#111] border border-white/5 rounded-xl p-6">
+              <div className="bg-surface border border-border rounded-xl p-6">
                 <div className="mb-4">
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase ${
                     businessType === 'Arriendo'
@@ -374,22 +374,22 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                   {price}
                 </p>
                 {businessType === 'Arriendo' && (
-                  <p className="text-white/40 text-xs mb-4">/mes</p>
+                  <p className="text-faint text-xs mb-4">/mes</p>
                 )}
                 {property.maintenance_fee_label && (
-                  <p className="text-white/40 text-xs">
-                    Administración: <span className="text-white/60">{property.maintenance_fee_label}</span>
+                  <p className="text-faint text-xs">
+                    Administración: <span className="text-muted">{property.maintenance_fee_label}</span>
                   </p>
                 )}
 
-                <div className="border-t border-white/5 my-4" />
+                <div className="border-t border-border my-4" />
 
                 {/* Quick CTA */}
                 <a
                   href={waLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold text-sm rounded-lg transition-colors mb-3"
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#20BD5A] text-foreground font-semibold text-sm rounded-lg transition-colors mb-3"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -398,7 +398,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                 </a>
                 <a
                   href="tel:+576043220207"
-                  className="w-full flex items-center justify-center gap-2 py-3 border border-white/10 text-white/70 hover:text-white hover:border-white/20 font-medium text-sm rounded-lg transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-3 border border-border text-muted hover:text-foreground hover:border-border font-medium text-sm rounded-lg transition-colors"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -408,9 +408,9 @@ export default function FunnelClient({ property }: FunnelClientProps) {
               </div>
 
               {/* Contact form */}
-              <div className="bg-[#111] border border-white/5 rounded-xl p-6">
+              <div className="bg-surface border border-border rounded-xl p-6">
                 <h3 className="font-display font-bold text-white text-lg mb-1">¿Te interesa?</h3>
-                <p className="text-white/40 text-xs mb-5">Déjanos tus datos y te contactamos</p>
+                <p className="text-faint text-xs mb-5">Déjanos tus datos y te contactamos</p>
                 <FunnelForm
                   propertyId={property.id_property}
                   propertyType={property.property_type_label}
@@ -422,8 +422,8 @@ export default function FunnelClient({ property }: FunnelClientProps) {
 
               {/* Trust signals */}
               <div className="text-center space-y-2">
-                <p className="text-white/25 text-xs">INDUBIENES SAS · Medellín</p>
-                <p className="text-white/15 text-[10px]">Tus datos están protegidos. No compartimos tu información.</p>
+                <p className="text-faint/60 text-xs">INDUBIENES SAS · Medellín</p>
+                <p className="text-faint/30 text-[10px]">Tus datos están protegidos. No compartimos tu información.</p>
               </div>
             </div>
           </div>
@@ -483,7 +483,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
       )}
 
       {/* ═══ FLOATING MOBILE CTA ═══ */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[#0A0A0A]/95 backdrop-blur-lg border-t border-white/5 px-4 py-3 safe-area-pb">
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-lg border-t border-white/5 px-4 py-3 safe-area-pb">
         <div className="flex gap-3 max-w-lg mx-auto">
           <a
             href={waLink}

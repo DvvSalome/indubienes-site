@@ -46,20 +46,20 @@ export default function PropertyCard({ property }: { property: Property }) {
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             loading="lazy"
           />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+          {/* Gradient overlay — stronger at top and bottom for badge + price readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/30" />
 
           {/* Badges */}
-          <div className="absolute top-3 left-3 flex gap-2">
-            <span className={`px-3 py-1 text-xs font-body font-semibold rounded-full tracking-wide uppercase backdrop-blur-sm ${
+          <div className="absolute top-3 left-3 z-10 flex gap-2">
+            <span className={`px-3 py-1.5 text-xs font-body font-bold rounded-full tracking-wide uppercase shadow-lg border ${
               businessType === 'Arriendo'
-                ? 'bg-emerald-500/90 text-white'
-                : 'bg-gold/90 text-white'
-            }`}>
+                ? 'bg-emerald-500 text-white border-emerald-400/30'
+                : 'bg-[#3B6FA0] text-white border-[#4A8BC2]/30'
+            }`} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
               {businessType}
             </span>
             {property.property_type_label && typeof property.property_type_label === 'string' && !property.property_type_label.includes('models/') && (
-              <span className="px-3 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-body rounded-full">
+              <span className="px-3 py-1.5 bg-black/70 backdrop-blur-md text-white text-xs font-body font-medium rounded-full border border-white/10 shadow-lg">
                 {property.property_type_label}
               </span>
             )}

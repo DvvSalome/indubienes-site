@@ -96,17 +96,17 @@ export default function FunnelForm({
           </svg>
         </div>
         <h3 className="text-2xl font-bold text-green-500 mb-2">¡Envío exitoso!</h3>
-        <p className="text-[#B0B0B0]">{state.message}</p>
-        <p className="text-[#707070] text-sm mt-4">Nos pondremos en contacto contigo en las próximas 24 horas.</p>
+        <p className="text-muted">{state.message}</p>
+        <p className="text-faint text-sm mt-4">Nos pondremos en contacto contigo en las próximas 24 horas.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#1A1A1A] rounded-lg p-8 sm:p-12 border border-[#333333]">
+    <form onSubmit={handleSubmit} className="bg-surface rounded-lg p-8 sm:p-12 border border-border">
       {/* Name */}
       <div className="mb-6">
-        <label htmlFor="name" className="block text-sm font-semibold text-white mb-2">
+        <label htmlFor="name" className="block text-sm font-semibold text-foreground mb-2">
           Nombre completo *
         </label>
         <input
@@ -116,14 +116,14 @@ export default function FunnelForm({
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition"
+          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-faint focus:outline-none focus:border-gold transition"
           placeholder="Tu nombre"
         />
       </div>
 
       {/* Phone */}
       <div className="mb-6">
-        <label htmlFor="phone" className="block text-sm font-semibold text-white mb-2">
+        <label htmlFor="phone" className="block text-sm font-semibold text-foreground mb-2">
           Teléfono *
         </label>
         <input
@@ -133,14 +133,14 @@ export default function FunnelForm({
           value={formData.phone}
           onChange={handleChange}
           required
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition"
+          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-faint focus:outline-none focus:border-gold transition"
           placeholder="+57 3XX XXX XXXX"
         />
       </div>
 
       {/* Email */}
       <div className="mb-6">
-        <label htmlFor="email" className="block text-sm font-semibold text-white mb-2">
+        <label htmlFor="email" className="block text-sm font-semibold text-foreground mb-2">
           Email *
         </label>
         <input
@@ -150,14 +150,14 @@ export default function FunnelForm({
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition"
+          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-faint focus:outline-none focus:border-gold transition"
           placeholder="tu@email.com"
         />
       </div>
 
       {/* Message */}
       <div className="mb-8">
-        <label htmlFor="message" className="block text-sm font-semibold text-white mb-2">
+        <label htmlFor="message" className="block text-sm font-semibold text-foreground mb-2">
           Mensaje (opcional)
         </label>
         <textarea
@@ -166,7 +166,7 @@ export default function FunnelForm({
           value={formData.message}
           onChange={handleChange}
           rows={4}
-          className="w-full bg-[#242424] border border-[#333333] rounded-lg px-4 py-3 text-white placeholder-[#707070] focus:outline-none focus:border-[#4A8BC2] transition resize-none"
+          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-faint focus:outline-none focus:border-gold transition resize-none"
           placeholder="Cuéntanos más sobre tu interés en esta propiedad..."
         />
       </div>
@@ -184,7 +184,7 @@ export default function FunnelForm({
         disabled={state.status === 'loading'}
         className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition transform ${
           state.status === 'loading'
-            ? 'bg-[#707070] text-[#B0B0B0] cursor-not-allowed'
+            ? 'bg-[#707070] text-muted cursor-not-allowed'
             : 'bg-[#4A8BC2] text-white hover:bg-[#3B6FA0] hover:scale-105'
         }`}
       >
@@ -192,7 +192,7 @@ export default function FunnelForm({
       </button>
 
       {/* Privacy Note */}
-      <p className="text-[#707070] text-xs mt-6 text-center">
+      <p className="text-faint text-xs mt-6 text-center">
         Tus datos están protegidos y encriptados. No compartimos tu información con terceros.
       </p>
     </form>
