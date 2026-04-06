@@ -136,14 +136,41 @@ export async function searchProperties(filters: PropertySearchFilters = {}): Pro
   };
 }
 
+// Read admin-curated featured IDs from data/featured-ids.json
+async function getFeaturedIds(): Promise<number[]> {
+  try {
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    const filePath = path.join(process.cwd(), 'data', 'featured-ids.json');
+    const raw = await fs.readFile(filePath, 'utf-8');
+    const data = JSON.parse(raw);
+    return Array.isArray(data.ids) ? data.ids.filter((id: number) => id > 0) : [];
+  } catch {
+    return [];
+  }
+}
+
 // Get featured/highlighted properties
+// Priority: admin-curated IDs > WASI highlighted > fallback mock
 export async function getHighlightedProperties(): Promise<Property[]> {
+  // 1. Check if admin has curated specific properties
+  const featuredIds = await getFeaturedIds();
+
+  if (featuredIds.length > 0) {
+    // Fetch each property by ID from WASI
+    const fetched = await Promise.all(
+      featuredIds.slice(0, 9).map(id => getProperty(id))
+    );
+    const valid = fetched.filter((p): p is Property => p !== null);
+    if (valid.length > 0) return valid;
+  }
+
+  // 2. Fallback: WASI highlighted endpoint
   const result = await wasiRequest<Record<string, Property>>('/property/highlighted/', {
     params: { for_sale: 'true' },
   });
 
   if (result) {
-    // WASI returns properties at top level with numeric keys: {"total": N, "0": {...}, "1": {...}}
     const properties = Object.entries(result)
       .filter(([key]) => !isNaN(Number(key)))
       .map(([, value]) => normalizeProperty(value))
@@ -154,7 +181,7 @@ export async function getHighlightedProperties(): Promise<Property[]> {
     }
   }
 
-  // Fallback
+  // 3. Last fallback
   return mockProperties.slice(0, 4);
 }
 
