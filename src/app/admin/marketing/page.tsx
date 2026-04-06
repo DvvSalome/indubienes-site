@@ -253,18 +253,41 @@ export default function MarketingPage() {
           </div>
 
           <div className="space-y-4 pt-4 border-t border-[#222]">
-            <h3 className="text-sm font-bold text-white">Parámetros UTM</h3>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#888]">UTM Source</label>
-              <input type="text" value={utmSource} onChange={(e) => setUtmSource(e.target.value)} placeholder="ej: facebook, google" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors" />
+            <div>
+              <h3 className="text-sm font-bold text-white">¿Dónde vas a compartir este link?</h3>
+              <p className="text-[11px] text-[#555] mt-1">Esto nos ayuda a saber de dónde vienen los interesados</p>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: 'WhatsApp', icon: '💬', source: 'whatsapp', medium: 'social' },
+                { label: 'Facebook', icon: '📘', source: 'facebook', medium: 'social' },
+                { label: 'Instagram', icon: '📷', source: 'instagram', medium: 'social' },
+                { label: 'Email', icon: '📧', source: 'email', medium: 'email' },
+                { label: 'Portal web', icon: '🌐', source: 'portal', medium: 'web' },
+                { label: 'Otro', icon: '📎', source: '', medium: '' },
+              ].map((opt) => (
+                <button
+                  key={opt.label}
+                  type="button"
+                  onClick={() => {
+                    setUtmSource(opt.source);
+                    setUtmMedium(opt.medium);
+                  }}
+                  className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium transition-all border ${
+                    utmSource === opt.source && opt.source
+                      ? 'border-[#4A8BC2]/50 bg-[#4A8BC2]/10 text-[#4A8BC2]'
+                      : 'border-[#333] bg-[#111] text-[#888] hover:border-[#444] hover:text-white'
+                  }`}
+                >
+                  <span>{opt.icon}</span>
+                  <span>{opt.label}</span>
+                </button>
+              ))}
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#888]">UTM Medium</label>
-              <input type="text" value={utmMedium} onChange={(e) => setUtmMedium(e.target.value)} placeholder="ej: cpc, organic, email" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors" />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#888]">UTM Campaign</label>
-              <input type="text" value={utmCampaign} onChange={(e) => setUtmCampaign(e.target.value)} placeholder="ej: spring_sale" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors" />
+              <label className="block text-xs font-medium text-[#666]">Nombre de campaña <span className="text-[#444]">(opcional)</span></label>
+              <input type="text" value={utmCampaign} onChange={(e) => setUtmCampaign(e.target.value)} placeholder="ej: promo_abril, open_house" className="w-full bg-[#222] border border-[#333] rounded-lg px-4 py-2 text-white text-sm placeholder:text-[#555] focus:outline-none focus:border-[#4A8BC2]/50 transition-colors" />
+              <p className="text-[10px] text-[#444]">Dale un nombre para identificar esta campaña después</p>
             </div>
           </div>
 
