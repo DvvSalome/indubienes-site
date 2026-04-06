@@ -3,16 +3,16 @@
 import Image from 'next/image';
 
 export default function Logo({ className = '', height = 45 }: { className?: string; height?: number }) {
-  // Logo PNG — will be replaced with HD version from client
-  const nativeW = 250;
-  const nativeH = 90;
+  // HD logo with transparent background — 890x278 PNG, cleaned with rembg AI
+  const nativeW = 890;
+  const nativeH = 278;
   const aspectRatio = nativeW / nativeH;
-  const displayHeight = Math.min(height, nativeH);
+  const displayHeight = height;
   const displayWidth = Math.round(displayHeight * aspectRatio);
 
   return (
     <Image
-      src="/logo.gif"
+      src="/logo-clean-trimmed.png"
       alt="Inmobiliaria Indubienes"
       width={nativeW}
       height={nativeH}
@@ -22,7 +22,6 @@ export default function Logo({ className = '', height = 45 }: { className?: stri
         width: `${displayWidth}px`,
       }}
       priority
-      unoptimized
     />
   );
 }
