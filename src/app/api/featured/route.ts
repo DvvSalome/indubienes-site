@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'nodejs';
+
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '***REDACTED***';
 const REPO = 'adriangar333/indubienes-site';
 const FILE_PATH = 'data/featured-ids.json';

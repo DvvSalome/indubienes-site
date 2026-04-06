@@ -136,14 +136,16 @@ export async function searchProperties(filters: PropertySearchFilters = {}): Pro
   };
 }
 
-// Read admin-curated featured IDs from data/featured-ids.json
+// Read admin-curated featured IDs from GitHub (source of truth)
 async function getFeaturedIds(): Promise<number[]> {
   try {
-    const fs = await import('fs/promises');
-    const path = await import('path');
-    const filePath = path.join(process.cwd(), 'data', 'featured-ids.json');
-    const raw = await fs.readFile(filePath, 'utf-8');
-    const data = JSON.parse(raw);
+    // Read directly from GitHub raw content (always fresh, no cache)
+    const res = await fetch(
+      'https://raw.githubusercontent.com/adriangar333/indubienes-site/master/data/featured-ids.json',
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
     return Array.isArray(data.ids) ? data.ids.filter((id: number) => id > 0) : [];
   } catch {
     return [];
