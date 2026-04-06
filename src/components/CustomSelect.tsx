@@ -48,7 +48,7 @@ export default function CustomSelect({
     },
     hero: {
       trigger: 'bg-white/[0.07] border border-white/[0.12] text-white hover:border-gold/40 hover:bg-white/[0.1]',
-      dropdown: 'bg-[#1A1A1A]/95 backdrop-blur-xl border border-white/[0.12]',
+      dropdown: 'bg-[#1A1A1A] border border-white/[0.15] shadow-[0_8px_32px_rgba(0,0,0,0.5)]',
       option: 'text-white/70 hover:text-white hover:bg-white/[0.08]',
       optionActive: 'text-gold bg-gold/10',
     },
@@ -63,7 +63,7 @@ export default function CustomSelect({
   const s = baseStyles[variant];
 
   return (
-    <div ref={ref} className={`relative ${isOpen ? 'z-[100]' : 'z-10'}`}>
+    <div ref={ref} className={`relative ${isOpen ? 'z-[200]' : 'z-10'}`}>
       {label && (
         <label className="block text-xs font-body text-muted mb-1.5 tracking-wide">{label}</label>
       )}
@@ -90,7 +90,7 @@ export default function CustomSelect({
 
       {/* Dropdown */}
       <div
-        className={`absolute z-50 top-full left-0 right-0 mt-2 rounded-xl overflow-hidden shadow-2xl transition-all duration-300 origin-top ${s.dropdown} ${
+        className={`absolute z-[200] top-full left-0 right-0 mt-2 rounded-xl overflow-hidden shadow-2xl transition-all duration-300 origin-top ${s.dropdown} ${
           isOpen
             ? 'opacity-100 scale-y-100 translate-y-0'
             : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'

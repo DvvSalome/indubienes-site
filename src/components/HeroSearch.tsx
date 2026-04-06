@@ -34,8 +34,8 @@ export default function HeroSearch() {
 
   return (
     <div className="hero-search">
-      <div className="bg-black/30 backdrop-blur-2xl rounded-2xl p-3 sm:p-4 max-w-3xl mx-auto border border-white/[0.08] shadow-2xl shadow-black/20">
-        <div className="flex flex-col sm:flex-row gap-3">
+      <div className="bg-black/30 backdrop-blur-2xl rounded-2xl p-3 sm:p-4 max-w-3xl mx-auto border border-white/[0.08] shadow-2xl shadow-black/20 overflow-visible">
+        <div className="flex flex-col sm:flex-row gap-3 overflow-visible">
           <div className="flex-1">
             <CustomSelect
               options={tipoOptions}
