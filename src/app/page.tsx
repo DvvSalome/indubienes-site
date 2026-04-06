@@ -160,18 +160,27 @@ export default async function HomePage() {
                 ))}
               </div>
 
-              <div className="text-center sm:text-left">
-                <Link
-                  href="/contacto"
-                  className="group inline-flex items-center gap-3 px-10 py-4 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-gold/20"
-                >
-                  Contáctenos
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </Link>
-              </div>
+              <Link
+                href="/contacto"
+                className="group block w-full border-l-[3px] border-gold bg-card hover:bg-card-hover rounded-r-xl pl-5 pr-5 py-5 transition-all duration-500 hover:shadow-lg hover:shadow-gold/10 hover:border-l-[4px]"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-base sm:text-lg font-display font-bold text-foreground mb-1 tracking-tight">
+                      Contáctenos
+                    </p>
+                    <p className="text-xs sm:text-sm text-muted font-body">
+                      Le asesoramos sin compromiso
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-all duration-300">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gold transition-transform duration-300 group-hover:translate-x-0.5">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
