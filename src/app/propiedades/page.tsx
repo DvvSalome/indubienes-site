@@ -46,11 +46,23 @@ export default async function PropiedadesPage({ searchParams }: Props) {
     <div className="pt-20 sm:pt-24">
       {/* Mini-hero banner */}
       <section className="relative h-[220px] sm:h-[280px] flex items-end overflow-hidden">
-        {/* Background image */}
+        {/* Background video with poster fallback */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/videos/medellin-poster.jpg"
+          className="absolute inset-0 w-full h-full object-cover"
+          preload="auto"
+        >
+          <source src="/videos/medellin-banner.mp4" type="video/mp4" />
+        </video>
+        {/* Poster fallback for browsers without video support */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat -z-10"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1633627425472-d07ac65e2a36?w=1920&h=600&fit=crop&q=80')`,
+            backgroundImage: `url('/videos/medellin-poster.jpg')`,
           }}
         />
         {/* Overlay */}
