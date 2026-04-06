@@ -217,7 +217,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
             {allImages.length > 0 && (
               <div>
                 <h2 className="text-xl font-display font-bold text-foreground mb-5">Galería</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-1.5">
                   {allImages.slice(0, 9).map((img, idx) => (
                     <button
                       key={idx}
@@ -253,7 +253,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                   </svg>
                   Video del inmueble
                 </h2>
-                <div className="aspect-video rounded-xl overflow-hidden bg-[#111] border border-border">
+                <div className="aspect-video rounded-xl overflow-hidden bg-surface border border-border">
                   <iframe
                     src={videoEmbed}
                     className="w-full h-full"
@@ -483,7 +483,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
       )}
 
       {/* ═══ FLOATING MOBILE CTA ═══ */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-lg border-t border-white/5 px-4 py-3 safe-area-pb">
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-lg border-t border-border px-4 py-3 safe-area-pb">
         <div className="flex gap-3 max-w-lg mx-auto">
           <a
             href={waLink}

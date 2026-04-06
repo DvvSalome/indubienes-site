@@ -2,16 +2,15 @@
 
 import { useEffect } from 'react';
 
-// Initializes theme from saved preference. Defaults to light mode.
+// Initializes theme from saved preference or system preference.
+// Must stay in sync with ThemeToggle logic to avoid flashes.
 export default function ForceDarkMode() {
   useEffect(() => {
     const saved = localStorage.getItem('theme');
-    if (saved === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      // Default: light mode
-      document.documentElement.classList.remove('dark');
-    }
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Match ThemeToggle logic: saved value wins, then system preference
+    const shouldBeDark = saved === 'dark' || (!saved && prefersDark);
+    document.documentElement.classList.toggle('dark', shouldBeDark);
   }, []);
 
   return null;
