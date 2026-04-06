@@ -39,7 +39,7 @@ export default function PropertyCard({ property }: { property: Property }) {
     <Link href={`/propiedad/${property.id_property}`} className="block group">
       <div className="property-card bg-white dark:bg-card rounded-2xl overflow-hidden border border-black/[0.06] dark:border-border hover:border-gold/30 dark:hover:border-gold/30 transition-all duration-300">
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900">
+        <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900 image-shine">
           <img
             src={imageUrl}
             alt={displayTitle || ''}
