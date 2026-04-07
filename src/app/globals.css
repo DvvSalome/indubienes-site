@@ -8,18 +8,18 @@
   --font-display: 'Montserrat', sans-serif;
   --font-body: 'Montserrat', sans-serif;
 
-  /* Light mode — warm palette */
-  --background: #F5F3EE;
+  /* Light mode — clean white/gray palette */
+  --background: #FFFFFF;
   --foreground: #1A1A1A;
-  --surface: #EBE8E2;
-  --surface-hover: #E2DED6;
-  --card: #FAFAF7;
-  --card-hover: #F2F0EB;
+  --surface: #F5F5F5;
+  --surface-hover: #EBEBEB;
+  --card: #FFFFFF;
+  --card-hover: #F9F9F9;
   --gold: #005D83;
   --gold-hover: #004A69;
   --muted: #5A5A5A;
   --faint: #8A8A8A;
-  --border-color: #D8D4CB;
+  --border-color: #E0E0E0;
 }
 
 .dark {
