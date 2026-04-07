@@ -1,0 +1,29 @@
+{
+  "videos": [
+    {
+      "id": "1",
+      "label": "Familia descubriendo su hogar",
+      "desktop": "/videos/hero-desktop-1.mp4",
+      "mobile": "/videos/hero-mobile-1.mp4",
+      "active": true
+    },
+    {
+      "id": "2",
+      "label": "Familia mudándose",
+      "desktop": "/videos/hero-desktop-2.mp4",
+      "mobile": "/videos/hero-mobile-2.mp4",
+      "active": true
+    },
+    {
+      "id": "3",
+      "label": "Momentos en el nuevo hogar",
+      "desktop": "/videos/hero-desktop-3.mp4",
+      "mobile": "/videos/hero-mobile-3.mp4",
+      "active": true
+    }
+  ],
+  "posterDesktop": "/videos/hero-poster-desktop.jpg",
+  "posterMobile": "/videos/hero-poster-mobile.jpg",
+  "updatedAt": "",
+  "updatedBy": ""
+}
