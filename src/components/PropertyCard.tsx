@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
