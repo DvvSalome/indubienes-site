@@ -29,7 +29,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-20 sm:h-24">
           {/* Logo */}
           <Link href="/" className="flex items-center group">
-            <Logo height={56} />
+            <Logo height={72} />
           </Link>
 
           {/* Desktop Navigation */}
