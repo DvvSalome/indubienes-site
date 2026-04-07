@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="pb-6 lg:pb-0">
             <div className="flex items-center mb-3">
-              <Logo height={36} />
+              <Logo height={52} />
             </div>
             <p className="text-sm text-muted leading-relaxed max-w-[320px] mb-4">
               Su aliado inmobiliario en Medellín. Venta, arriendo y administración de propiedades.
