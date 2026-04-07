@@ -95,8 +95,7 @@ export default function PropertyCard({ property }: { property: Property }) {
             {property.bedrooms > 0 && (
               <span className="flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7" />
-                  <path d="M21 10H3V7a2 2 0 012-2h14a2 2 0 012 2v3z" />
+                  <path d="M2 4v16" /><path d="M2 8h18a2 2 0 012 2v10" /><path d="M2 17h20" /><path d="M6 8v9" />
                 </svg>
                 {property.bedrooms} hab
               </span>
@@ -113,9 +112,7 @@ export default function PropertyCard({ property }: { property: Property }) {
             {property.area > 0 && (
               <span className="flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <path d="M3 9h18" />
-                  <path d="M9 21V9" />
+                  <path d="M21 3L3 3l18 18" /><path d="M3 3v18" /><path d="M21 3v4" /><path d="M3 21h4" /><path d="M17 7l-10 10" />
                 </svg>
                 {property.area} m²
               </span>
@@ -123,8 +120,7 @@ export default function PropertyCard({ property }: { property: Property }) {
             {property.garages > 0 && (
               <span className="flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 21V8l9-5 9 5v13" />
-                  <path d="M9 21v-6h6v6" />
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10H6l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2" /><path d="M14 17H10" /><circle cx="6.5" cy="17.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" /><path d="M6 10V5h12v5" />
                 </svg>
                 {property.garages}
               </span>
