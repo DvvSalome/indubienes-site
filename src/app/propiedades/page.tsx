@@ -8,6 +8,7 @@ interface Props {
   searchParams: {
     tipo?: string;
     propiedad?: string;
+    zona?: string;
     minPrecio?: string;
     maxPrecio?: string;
     habitaciones?: string;
@@ -26,6 +27,7 @@ export default async function PropiedadesPage({ searchParams }: Props) {
   if (searchParams.tipo === 'venta') filters.for_sale = true;
   if (searchParams.tipo === 'arriendo') filters.for_rent = true;
   if (searchParams.propiedad) filters.id_property_type = parseInt(searchParams.propiedad, 10);
+  if (searchParams.zona) filters.id_zone = parseInt(searchParams.zona, 10);
   if (searchParams.minPrecio) filters.min_price = parseInt(searchParams.minPrecio, 10);
   if (searchParams.maxPrecio) filters.max_price = parseInt(searchParams.maxPrecio, 10);
   if (searchParams.habitaciones) filters.min_bedrooms = parseInt(searchParams.habitaciones, 10);
