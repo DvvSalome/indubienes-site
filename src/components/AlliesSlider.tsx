@@ -33,7 +33,7 @@ export default function AlliesSlider() {
           {items.map((ally, i) => (
             <div
               key={`${ally.name}-${i}`}
-              className="flex-shrink-0 flex items-center justify-center h-12 sm:h-14 w-[140px] sm:w-[170px] grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+              className="flex-shrink-0 flex items-center justify-center h-12 sm:h-14 w-[140px] sm:w-[170px] opacity-70 hover:opacity-100 transition-all duration-500"
             >
               <img
                 src={ally.logo}
