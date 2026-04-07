@@ -121,13 +121,22 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 pt-5 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-1.5 text-center">
-          <p className="text-[11px] text-faint tracking-wide">
-            © {new Date().getFullYear()} INMOBILIARIA INDUBIENES SAS · NIT 900965649 · Medellín, Colombia
-          </p>
-          <p className="text-[11px] text-faint tracking-wide">
-            Todos los derechos reservados
-          </p>
+        <div className="mt-8 pt-5 border-t border-border/50 space-y-3">
+          <div className="flex flex-wrap justify-center gap-4 text-[11px]">
+            <Link href="/politica-privacidad" className="text-faint hover:text-gold transition-colors">Política de Privacidad</Link>
+            <span className="text-faint/40">·</span>
+            <Link href="/autorizacion-datos" className="text-faint hover:text-gold transition-colors">Autorización de Datos</Link>
+            <span className="text-faint/40">·</span>
+            <Link href="/politica-privacidad#cookies" className="text-faint hover:text-gold transition-colors">Política de Cookies</Link>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-1.5 text-center">
+            <p className="text-[11px] text-faint tracking-wide">
+              © {new Date().getFullYear()} INMOBILIARIA INDUBIENES SAS · NIT 900965649 · Medellín, Colombia
+            </p>
+            <p className="text-[11px] text-faint tracking-wide">
+              Todos los derechos reservados
+            </p>
+          </div>
         </div>
       </div>
     </footer>
