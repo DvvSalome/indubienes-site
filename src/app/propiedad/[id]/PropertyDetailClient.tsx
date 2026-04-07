@@ -427,10 +427,10 @@ export default function PropertyDetailClient({ property }: Props) {
             {/* Quick specs */}
             <div ref={specsRef} className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
               {[
-                { label: 'Habitaciones', value: property.bedrooms, icon: 'M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7M21 10H3V7a2 2 0 012-2h14a2 2 0 012 2v3z' },
+                { label: 'Habitaciones', value: property.bedrooms, icon: 'M2 4v16M2 8h18a2 2 0 012 2v10M2 17h20M6 8v9' },
                 { label: 'Baños', value: property.bathrooms, icon: 'M4 12h16a1 1 0 011 1v3a4 4 0 01-4 4H7a4 4 0 01-4-4v-3a1 1 0 011-1zM6 12V5a2 2 0 012-2h3v2.25' },
-                { label: 'Área', value: property.area ? `${property.area} m²` : null, icon: 'M3 3h18v18H3zM3 9h18M9 21V9' },
-                { label: 'Parqueaderos', value: property.garages, icon: 'M3 21V8l9-5 9 5v13M3 21h18M9 21v-6h6v6' },
+                { label: 'Área', value: property.area ? `${property.area} m²` : null, icon: 'M21 3L3 3l18 18M3 3v18M21 3v4M3 21h4M17 7l-10 10' },
+                { label: 'Parqueaderos', value: property.garages, icon: 'M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10H6l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2M14 17H10M6 10V5h12v5M9 17.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM20 17.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z' },
               ].filter(s => s.value).map((spec) => (
                 <div key={spec.label} className="spec-card bg-surface rounded-xl p-5 text-center border border-border/60 shadow-sm hover:shadow-md hover:border-gold/30 transition-all duration-300">
                   <svg className="w-7 h-7 text-gold mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
