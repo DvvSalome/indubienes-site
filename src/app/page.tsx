@@ -69,7 +69,7 @@ export default async function HomePage() {
           <div className="text-center mb-16">
             <p className="featured-tagline scroll-reveal text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">Selección exclusiva</p>
             <div className="section-line scroll-reveal reveal-line w-12 h-[1px] bg-gold mx-auto mb-6 origin-left" data-delay="100" />
-            <h2 className="featured-title scroll-reveal text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-5 leading-tight" data-delay="150">
+            <h2 className="featured-title scroll-reveal font-display font-bold text-foreground mb-5 leading-tight" style={{ fontSize: '45px' }} data-delay="150">
               Propiedades Destacadas
             </h2>
             <p className="featured-desc scroll-reveal text-muted font-body max-w-xl mx-auto leading-relaxed" data-delay="250">
