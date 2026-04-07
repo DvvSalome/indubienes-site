@@ -5,6 +5,7 @@ import HeroSearch from '@/components/HeroSearch';
 import HomeAnimations from '@/components/HomeAnimations';
 import HeroRotatingLine from '@/components/HeroRotatingLine';
 import HeroVideo from '@/components/HeroVideo';
+import AlliesSlider from '@/components/AlliesSlider';
 
 export const dynamic = 'force-dynamic';
 
@@ -98,6 +99,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Allies / Partners Logo Slider */}
+      <AlliesSlider />
 
       {/* About Section */}
       <section className="about-section py-20 sm:py-32 px-5 sm:px-6 lg:px-8 bg-surface">
