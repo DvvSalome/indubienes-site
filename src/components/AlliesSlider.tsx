@@ -16,7 +16,7 @@ export default function AlliesSlider() {
   const items = [...ALLIES, ...ALLIES];
 
   return (
-    <section className="allies-section py-12 sm:py-16 bg-surface overflow-hidden">
+    <section className="allies-section py-12 sm:py-16 bg-white dark:bg-[#111] border-y border-border-color/30 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 mb-8 text-center">
         <p className="text-[13px] font-body font-bold tracking-[0.3em] uppercase text-muted/70 mb-2">
           Nuestros aliados
@@ -26,8 +26,8 @@ export default function AlliesSlider() {
 
       <div className="allies-track-wrapper relative">
         {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-surface to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-white dark:from-[#111] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-white dark:from-[#111] to-transparent z-10 pointer-events-none" />
 
         <div className="allies-track flex items-center gap-12 sm:gap-16 animate-scroll-left">
           {items.map((ally, i) => (
