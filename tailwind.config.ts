@@ -23,8 +23,8 @@ const config: Config = {
         border: "var(--border-color)",
       },
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        body: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Montserrat", "sans-serif"],
+        body: ["var(--font-body)", "Montserrat", "sans-serif"],
       },
       animation: {
         "fade-in": "fadeIn 0.6s ease-out forwards",
