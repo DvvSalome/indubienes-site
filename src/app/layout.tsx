@@ -28,7 +28,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://api.fontshare.com" />
+        {/* Montserrat only — loaded via Google Fonts */}
       </head>
       <body className="font-body antialiased min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
         <ForceDarkMode />
