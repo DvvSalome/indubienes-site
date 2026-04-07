@@ -28,8 +28,8 @@ export default function PropertyCard({ property }: { property: Property }) {
     ? toTitleCase(property.title)
     : property.title;
 
-  // Use url_original (raw photo, no white borders) — url_big has WASI contain+whiteBg letterboxing
-  const imageUrl = property.main_image?.url_original || property.main_image?.url_big || property.main_image?.url || '/placeholder-property.jpg';
+  // Use url_big (reliable WASI CDN) — url_original can 403 in browser
+  const imageUrl = property.main_image?.url_big || property.main_image?.url_original || property.main_image?.url || '/placeholder-property.jpg';
 
   // Clean location display
   const location = (typeof property.location_label === 'string' ? property.location_label : '') ||
