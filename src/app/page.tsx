@@ -27,9 +27,12 @@ export default async function HomePage() {
         {/* Grain texture overlay */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.5\'/%3E%3C/svg%3E")' }} />
 
+        {/* Top gradient for header readability */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-black/50 via-black/25 to-transparent z-[2]" />
+
         {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-          <p className="hero-tagline text-white/80 text-sm sm:text-base font-body font-medium tracking-[0.3em] uppercase mb-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
+        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center pt-20 sm:pt-24">
+          <p className="hero-tagline text-white text-sm sm:text-base font-body font-semibold tracking-[0.3em] uppercase mb-6" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.3)' }}>
             Inmobiliaria en Medellín
           </p>
 
