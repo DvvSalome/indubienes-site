@@ -19,7 +19,7 @@
       "label": "Momentos en el nuevo hogar",
       "desktop": "/videos/hero-desktop-3.mp4",
       "mobile": "/videos/hero-mobile-3.mp4",
-      "active": true
+      "active": false
     }
   ],
   "posterDesktop": "/videos/hero-poster-desktop.jpg",
