@@ -28,8 +28,9 @@ export default function PropertyCard({ property }: { property: Property }) {
     ? toTitleCase(property.title)
     : property.title;
 
-  // Use url_big (reliable WASI CDN) — url_original can 403 in browser
-  const imageUrl = property.main_image?.url_big || property.main_image?.url_original || property.main_image?.url || '/placeholder-property.jpg';
+  // Prefer url_original (raw photo, no letterboxing) with fallback chain
+  const imageUrl = property.main_image?.url_original || property.main_image?.url_big || property.main_image?.url || '/placeholder-property.jpg';
+  const fallbackUrl = property.main_image?.url_big || property.main_image?.url || '/placeholder-property.jpg';
 
   // Clean location display
   const location = (typeof property.location_label === 'string' ? property.location_label : '') ||
@@ -45,6 +46,10 @@ export default function PropertyCard({ property }: { property: Property }) {
             alt={displayTitle || ''}
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             loading="lazy"
+            onError={(e) => {
+              const img = e.target as HTMLImageElement;
+              if (img.src !== fallbackUrl) img.src = fallbackUrl;
+            }}
           />
           {/* Gradient overlay — stronger at top and bottom for badge + price readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/30" />
