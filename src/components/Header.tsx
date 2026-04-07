@@ -40,6 +40,7 @@ export default function Header() {
               { label: 'Venta', href: '/propiedades?tipo=venta' },
               { label: 'Arriendo', href: '/propiedades?tipo=arriendo' },
               { label: 'Contacto', href: '/contacto' },
+              { label: 'Política de Privacidad', href: '/politica-privacidad' },
             ].map(({ label, href }) => (
               <Link
                 key={label}
@@ -112,6 +113,7 @@ export default function Header() {
               { label: 'Venta', href: '/propiedades?tipo=venta' },
               { label: 'Arriendo', href: '/propiedades?tipo=arriendo' },
               { label: 'Contacto', href: '/contacto' },
+              { label: 'Política de Privacidad', href: '/politica-privacidad' },
             ].map(({ label, href }) => (
               <Link
                 key={label}
