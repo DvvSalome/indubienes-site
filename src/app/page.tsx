@@ -4,6 +4,7 @@ import { getHighlightedProperties } from '@/lib/wasi';
 import HeroSearch from '@/components/HeroSearch';
 import HomeAnimations from '@/components/HomeAnimations';
 import HeroRotatingLine from '@/components/HeroRotatingLine';
+import HeroVideo from '@/components/HeroVideo';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,15 +17,9 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="hero-section relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-        {/* Background image with Ken Burns */}
+        {/* Background video (or fallback image) */}
         <div className="absolute inset-0 overflow-hidden">
-          <div
-            className="hero-bg-image absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&h=1080&fit=crop')`,
-              transform: 'scale(1.15)',
-            }}
-          />
+          <HeroVideo />
         </div>
         {/* Overlay */}
         <div className="absolute inset-0 hero-overlay" />
