@@ -131,7 +131,7 @@ export default function CustomSelect({
           : 'opacity-0 scale-y-95 pointer-events-none'
       }`}
     >
-      <div className={`${isHero ? 'max-h-44' : 'max-h-60'} overflow-y-auto py-1 custom-scrollbar`}>
+      <div className={`${isHero ? 'max-h-56' : 'max-h-60'} overflow-y-auto py-1 custom-scrollbar`}>
         {options.map((opt) => (
           <button
             key={opt.value}
