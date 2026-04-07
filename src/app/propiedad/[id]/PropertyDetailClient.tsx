@@ -38,16 +38,15 @@ interface Props {
 }
 
 // Pick the best working URL for an image.
-// url_big = WASI processed (reliable CDN, always available)
-// url_original = raw photo (images.wasi.co — can 403 in browser)
-// Prefer url_big for reliability; use url_original only as enrichment fallback
+// url_original = raw photo without WASI letterboxing (preferred — no white borders)
+// url_big = WASI processed (reliable CDN, but adds white bars on portrait photos)
 function bestImageUrl(img: { url?: string; url_big?: string; url_original?: string }): string {
-  return img?.url_big || img?.url_original || img?.url || '';
+  return img?.url_original || img?.url_big || img?.url || '';
 }
 
-// Fallback URL chain
+// Fallback URL when url_original gives 403
 function fallbackImageUrl(img: { url?: string; url_big?: string; url_original?: string }): string {
-  return img?.url || '';
+  return img?.url_big || img?.url || '';
 }
 
 export default function PropertyDetailClient({ property }: Props) {
