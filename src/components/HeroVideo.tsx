@@ -23,6 +23,7 @@ interface HeroVideoConfig {
  */
 export default function HeroVideo() {
   const [config, setConfig] = useState<HeroVideoConfig | null>(null);
+  const [configLoaded, setConfigLoaded] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [fadeClass, setFadeClass] = useState('opacity-100');
@@ -47,7 +48,8 @@ export default function HeroVideo() {
           setConfig({ ...data, videos: activeVideos });
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setConfigLoaded(true));
   }, []);
 
   const activeVideos = config?.videos || [];
@@ -113,7 +115,11 @@ export default function HeroVideo() {
   }, [currentIdx, activeVideos, getVideoUrl]);
 
   if (!activeVideos.length) {
-    // Fallback to static background
+    if (!configLoaded) {
+      // Still loading config — show blank dark bg to avoid flash of fallback image
+      return <div className="absolute inset-0 bg-[#1a1a1a]" />;
+    }
+    // Config loaded but no videos — fallback to static background
     return (
       <div
         className="hero-bg-image absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
