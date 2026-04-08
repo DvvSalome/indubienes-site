@@ -45,6 +45,7 @@ export interface Property {
   id_property_type: number;
   property_type_label: string;
   stratum: number;
+  year_built: number;
   maintenance_fee: number;
   maintenance_fee_label: string;
   property_condition_label: string;
