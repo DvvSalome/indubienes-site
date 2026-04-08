@@ -262,17 +262,34 @@ function normalizeFeatures(raw: any): { internal: string[]; external: string[] }
 
 /**
  * Normalize WASI image object.
- * WASI url/url_big use fit:"contain" with white background (letterboxing) — unusable.
- * url_original (images.wasi.co) is the raw photo without processing — always prefer it.
- * CSS object-cover handles cropping client-side.
+ * WASI's `url_original` field is BROKEN: it returns a tiny 100x90 thumbnail
+ * (e.g. https://images.wasi.co/inmuebles/7596220260319055529.jpg is only 100x90).
+ * The REAL raw photo lives at the same path but with a "g" prefix on the filename:
+ *   https://images.wasi.co/inmuebles/g7596220260319055529.jpg (979x734)
+ * We derive the correct URL from the `filename` field whenever possible.
+ * `url`/`url_big` are the processed image.wasi.co tokens — they work but apply
+ * fit:"contain" with white letterboxing on portrait shots, so we keep them only
+ * as fallbacks when the filename isn't available.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function fixImageObject(img: any): { url: string; url_big: string; url_original: string } {
   if (!img) return { url: '/placeholder-property.jpg', url_big: '/placeholder-property.jpg', url_original: '/placeholder-property.jpg' };
+
+  // Derive the real raw photo URL from filename (fixes WASI's broken url_original).
+  let urlOriginal = '';
+  const filename = typeof img.filename === 'string' ? img.filename : '';
+  if (filename) {
+    // Prefix with "g" if not already present
+    const normalized = filename.startsWith('g') ? filename : `g${filename}`;
+    urlOriginal = `https://images.wasi.co/inmuebles/${normalized}`;
+  } else {
+    urlOriginal = img.url_original || img.url_big || img.url || '';
+  }
+
   return {
     url: img.url || '',
     url_big: img.url_big || '',
-    url_original: img.url_original || img.url_big || img.url || '',
+    url_original: urlOriginal,
   };
 }
 
@@ -311,6 +328,7 @@ function normalizeProperty(raw: any): Property {
     id_property_type: Number(raw.id_property_type) || 0,
     property_type_label: extractLabel(raw.property_type_label) || extractLabel(raw.id_property_type_label),
     stratum: Number(raw.stratum) || 0,
+    year_built: Number(raw.building_date) || Number(raw.year_built) || 0,
     maintenance_fee: Number(raw.maintenance_fee) || 0,
     maintenance_fee_label: extractLabel(raw.maintenance_fee_label),
     property_condition_label: (() => {
