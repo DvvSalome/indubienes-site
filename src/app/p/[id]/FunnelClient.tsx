@@ -41,7 +41,16 @@ export default function FunnelClient({ property }: FunnelClientProps) {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -272,7 +281,7 @@ export default function FunnelClient({ property }: FunnelClientProps) {
                 <h2 className="text-xl font-display font-bold text-foreground mb-5">Descripción</h2>
                 <div
                   className="text-muted leading-relaxed text-sm [&_p]:mb-3 [&_br]:leading-loose [&_strong]:text-white/80 [&_b]:text-white/80"
-                  dangerouslySetInnerHTML={{ __html: property.observations }}
+                  dangerouslySetInnerHTML={{ __html: (property.observations || '').replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/on\w+="[^"]*"/gi, '').replace(/on\w+='[^']*'/gi, '') }}
                 />
               </div>
             )}
