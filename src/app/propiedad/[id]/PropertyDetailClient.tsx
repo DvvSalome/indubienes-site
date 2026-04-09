@@ -482,7 +482,7 @@ export default function PropertyDetailClient({ property }: Props) {
                 <h2 className="text-xl font-display font-bold text-foreground mb-4">Descripción</h2>
                 <div
                   className="text-muted font-body leading-relaxed prose-invert prose-sm max-w-none [&_p]:mb-3 [&_br]:leading-loose"
-                  dangerouslySetInnerHTML={{ __html: property.observations }}
+                  dangerouslySetInnerHTML={{ __html: (property.observations || '').replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/on\w+="[^"]*"/gi, '').replace(/on\w+='[^']*'/gi, '') }}
                 />
               </div>
             )}
