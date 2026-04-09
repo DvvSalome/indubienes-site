@@ -35,6 +35,8 @@ export interface Property {
     internal: string[];
     external: string[];
   };
+  internal_feature_ids: number[];
+  external_feature_ids: number[];
   latitude: number;
   longitude: number;
   for_sale: boolean;
@@ -83,6 +85,16 @@ export interface PropertyType {
   id_property_type: number;
   name: string;
   count: number;
+}
+
+export interface PropertyFeature {
+  id: number;
+  name: string;
+}
+
+export interface PropertyFeatureGroup {
+  internal: PropertyFeature[];
+  external: PropertyFeature[];
 }
 
 export interface WasiClient {
