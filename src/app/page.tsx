@@ -17,7 +17,7 @@ export default async function HomePage() {
       <HomeAnimations />
 
       {/* Hero Section */}
-      <section className="hero-section relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+      <section className="hero-section antialiased relative h-screen min-h-[640px] sm:min-h-[700px] flex items-center justify-center overflow-hidden">
         {/* Background video (or fallback image) */}
         <div className="absolute inset-0 overflow-hidden">
           <HeroVideo />
@@ -32,12 +32,12 @@ export default async function HomePage() {
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/30 to-transparent z-[2]" />
 
         {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center pt-20 sm:pt-24">
-          <p className="hero-tagline text-white text-sm sm:text-base font-body font-semibold tracking-[0.3em] uppercase mb-6" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>
+        <div className="relative z-10 max-w-5xl mx-auto px-5 text-center pt-16 sm:pt-24">
+          <p className="hero-tagline text-white/90 text-xs sm:text-sm font-body font-semibold tracking-[0.22em] sm:tracking-[0.3em] uppercase mb-4 sm:mb-6" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
             Inmobiliaria en Medellín
           </p>
 
-          <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-8 leading-[1.1]" style={{ perspective: '600px', textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>
+          <h1 className="hero-title text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-6 sm:mb-8 leading-[1.05] tracking-[-0.01em]" style={{ perspective: '600px', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
             <span className="block overflow-hidden">
               <span className="hero-word inline-block" >Encuentra</span>{' '}
               <span className="hero-word inline-block" >tu</span>{' '}
@@ -46,8 +46,8 @@ export default async function HomePage() {
             <HeroRotatingLine />
           </h1>
 
-          <p className="hero-subtitle text-lg sm:text-xl text-white/80 font-body font-medium max-w-2xl mx-auto mb-12" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>
-            Apartamentos, casas y propiedades en las mejores zonas de Medellín y el Área Metropolitana
+          <p className="hero-subtitle text-base sm:text-xl text-white/90 font-body font-normal max-w-[22ch] sm:max-w-xl mx-auto mb-8 sm:mb-12 leading-snug sm:leading-relaxed" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
+            Apartamentos, casas y propiedades en las mejores zonas de Medellín.
           </p>
 
           <HeroSearch />
