@@ -479,8 +479,15 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
       const payload: Record<string, unknown> = { ...form };
       if (!payload.id_zone) delete payload.id_zone;
 
-      // WASI expects feature IDs as `internal_features[]` / `external_features[]`.
-      // We already use those field names in state, so they're passed through.
+      // WASI read endpoint returns `building_date` but write endpoints only accept
+      // that same key — `year_built` is silently ignored. Rename before sending.
+      if (payload.year_built) {
+        payload.building_date = payload.year_built;
+      }
+      delete payload.year_built;
+
+      // WASI expects feature IDs as JSON arrays on `internal_features` / `external_features`.
+      // Empty arrays also clear the selection, which is the expected behavior.
 
       let res: Response;
       if (isEditing && property) {
