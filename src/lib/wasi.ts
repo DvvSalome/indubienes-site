@@ -1,4 +1,4 @@
-import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, WasiClient, WasiClientSearchFilters, WasiClientSearchResult } from './types';
+import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, PropertyFeatureGroup, WasiClient, WasiClientSearchFilters, WasiClientSearchResult } from './types';
 import { mockProperties, mockPropertyTypes } from './mock-data';
 
 const WASI_BASE_URL = 'https://api.wasi.co/v1';
@@ -220,6 +220,33 @@ export async function getPropertyTypes(): Promise<PropertyType[]> {
   return mockPropertyTypes;
 }
 
+// Get all available internal/external property features from WASI.
+// Endpoint: GET /v1/feature/all — returns { internal: [{id, nombre, name, own}], external: [...] }
+export async function getFeatures(): Promise<PropertyFeatureGroup> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await wasiRequest<Record<string, any>>('/feature/all');
+  if (!result) return { internal: [], external: [] };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapList = (arr: any): { id: number; name: string }[] => {
+    if (!arr) return [];
+    const items = Array.isArray(arr) ? arr : Object.values(arr);
+    return items
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((item: any) => ({
+        id: Number(item?.id || item?.id_feature || 0),
+        name: String(item?.nombre || item?.name || '').trim(),
+      }))
+      .filter((f) => f.id > 0 && f.name.length > 0)
+      .sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  };
+
+  return {
+    internal: mapList(result.internal || result.internals),
+    external: mapList(result.external || result.externals),
+  };
+}
+
 // WASI returns booleans as strings "true"/"false", numbers 0/1, or actual booleans
 // Boolean("false") === true in JS, so we need explicit parsing
 function parseBool(val: unknown): boolean {
@@ -260,6 +287,22 @@ function normalizeFeatures(raw: any): { internal: string[]; external: string[] }
     internal: normalize(raw.internal || raw.internals),
     external: normalize(raw.external || raw.externals),
   };
+}
+
+// Extract numeric IDs from WASI feature arrays (used by admin for pre-selection).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractFeatureIds(raw: any): number[] {
+  if (!raw) return [];
+  const items = Array.isArray(raw) ? raw : Object.values(raw);
+  return items
+    .map((item: unknown) => {
+      if (item && typeof item === 'object') {
+        const obj = item as Record<string, unknown>;
+        return Number(obj.id || obj.id_feature || 0);
+      }
+      return Number(item) || 0;
+    })
+    .filter((n) => n > 0);
 }
 
 /**
@@ -320,6 +363,8 @@ function normalizeProperty(raw: any): Property {
     main_image: fixImageObject(raw.main_image || raw.image),
     galleries: normalizeGalleries(raw.galleries),
     features: normalizeFeatures(raw.features),
+    internal_feature_ids: extractFeatureIds(raw?.features?.internal ?? raw?.features?.internals),
+    external_feature_ids: extractFeatureIds(raw?.features?.external ?? raw?.features?.externals),
     latitude: Number(raw.latitude) || 0,
     longitude: Number(raw.longitude) || 0,
     for_sale: parseBool(raw.for_sale),
