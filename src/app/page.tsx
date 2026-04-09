@@ -37,7 +37,7 @@ export default async function HomePage() {
             Inmobiliaria en Medellín
           </p>
 
-          <h1 className="hero-title text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-6 sm:mb-8 leading-[1.05] tracking-[-0.01em]" style={{ perspective: '600px', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
+          <h1 className="hero-title text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white/95 mb-6 sm:mb-8 leading-[1.05] tracking-normal" style={{ perspective: '600px', textShadow: '0 1px 0 rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.28)' }}>
             <span className="block overflow-hidden">
               <span className="hero-word inline-block" >Encuentra</span>{' '}
               <span className="hero-word inline-block" >tu</span>{' '}
