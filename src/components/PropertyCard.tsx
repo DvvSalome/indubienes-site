@@ -1,6 +1,8 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
 
@@ -13,7 +15,7 @@ function toTitleCase(str: string): string {
     .join(' ');
 }
 
-export default function PropertyCard({ property }: { property: Property }) {
+function PropertyCardInner({ property }: { property: Property }) {
   // Determine business type: check rent_price > 0 AND title hints
   const titleLower = (property.title || '').toLowerCase();
   const isRent = property.for_rent || (!property.for_sale && property.rent_price > 0) || titleLower.includes('arrienda') || titleLower.includes('arriendo');
@@ -43,11 +45,12 @@ export default function PropertyCard({ property }: { property: Property }) {
       <div className="property-card bg-white dark:bg-card rounded-2xl overflow-hidden border border-black/[0.06] dark:border-border hover:border-gold/30 dark:hover:border-gold/30 transition-all duration-300">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900 image-shine">
-          <img
+          <Image
             src={imageUrl}
             alt={displayTitle || ''}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-            loading="lazy"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             onError={(e) => {
               const img = e.target as HTMLImageElement;
               if (img.src !== fallbackUrl) img.src = fallbackUrl;
@@ -138,3 +141,8 @@ export default function PropertyCard({ property }: { property: Property }) {
     </Link>
   );
 }
+
+export default React.memo(PropertyCardInner, (prev, next) =>
+  prev.property.id_property === next.property.id_property &&
+  prev.property.main_image?.url_original === next.property.main_image?.url_original
+);
