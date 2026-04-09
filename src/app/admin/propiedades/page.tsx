@@ -561,7 +561,8 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
     }
   };
 
-  const imageUrl = property?.main_image?.url_big || property?.main_image?.url || property?.main_image?.url_original;
+  // Prefer url_original (raw photo) — url/url_big apply fit:contain with white letterbox on portrait shots.
+  const imageUrl = property?.main_image?.url_original || property?.main_image?.url_big || property?.main_image?.url;
   const inputClass = 'w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#4A8BC2]/60 transition-colors';
   const labelClass = 'block text-xs font-medium text-[#888] mb-1.5 uppercase tracking-wider';
 
@@ -1116,7 +1117,8 @@ export default function PropiedadesPage() {
   const totalPages = Math.ceil(totalProperties / itemsPerPage);
 
   const bestImageUrl = (img?: { url?: string; url_big?: string; url_original?: string }) => {
-    return img?.url_big || img?.url || img?.url_original || '';
+    // Prefer url_original (raw photo) — url_big/url letterbox portrait shots.
+    return img?.url_original || img?.url_big || img?.url || '';
   };
 
   const handleCopyLink = (propertyId: number) => {
