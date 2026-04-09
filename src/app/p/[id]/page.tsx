@@ -17,7 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const type = property.for_sale ? 'Venta' : 'Arriendo';
   const title = `${property.property_type_label} en ${type} - ${property.location_label || property.city_label}`;
   const description = `${property.property_type_label} de ${property.area}m² con ${property.bedrooms} hab. ${property.bathrooms} baños. ${price}. ${property.location_label}, ${property.city_label}.`;
-  const image = property.main_image?.url_big || property.main_image?.url;
+  // OG image: prefer raw url_original so WhatsApp/FB previews don't show white letterbox bars.
+  const image = property.main_image?.url_original || property.main_image?.url_big || property.main_image?.url;
 
   return {
     title: `${title} | Indubienes`,
