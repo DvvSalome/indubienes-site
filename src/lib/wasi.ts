@@ -2,8 +2,10 @@ import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, Pr
 import { mockProperties, mockPropertyTypes } from './mock-data';
 
 const WASI_BASE_URL = 'https://api.wasi.co/v1';
-const WASI_COMPANY_ID = process.env.WASI_COMPANY_ID || '';
-const WASI_TOKEN = process.env.WASI_TOKEN || '';
+// Trim to defend against trailing whitespace/newlines when env vars are pasted
+// into dashboards (Vercel, etc.). WASI rejects tokens with whitespace silently.
+const WASI_COMPANY_ID = (process.env.WASI_COMPANY_ID || '').trim();
+const WASI_TOKEN = (process.env.WASI_TOKEN || '').trim();
 
 interface WasiRequestOptions {
   method?: 'GET' | 'POST';
