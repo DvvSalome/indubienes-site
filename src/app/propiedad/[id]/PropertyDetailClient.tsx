@@ -444,36 +444,159 @@ export default function PropertyDetailClient({ property }: Props) {
             {/* Detalles del inmueble */}
             <div className="mb-8">
               <h2 className="text-xl font-display font-bold text-foreground mb-4">Detalles del inmueble</h2>
-              <div className="bg-surface border border-border/60 rounded-xl p-5 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3 text-sm font-body">
-                {[
-                  { label: 'País', value: property.country_label },
-                  { label: 'Departamento', value: property.region_label },
-                  { label: 'Ciudad', value: property.city_label },
-                  { label: 'Zona / barrio', value: property.zone_label || property.location_label },
-                  { label: 'Código', value: property.id_property },
-                  { label: 'Estado', value: property.property_condition_label },
-                  { label: 'Área Construida', value: property.built_area ? `${property.built_area} m²` : null },
-                  { label: 'Área Privada', value: property.private_area ? `${property.private_area} m²` : null },
-                  { label: 'Área Terreno', value: property.area ? `${property.area} m²` : null },
-                  { label: 'Alcobas', value: property.bedrooms || null },
-                  { label: 'Baños', value: property.bathrooms || null },
-                  { label: 'Estrato', value: property.stratum || null },
-                  { label: 'Piso', value: property.floor || null },
-                  { label: 'Año construcción', value: property.year_built || null },
-                  { label: 'Tipo de inmueble', value: property.property_type_label },
-                  { label: 'Tipo de negocio', value: businessType },
-                ]
-                  .filter((d) => d.value !== null && d.value !== undefined && d.value !== '' && d.value !== 0)
-                  .map((d) => (
-                    <div key={d.label} className="flex items-start gap-2">
-                      <span className="text-gold mt-1.5 flex-shrink-0">•</span>
-                      <div>
-                        <span className="font-semibold text-foreground">{d.label}:</span>{' '}
-                        <span className="text-muted">{d.value}</span>
+
+              {/* Location pill */}
+              {(property.zone_label || property.location_label || property.city_label || property.region_label || property.country_label) && (
+                <div className="mb-4 inline-flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-2.5 rounded-full bg-surface border border-border/60 text-sm font-body">
+                  <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  {(property.zone_label || property.location_label) && (
+                    <span className="text-foreground font-semibold">{property.zone_label || property.location_label}</span>
+                  )}
+                  {[property.city_label, property.region_label, property.country_label].filter(Boolean).length > 0 && (
+                    <>
+                      {(property.zone_label || property.location_label) && <span className="text-muted/60">·</span>}
+                      <span className="text-muted">
+                        {[property.city_label, property.region_label, property.country_label].filter(Boolean).join(', ')}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* KPI Stats — up to 4 highest-priority metrics */}
+              {(() => {
+                type Kpi = { value: string | number; label: string; icon: React.ReactNode };
+                const kpiList: (Kpi | null)[] = [
+                  property.bedrooms
+                    ? {
+                        value: property.bedrooms,
+                        label: 'Alcobas',
+                        icon: (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8" />
+                            <path d="M2 17h20" />
+                            <path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" />
+                          </svg>
+                        ),
+                      }
+                    : null,
+                  property.bathrooms
+                    ? {
+                        value: property.bathrooms,
+                        label: 'Baños',
+                        icon: (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 6 7 4H3v6h18V8a2 2 0 0 0-2-2h-6" />
+                            <path d="M3 10v4a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4v-4" />
+                            <path d="m6 20-1 2" />
+                            <path d="m19 22-1-2" />
+                          </svg>
+                        ),
+                      }
+                    : null,
+                  property.built_area
+                    ? {
+                        value: `${property.built_area} m²`,
+                        label: 'Construida',
+                        icon: (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <path d="M3 9h18" />
+                            <path d="M9 21V9" />
+                          </svg>
+                        ),
+                      }
+                    : null,
+                  property.private_area && !property.built_area
+                    ? {
+                        value: `${property.private_area} m²`,
+                        label: 'Privada',
+                        icon: (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                          </svg>
+                        ),
+                      }
+                    : null,
+                  property.stratum
+                    ? {
+                        value: property.stratum,
+                        label: 'Estrato',
+                        icon: (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
+                            <path d="M6 12H4a2 2 0 0 0-2 2v8h4" />
+                            <path d="M18 9h2a2 2 0 0 1 2 2v11h-4" />
+                            <path d="M10 6h4M10 10h4M10 14h4M10 18h4" />
+                          </svg>
+                        ),
+                      }
+                    : null,
+                  property.floor
+                    ? {
+                        value: property.floor,
+                        label: 'Piso',
+                        icon: (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m18 15-6-6-6 6" />
+                            <path d="M6 21h12" />
+                          </svg>
+                        ),
+                      }
+                    : null,
+                ];
+                const kpis = kpiList.filter((k): k is Kpi => k !== null).slice(0, 4);
+                if (kpis.length === 0) return null;
+                const gridCols =
+                  kpis.length === 1 ? 'grid-cols-1' :
+                  kpis.length === 2 ? 'grid-cols-2' :
+                  kpis.length === 3 ? 'grid-cols-3' :
+                  'grid-cols-2 md:grid-cols-4';
+                return (
+                  <div className={`grid gap-3 mb-4 ${gridCols}`}>
+                    {kpis.map((k) => (
+                      <div key={k.label} className="bg-surface border border-border/60 rounded-xl p-4 text-center hover:border-gold/40 transition-colors">
+                        <div className="w-8 h-8 mx-auto mb-2 text-gold">{k.icon}</div>
+                        <div className="text-2xl sm:text-3xl font-display font-bold text-foreground leading-none">{k.value}</div>
+                        <div className="text-[10px] font-body uppercase tracking-[0.15em] text-muted mt-2">{k.label}</div>
                       </div>
-                    </div>
-                  ))}
-              </div>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              {/* Secondary metadata — definition list */}
+              {(() => {
+                const rows = [
+                  { label: 'Tipo de negocio', value: businessType },
+                  { label: 'Tipo de inmueble', value: property.property_type_label },
+                  { label: 'Estado', value: property.property_condition_label },
+                  { label: 'Año construcción', value: property.year_built || null },
+                  { label: 'Área terreno', value: property.area ? `${property.area} m²` : null },
+                  { label: 'Área privada', value: (property.private_area && property.built_area) ? `${property.private_area} m²` : null },
+                  { label: 'Código', value: property.id_property },
+                ].filter((r) => r.value !== null && r.value !== undefined && r.value !== '' && r.value !== 0);
+                if (rows.length === 0) return null;
+                return (
+                  <dl className="bg-surface border border-border/60 rounded-xl px-5 py-2 grid grid-cols-1 sm:grid-cols-2 gap-x-8 text-sm font-body">
+                    {rows.map((r, i) => {
+                      const isLastInColumn = i >= rows.length - 2 || (rows.length % 2 === 1 && i === rows.length - 1);
+                      return (
+                        <div
+                          key={r.label}
+                          className={`flex items-baseline justify-between gap-4 py-3 ${isLastInColumn ? '' : 'border-b border-border/20'}`}
+                        >
+                          <dt className="text-muted flex-shrink-0">{r.label}</dt>
+                          <dd className="text-foreground font-medium text-right">{r.value}</dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
+                );
+              })()}
             </div>
 
             {/* Description */}
@@ -491,35 +614,49 @@ export default function PropertyDetailClient({ property }: Props) {
             {(property.features?.internal?.length > 0 || property.features?.external?.length > 0) && (
               <div ref={featuresRef} className="mb-8">
                 <h2 className="text-xl font-display font-bold text-foreground mb-4">Características</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {property.features?.internal?.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-body font-semibold text-gold uppercase tracking-wider mb-3">Internas</h3>
-                      <ul className="space-y-2">
+                    <div className="bg-surface border border-border/60 rounded-xl p-5">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-9 h-9 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                          </svg>
+                        </div>
+                        <h3 className="text-sm font-display font-bold text-foreground uppercase tracking-wider">Internas</h3>
+                        <span className="ml-auto text-xs text-muted font-body">{property.features.internal.length}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
                         {property.features.internal.map((f, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm text-muted font-body">
-                            <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
+                          <span key={i} className="inline-flex items-center px-3 py-1.5 rounded-full bg-gold/5 border border-gold/25 text-xs font-body text-foreground">
                             {typeof f === 'string' ? f : String((f as Record<string, string>)?.nombre || (f as Record<string, string>)?.name || '')}
-                          </li>
+                          </span>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
                   {property.features?.external?.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-body font-semibold text-gold uppercase tracking-wider mb-3">Externas</h3>
-                      <ul className="space-y-2">
+                    <div className="bg-surface border border-border/60 rounded-xl p-5">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-9 h-9 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 2v20" />
+                            <path d="M17 5a5 5 0 0 0-10 0c0 2.5 2 4 5 7 3-3 5-4.5 5-7Z" />
+                            <path d="M7 18c-2.5 0-4-1.5-4-4 0-1.5.5-2.5 2-3.5" />
+                            <path d="M17 18c2.5 0 4-1.5 4-4 0-1.5-.5-2.5-2-3.5" />
+                          </svg>
+                        </div>
+                        <h3 className="text-sm font-display font-bold text-foreground uppercase tracking-wider">Externas</h3>
+                        <span className="ml-auto text-xs text-muted font-body">{property.features.external.length}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
                         {property.features.external.map((f, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm text-muted font-body">
-                            <svg className="w-4 h-4 text-gold flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
+                          <span key={i} className="inline-flex items-center px-3 py-1.5 rounded-full bg-gold/5 border border-gold/25 text-xs font-body text-foreground">
                             {typeof f === 'string' ? f : String((f as Record<string, string>)?.nombre || (f as Record<string, string>)?.name || '')}
-                          </li>
+                          </span>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
                 </div>
