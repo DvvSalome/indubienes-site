@@ -33,11 +33,11 @@ export default async function HomePage() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-5 text-center pt-16 sm:pt-24">
-          <p className="hero-tagline text-white/90 text-xs sm:text-sm font-body font-semibold tracking-[0.22em] sm:tracking-[0.3em] uppercase mb-4 sm:mb-6" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.3)' }}>
+          <p className="hero-tagline text-white/90 text-xs sm:text-sm font-body font-semibold tracking-[0.22em] sm:tracking-[0.3em] uppercase mb-4 sm:mb-6" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.55)' }}>
             Inmobiliaria en Medellín
           </p>
 
-          <h1 className="hero-title text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-6 sm:mb-8 leading-[1.05] tracking-[-0.01em]" style={{ perspective: '600px', textShadow: '0 1px 0 rgba(0,0,0,0.45), 0 2px 16px rgba(0,0,0,0.55), 0 4px 32px rgba(0,0,0,0.28)' }}>
+          <h1 className="hero-title text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-6 sm:mb-8 leading-[1.05] tracking-[-0.01em]" style={{ perspective: '600px', textShadow: '0 2px 12px rgba(0,0,0,0.45)' }}>
             <span className="block overflow-hidden">
               <span className="hero-word inline-block" >Encuentra</span>{' '}
               <span className="hero-word inline-block" >tu</span>{' '}
@@ -46,7 +46,7 @@ export default async function HomePage() {
             <HeroRotatingLine />
           </h1>
 
-          <p className="hero-subtitle text-base sm:text-xl text-white/90 font-body font-normal max-w-[22ch] sm:max-w-xl mx-auto mb-8 sm:mb-12 leading-snug sm:leading-relaxed" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.45), 0 2px 14px rgba(0,0,0,0.3)' }}>
+          <p className="hero-subtitle text-base sm:text-xl text-white/90 font-body font-normal max-w-[22ch] sm:max-w-xl mx-auto mb-8 sm:mb-12 leading-snug sm:leading-relaxed" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.45)' }}>
             Apartamentos, casas y propiedades en las mejores zonas de Medellín.
           </p>
 

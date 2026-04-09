@@ -3,7 +3,7 @@
 import RotatingText from './RotatingText';
 
 export default function HeroRotatingLine() {
-  const goldFilter = { filter: 'drop-shadow(0 1px 0 rgba(0,0,0,0.45)) drop-shadow(0 2px 16px rgba(0,0,0,0.55)) drop-shadow(0 4px 32px rgba(0,0,0,0.28))' };
+  const goldFilter = { filter: 'drop-shadow(0 2px 10px rgba(0,0,0,0.45))' };
 
   return (
     <span className="block overflow-hidden mt-2">
