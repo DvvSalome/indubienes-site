@@ -32,6 +32,15 @@ function PropertyCardInner({ property }: { property: Property }) {
     ? toTitleCase(property.title)
     : property.title;
 
+  // Clean alt text for screen readers: strip "SE VENDE" / "SE ARRIENDA" prefix,
+  // use sentence case, and append location for context.
+  const cleanAlt = (() => {
+    const raw = (property.title || '').replace(/^\s*SE\s+(VENDE|ARRIENDA)\s+/i, '').trim();
+    const sentence = raw ? raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase() : 'Propiedad';
+    const loc = [property.zone_label, property.city_label].filter(Boolean).join(', ');
+    return loc ? `${sentence} — ${loc}` : sentence;
+  })();
+
   // Prefer url_original (raw photo, no letterboxing) with fallback chain
   const imageUrl = property.main_image?.url_original || property.main_image?.url_big || property.main_image?.url || '/placeholder-property.jpg';
   const fallbackUrl = property.main_image?.url_big || property.main_image?.url || '/placeholder-property.jpg';
@@ -47,7 +56,7 @@ function PropertyCardInner({ property }: { property: Property }) {
         <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900 image-shine">
           <Image
             src={imageUrl}
-            alt={displayTitle || ''}
+            alt={cleanAlt}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
