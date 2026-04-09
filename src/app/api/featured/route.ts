@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifySessionToken } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '***REDACTED***';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const REPO = 'adriangar333/indubienes-site';
 const FILE_PATH = 'data/featured-ids.json';
 const BRANCH = 'master';
@@ -34,6 +35,15 @@ export async function GET() {
 // POST: Save featured IDs to GitHub (triggers Vercel rebuild)
 export async function POST(request: NextRequest) {
   try {
+    const sessionCookie = request.cookies.get('indubienes_session');
+    if (!sessionCookie) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const session = verifySessionToken(sessionCookie.value);
+    if (!session) {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { ids, updatedBy } = body;
 
