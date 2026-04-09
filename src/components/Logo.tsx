@@ -1,7 +1,7 @@
 'use client';
 
 export default function Logo({ className = '', height = 45 }: { className?: string; height?: number }) {
-  // Official 2026 brand asset — full-color SVG (crisp at any size)
+  // Official 2026 brand asset — full-color SVG (#234c8e blue + gray building)
   // viewBox 1585.09 x 612 → aspect 2.59
   const aspectRatio = 1585.09 / 612;
   const displayHeight = height;
