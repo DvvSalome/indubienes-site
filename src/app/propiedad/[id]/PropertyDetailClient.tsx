@@ -441,6 +441,41 @@ export default function PropertyDetailClient({ property }: Props) {
               ))}
             </div>
 
+            {/* Detalles del inmueble */}
+            <div className="mb-8">
+              <h2 className="text-xl font-display font-bold text-foreground mb-4">Detalles del inmueble</h2>
+              <div className="bg-surface border border-border/60 rounded-xl p-5 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3 text-sm font-body">
+                {[
+                  { label: 'País', value: property.country_label },
+                  { label: 'Departamento', value: property.region_label },
+                  { label: 'Ciudad', value: property.city_label },
+                  { label: 'Zona / barrio', value: property.zone_label || property.location_label },
+                  { label: 'Código', value: property.id_property },
+                  { label: 'Estado', value: property.property_condition_label },
+                  { label: 'Área Construida', value: property.built_area ? `${property.built_area} m²` : null },
+                  { label: 'Área Privada', value: property.private_area ? `${property.private_area} m²` : null },
+                  { label: 'Área Terreno', value: property.area ? `${property.area} m²` : null },
+                  { label: 'Alcobas', value: property.bedrooms || null },
+                  { label: 'Baños', value: property.bathrooms || null },
+                  { label: 'Estrato', value: property.stratum || null },
+                  { label: 'Piso', value: property.floor || null },
+                  { label: 'Año construcción', value: property.year_built || null },
+                  { label: 'Tipo de inmueble', value: property.property_type_label },
+                  { label: 'Tipo de negocio', value: businessType },
+                ]
+                  .filter((d) => d.value !== null && d.value !== undefined && d.value !== '' && d.value !== 0)
+                  .map((d) => (
+                    <div key={d.label} className="flex items-start gap-2">
+                      <span className="text-gold mt-1.5 flex-shrink-0">•</span>
+                      <div>
+                        <span className="font-semibold text-foreground">{d.label}:</span>{' '}
+                        <span className="text-muted">{d.value}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
             {/* Description */}
             {property.observations && (
               <div ref={descRef} className="mb-8">
