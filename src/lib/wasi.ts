@@ -52,10 +52,12 @@ async function wasiRequest<T>(endpoint: string, options: WasiRequestOptions = {}
 
     const data = await response.json();
 
-    // Check for WASI-specific auth errors
+    // Check for WASI-specific errors: return the data so callers can surface the message.
+    // Callers that rely on presence of `id_property` / numeric keys still work because
+    // error responses don't contain those fields.
     if (data?.status === 'error' || data?.error) {
       console.error('WASI API returned error:', data);
-      return null;
+      return data as T;
     }
 
     return data as T;
@@ -401,6 +403,37 @@ export async function createProperty(data: Record<string, unknown>): Promise<{ s
     return { status: 'success', id_property: Number(result.id_property || 0) };
   }
   return { status: 'error', message: String(result?.message || 'Error al crear propiedad') };
+}
+
+/**
+ * Upload an image to a property's gallery via WASI's multipart endpoint.
+ * WASI endpoint: POST /v1/property/upload-image/{id_property}
+ * Content-Type: multipart/form-data
+ * Fields: image (file, required), description (string, optional), position (number, optional)
+ */
+export async function uploadPropertyImage(
+  id: number,
+  imageBlob: Blob,
+  filename = 'photo.jpg',
+  options: { description?: string; position?: number } = {}
+): Promise<{ status: string; message?: string; id_image?: number }> {
+  try {
+    const url = `${WASI_BASE_URL}/property/upload-image/${id}?id_company=${WASI_COMPANY_ID}&wasi_token=${WASI_TOKEN}`;
+    const formData = new FormData();
+    formData.append('image', imageBlob, filename);
+    if (options.description) formData.append('description', options.description);
+    if (options.position !== undefined) formData.append('position', String(options.position));
+
+    const response = await fetch(url, { method: 'POST', body: formData, cache: 'no-store' });
+    const data = await response.json();
+    if (data?.status === 'success') {
+      return { status: 'success', id_image: Number(data.id_image || data.id || 0) };
+    }
+    return { status: 'error', message: String(data?.message || 'WASI no pudo procesar la imagen') };
+  } catch (error) {
+    console.error('WASI image upload failed:', error);
+    return { status: 'error', message: 'Error de conexión al subir la imagen' };
+  }
 }
 
 // Update an existing property in WASI
