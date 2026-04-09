@@ -2,7 +2,7 @@ import { createHmac } from 'crypto';
 
 // Session configuration
 export const AUTH_COOKIE_NAME = 'indubienes_session';
-export const SESSION_SECRET = 'indubienes-admin-secret-2024-luxury';
+export const SESSION_SECRET = process.env.SESSION_SECRET || 'indubienes-admin-secret-change-me';
 export const SESSION_EXPIRY_HOURS = 24;
 
 interface SessionData {
