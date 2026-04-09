@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getRegions, getCities, getZones, getPropertyTypes } from '@/lib/wasi';
+import { getRegions, getCities, getZones, getPropertyTypes, getFeatures } from '@/lib/wasi';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,6 +35,11 @@ export async function GET(request: NextRequest) {
     if (type === 'property-types') {
       const types = await getPropertyTypes();
       return NextResponse.json({ data: types });
+    }
+
+    if (type === 'features') {
+      const features = await getFeatures();
+      return NextResponse.json({ data: features });
     }
 
     return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 });
