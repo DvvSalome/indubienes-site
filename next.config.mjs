@@ -13,6 +13,16 @@ const nextConfig = {
         hostname: 'images.wasi.co',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'image.wasi.co',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
   },
 };
