@@ -169,11 +169,9 @@ h6 {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 35%, transparent 100%);
 }
 
-/* Hero overlay — more cinematic */
+/* Hero overlay — subtle fade so video stays visible, no dark patch behind headline */
 .hero-overlay {
-  background:
-    radial-gradient(ellipse at 30% 50%, rgba(13, 13, 13, 0.4) 0%, transparent 70%),
-    linear-gradient(to bottom, rgba(13, 13, 13, 0.3) 0%, rgba(13, 13, 13, 0.6) 50%, rgba(13, 13, 13, 0.85) 100%);
+  background: linear-gradient(to bottom, transparent 0%, transparent 55%, rgba(13, 13, 13, 0.55) 100%);
 }
 
 /* Input focus ring — brand blue glow */
