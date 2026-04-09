@@ -11,7 +11,7 @@ export default function FunnelGallery({ property }: FunnelGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   // Collect all images from property
-  const allImages: Array<{ url: string; url_big: string }> = [];
+  const allImages: Array<{ url: string; url_big: string; url_original?: string }> = [];
 
   // Add main image
   if (property.main_image) {
@@ -47,7 +47,7 @@ export default function FunnelGallery({ property }: FunnelGalleryProps) {
               className="relative flex-shrink-0 w-80 h-96 rounded-lg overflow-hidden group cursor-pointer hover:shadow-lg transition"
             >
               <img
-                src={image.url}
+                src={image.url_original || image.url_big || image.url}
                 alt={`Imagen ${idx + 1}`}
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
               />
@@ -79,7 +79,7 @@ export default function FunnelGallery({ property }: FunnelGalleryProps) {
             onClick={e => e.stopPropagation()}
           >
             <img
-              src={allImages[selectedImageIndex].url_big || allImages[selectedImageIndex].url}
+              src={allImages[selectedImageIndex].url_original || allImages[selectedImageIndex].url_big || allImages[selectedImageIndex].url}
               alt={`Imagen ${selectedImageIndex + 1}`}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
