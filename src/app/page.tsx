@@ -33,11 +33,11 @@ export default async function HomePage() {
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center pt-20 sm:pt-24">
-          <p className="hero-tagline text-white text-sm sm:text-base font-body font-semibold tracking-[0.3em] uppercase mb-6" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.3)' }}>
+          <p className="hero-tagline text-white text-sm sm:text-base font-body font-semibold tracking-[0.3em] uppercase mb-6" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>
             Inmobiliaria en Medellín
           </p>
 
-          <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-8 leading-[1.1]" style={{ perspective: '600px', textShadow: '0 2px 16px rgba(0,0,0,0.4), 0 4px 32px rgba(0,0,0,0.2)' }}>
+          <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-8 leading-[1.1]" style={{ perspective: '600px', textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>
             <span className="block overflow-hidden">
               <span className="hero-word inline-block" >Encuentra</span>{' '}
               <span className="hero-word inline-block" >tu</span>{' '}
@@ -46,7 +46,7 @@ export default async function HomePage() {
             <HeroRotatingLine />
           </h1>
 
-          <p className="hero-subtitle text-lg sm:text-xl text-white/80 font-body font-medium max-w-2xl mx-auto mb-12" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>
+          <p className="hero-subtitle text-lg sm:text-xl text-white/80 font-body font-medium max-w-2xl mx-auto mb-12" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>
             Apartamentos, casas y propiedades en las mejores zonas de Medellín y el Área Metropolitana
           </p>
 
