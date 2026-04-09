@@ -25,7 +25,12 @@ interface Property {
   stratum?: number;
   floor?: number;
   built_area?: number;
+  private_area?: number;
+  year_built?: number;
+  maintenance_fee?: number;
   id_property_type?: number;
+  internal_feature_ids?: number[];
+  external_feature_ids?: number[];
 }
 
 interface PropertyType {
@@ -37,6 +42,24 @@ interface PropertyType {
 interface LocationOption {
   id: number;
   name: string;
+}
+
+interface FeatureOption {
+  id: number;
+  name: string;
+}
+
+interface FeatureGroups {
+  internal: FeatureOption[];
+  external: FeatureOption[];
+}
+
+// A file queued for upload after a brand-new property is created.
+interface QueuedPhoto {
+  id: string;
+  file: File;
+  blob: Blob;
+  preview: string;
 }
 
 // Strip HTML tags and decode HTML entities for clean text display
@@ -282,8 +305,11 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
     garages: property?.garages || 0,
     area: property?.area || 0,
     built_area: property?.built_area || 0,
+    private_area: property?.private_area || 0,
     floor: property?.floor || 0,
     stratum: property?.stratum || 0,
+    year_built: property?.year_built || 0,
+    maintenance_fee: property?.maintenance_fee || 0,
     address: property?.address || '',
     observations: stripHtml(property?.observations || ''),
     id_country: 1,
@@ -292,24 +318,38 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
     id_zone: 0,
     id_property_condition: 2,
     id_status_on_page: 1,
+    internal_features: property?.internal_feature_ids || [] as number[],
+    external_features: property?.external_feature_ids || [] as number[],
   });
 
   // Formatted price display strings
   const [salePriceDisplay, setSalePriceDisplay] = useState(formatCOP(property?.sale_price || 0));
   const [rentPriceDisplay, setRentPriceDisplay] = useState(formatCOP(property?.rent_price || 0));
+  const [feeDisplay, setFeeDisplay] = useState(formatCOP(property?.maintenance_fee || 0));
 
-  const [activeTab, setActiveTab] = useState<'info' | 'specs' | 'location' | 'details'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'specs' | 'features' | 'location' | 'details'>('info');
   const [propertyTypes, setPropertyTypes] = useState<PropertyType[]>([]);
   const [regions, setRegions] = useState<LocationOption[]>([]);
   const [cities, setCities] = useState<LocationOption[]>([]);
   const [zones, setZones] = useState<LocationOption[]>([]);
+  const [featureCatalog, setFeatureCatalog] = useState<FeatureGroups>({ internal: [], external: [] });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Queue of photos selected BEFORE the property exists. After createProperty
+  // succeeds we loop through these and upload them via the upload-image endpoint.
+  const [pendingPhotos, setPendingPhotos] = useState<QueuedPhoto[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<string>('');
+
   useEffect(() => {
     fetch('/api/locations?type=property-types').then(r => r.json()).then(d => setPropertyTypes(d.data || []));
     fetch('/api/locations?type=regions&country=1').then(r => r.json()).then(d => setRegions(d.data || []));
+    fetch('/api/locations?type=features').then(r => r.json()).then(d => {
+      if (d.data && (d.data.internal || d.data.external)) {
+        setFeatureCatalog({ internal: d.data.internal || [], external: d.data.external || [] });
+      }
+    }).catch(() => { /* non-fatal — features are optional */ });
   }, []);
 
   useEffect(() => {
@@ -333,12 +373,63 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
     }
   };
 
-  const handlePriceChange = (field: 'sale_price' | 'rent_price', raw: string) => {
+  const handlePriceChange = (field: 'sale_price' | 'rent_price' | 'maintenance_fee', raw: string) => {
     const digits = raw.replace(/\D/g, '');
     const num = Number(digits) || 0;
     const formatted = formatCOP(num);
     if (field === 'sale_price') { setSalePriceDisplay(formatted); setForm(prev => ({ ...prev, sale_price: num })); }
-    else { setRentPriceDisplay(formatted); setForm(prev => ({ ...prev, rent_price: num })); }
+    else if (field === 'rent_price') { setRentPriceDisplay(formatted); setForm(prev => ({ ...prev, rent_price: num })); }
+    else { setFeeDisplay(formatted); setForm(prev => ({ ...prev, maintenance_fee: num })); }
+  };
+
+  // Exclusive business type selector: "sale" | "rent" | "both"
+  const businessMode: 'sale' | 'rent' | 'both' =
+    form.for_sale && form.for_rent ? 'both' : form.for_rent ? 'rent' : 'sale';
+  const setBusinessMode = (mode: 'sale' | 'rent' | 'both') => {
+    setForm(prev => ({
+      ...prev,
+      for_sale: mode === 'sale' || mode === 'both',
+      for_rent: mode === 'rent' || mode === 'both',
+    }));
+  };
+
+  // Toggle a feature ID in the given group's selection
+  const toggleFeature = (group: 'internal_features' | 'external_features', id: number) => {
+    setForm(prev => {
+      const current = prev[group] as number[];
+      const next = current.includes(id) ? current.filter(x => x !== id) : [...current, id];
+      return { ...prev, [group]: next };
+    });
+  };
+
+  const removeQueuedPhoto = (id: string) => {
+    setPendingPhotos(prev => prev.filter(p => p.id !== id));
+  };
+
+  const handleQueuePhotos = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files?.length) return;
+    setError('');
+    try {
+      const newQueued: QueuedPhoto[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith('image/')) continue;
+        const { blob, preview } = await compressImage(file);
+        newQueued.push({
+          id: `${Date.now()}-${i}-${file.name}`,
+          file,
+          blob,
+          preview,
+        });
+      }
+      setPendingPhotos(prev => [...prev, ...newQueued]);
+    } catch (err) {
+      console.error('queue photos error', err);
+      setError('Error procesando las fotos. Intenta con otras imágenes.');
+    } finally {
+      e.target.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -388,6 +479,9 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
       const payload: Record<string, unknown> = { ...form };
       if (!payload.id_zone) delete payload.id_zone;
 
+      // WASI expects feature IDs as `internal_features[]` / `external_features[]`.
+      // We already use those field names in state, so they're passed through.
+
       let res: Response;
       if (isEditing && property) {
         res = await fetch(`/api/properties/${property.id_property}`, {
@@ -405,23 +499,57 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
       }
 
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data.status === 'success') {
-        setSuccess(isEditing ? 'Propiedad actualizada exitosamente' : `Propiedad creada (ID: ${data.id_property}) — Abriendo editor para subir fotos...`);
-        setTimeout(() => {
-          onSaved();
-          onClose();
-          if (!isEditing && data.id_property && onCreated) {
-            onCreated(data.id_property);
-          }
-        }, 1500);
-      } else {
+      if (!res.ok || data.status !== 'success') {
         // Surface WASI's real error message when available
         setError(data.error || data.message || `Error al guardar (HTTP ${res.status})`);
+        setSaving(false);
+        return;
       }
+
+      // For brand-new properties, upload any queued photos in sequence.
+      const newId: number | undefined = data.id_property;
+      if (!isEditing && newId && pendingPhotos.length > 0) {
+        let uploaded = 0;
+        for (let i = 0; i < pendingPhotos.length; i++) {
+          const q = pendingPhotos[i];
+          setUploadProgress(`Subiendo foto ${i + 1}/${pendingPhotos.length}...`);
+          try {
+            const formData = new FormData();
+            formData.append('image', q.blob, `property-${newId}-${Date.now()}-${i}.jpg`);
+            formData.append('position', String(i + 1));
+            const upRes = await fetch(`/api/properties/${newId}/upload-image`, {
+              method: 'POST',
+              body: formData,
+            });
+            const upData = await upRes.json().catch(() => ({}));
+            if (upRes.ok && upData.status === 'success') {
+              uploaded++;
+            }
+          } catch (err) {
+            console.error('queued upload error', err);
+          }
+        }
+        setUploadProgress('');
+        setSuccess(
+          uploaded === pendingPhotos.length
+            ? `Propiedad creada (ID: ${newId}) con ${uploaded} foto${uploaded === 1 ? '' : 's'} ✓`
+            : `Propiedad creada (ID: ${newId}). ${uploaded} de ${pendingPhotos.length} fotos subidas.`
+        );
+      } else {
+        setSuccess(isEditing ? 'Propiedad actualizada exitosamente' : `Propiedad creada (ID: ${newId}) ✓`);
+      }
+
+      setTimeout(() => {
+        onSaved();
+        onClose();
+        // Only reopen editor if no photos were queued (fallback flow)
+        if (!isEditing && newId && pendingPhotos.length === 0 && onCreated) {
+          onCreated(newId);
+        }
+      }, 1500);
     } catch (err) {
       console.error('submit error', err);
       setError('Error de conexión — revisa tu internet e intenta de nuevo.');
-    } finally {
       setSaving(false);
     }
   };
@@ -432,7 +560,8 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
 
   const tabs = [
     { id: 'info' as const, label: 'Información', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-    { id: 'specs' as const, label: 'Características', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg> },
+    { id: 'specs' as const, label: 'Espacios', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg> },
+    { id: 'features' as const, label: 'Comodidades', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> },
     { id: 'location' as const, label: 'Ubicación', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
     { id: 'details' as const, label: 'Detalles', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> },
   ];
@@ -490,24 +619,26 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
                   <input name="title" value={form.title} onChange={handleChange} required className={inputClass + ' text-base'} placeholder="Ej: Hermoso apartamento en Laureles" />
                 </div>
 
-                {/* Business type — big toggle buttons */}
+                {/* Business type — exclusive 3-option segmented control */}
                 <div>
                   <label className={labelClass}>Tipo de negocio</label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button type="button" onClick={() => setForm(prev => ({ ...prev, for_sale: !prev.for_sale }))}
-                      className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-bold transition-all ${
-                        form.for_sale ? 'border-[#4A8BC2] bg-[#4A8BC2]/10 text-[#4A8BC2]' : 'border-[#333] bg-[#111] text-[#666] hover:border-[#444]'
-                      }`}>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      En Venta
-                    </button>
-                    <button type="button" onClick={() => setForm(prev => ({ ...prev, for_rent: !prev.for_rent }))}
-                      className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-bold transition-all ${
-                        form.for_rent ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-[#333] bg-[#111] text-[#666] hover:border-[#444]'
-                      }`}>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                      En Arriendo
-                    </button>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { mode: 'sale', label: 'En Venta', activeClass: 'border-[#4A8BC2] bg-[#4A8BC2]/10 text-[#4A8BC2]' },
+                      { mode: 'rent', label: 'En Arriendo', activeClass: 'border-green-500 bg-green-500/10 text-green-400' },
+                      { mode: 'both', label: 'Venta + Arriendo', activeClass: 'border-amber-500 bg-amber-500/10 text-amber-400' },
+                    ] as const).map(opt => (
+                      <button
+                        key={opt.mode}
+                        type="button"
+                        onClick={() => setBusinessMode(opt.mode)}
+                        className={`py-3 rounded-xl border-2 text-xs font-bold transition-all ${
+                          businessMode === opt.mode ? opt.activeClass : 'border-[#333] bg-[#111] text-[#666] hover:border-[#444]'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -616,10 +747,126 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
                     </div>
                   </div>
                   <div>
+                    <label className={labelClass}>Área privada</label>
+                    <div className="relative">
+                      <input type="number" name="private_area" value={form.private_area || ''} onChange={(e) => setForm(prev => ({ ...prev, private_area: Number(e.target.value) || 0 }))} min={0} className={inputClass + ' pr-10'} placeholder="0" />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] text-xs">m²</span>
+                    </div>
+                  </div>
+                </div>
+
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                  title="Extras"
+                />
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
                     <label className={labelClass}>Piso</label>
                     <input type="number" name="floor" value={form.floor || ''} onChange={(e) => setForm(prev => ({ ...prev, floor: Number(e.target.value) || 0 }))} min={0} className={inputClass} placeholder="0" />
                   </div>
+                  <div>
+                    <label className={labelClass}>Año construcción</label>
+                    <input
+                      type="number"
+                      name="year_built"
+                      value={form.year_built || ''}
+                      onChange={(e) => setForm(prev => ({ ...prev, year_built: Number(e.target.value) || 0 }))}
+                      min={1900}
+                      max={new Date().getFullYear() + 5}
+                      className={inputClass}
+                      placeholder="Ej: 2018"
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Cuota admin.</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4A8BC2] text-xs font-bold">$</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={feeDisplay}
+                        onChange={(e) => handlePriceChange('maintenance_fee', e.target.value)}
+                        className={inputClass + ' pl-7'}
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
                 </div>
+              </>
+            )}
+
+            {/* ─── TAB: FEATURES (Comodidades) ─── */}
+            {activeTab === 'features' && (
+              <>
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>}
+                  title="Características internas"
+                />
+                {featureCatalog.internal.length === 0 ? (
+                  <p className="text-xs text-[#666] italic">Cargando comodidades...</p>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {featureCatalog.internal.map(f => {
+                      const checked = (form.internal_features as number[]).includes(f.id);
+                      return (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => toggleFeature('internal_features', f.id)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs text-left transition-all ${
+                            checked
+                              ? 'border-[#4A8BC2] bg-[#4A8BC2]/10 text-white'
+                              : 'border-[#222] bg-[#111] text-[#888] hover:border-[#333]'
+                          }`}
+                        >
+                          <span className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${checked ? 'border-[#4A8BC2] bg-[#4A8BC2]' : 'border-[#444]'}`}>
+                            {checked && (
+                              <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                            )}
+                          </span>
+                          <span className="truncate">{f.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <SectionHeader
+                  icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>}
+                  title="Características externas"
+                />
+                {featureCatalog.external.length === 0 ? (
+                  <p className="text-xs text-[#666] italic">Cargando comodidades...</p>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {featureCatalog.external.map(f => {
+                      const checked = (form.external_features as number[]).includes(f.id);
+                      return (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => toggleFeature('external_features', f.id)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs text-left transition-all ${
+                            checked
+                              ? 'border-green-500 bg-green-500/10 text-white'
+                              : 'border-[#222] bg-[#111] text-[#888] hover:border-[#333]'
+                          }`}
+                        >
+                          <span className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${checked ? 'border-green-500 bg-green-500' : 'border-[#444]'}`}>
+                            {checked && (
+                              <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                            )}
+                          </span>
+                          <span className="truncate">{f.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <p className="text-[10px] text-[#555] pt-2">
+                  Seleccionadas: {(form.internal_features as number[]).length} internas, {(form.external_features as number[]).length} externas
+                </p>
               </>
             )}
 
@@ -687,15 +934,64 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
                 {/* Image Upload */}
                 <SectionHeader
                   icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
-                  title="Foto principal"
+                  title={isEditing ? 'Galería de fotos' : 'Fotos del inmueble'}
                 />
                 {isEditing && property ? (
                   <ImageUploader propertyId={property.id_property} onUploaded={() => {}} />
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed border-[#333] bg-[#111]">
-                    <svg className="w-8 h-8 text-[#444]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    <span className="text-xs text-[#888] text-center px-4">Primero guarda la propiedad, luego podrás subir fotos editándola</span>
-                    <span className="text-[10px] text-[#555]">Se abrirá el editor automáticamente</span>
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        capture="environment"
+                        onChange={handleQueuePhotos}
+                        disabled={saving}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 disabled:cursor-not-allowed"
+                        id="image-queue"
+                      />
+                      <label
+                        htmlFor="image-queue"
+                        className="flex flex-col items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed border-[#333] hover:border-[#4A8BC2]/40 bg-[#111] hover:bg-[#4A8BC2]/5 cursor-pointer transition-all"
+                      >
+                        <svg className="w-8 h-8 text-[#666]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <span className="text-xs text-[#888]">Agregar fotos a la cola</span>
+                        <span className="text-[10px] text-[#555]">Se subirán automáticamente al crear la propiedad</span>
+                      </label>
+                    </div>
+
+                    {pendingPhotos.length > 0 && (
+                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                        {pendingPhotos.map((p, idx) => (
+                          <div key={p.id} className="relative group aspect-square rounded-lg overflow-hidden border border-[#333]">
+                            <img src={p.preview} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => removeQueuedPhoto(p.id)}
+                              className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Quitar"
+                            >
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                            <span className="absolute bottom-1 left-1 text-[9px] font-bold text-white bg-black/60 px-1 rounded">#{idx + 1}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {pendingPhotos.length > 0 && (
+                      <p className="text-[10px] text-[#888]">
+                        {pendingPhotos.length} foto{pendingPhotos.length === 1 ? '' : 's'} en cola · se subirán después de guardar
+                      </p>
+                    )}
+
+                    {uploadProgress && (
+                      <div className="flex items-center gap-2 text-xs text-[#4A8BC2]">
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>
+                        {uploadProgress}
+                      </div>
+                    )}
                   </div>
                 )}
 
