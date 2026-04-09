@@ -69,8 +69,13 @@ function parseCOP(str: string): number {
   return Number(str.replace(/\./g, '').replace(/,/g, '')) || 0;
 }
 
-// Compress image client-side: resize to max dimension, convert to JPEG with quality
-async function compressImage(file: File, maxDim = 1600, quality = 0.82): Promise<string> {
+// Compress image client-side: resize to max dimension, convert to JPEG Blob (for multipart upload)
+// + return a tiny dataURL for local preview.
+async function compressImage(
+  file: File,
+  maxDim = 1600,
+  quality = 0.82
+): Promise<{ blob: Blob; preview: string }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -78,7 +83,6 @@ async function compressImage(file: File, maxDim = 1600, quality = 0.82): Promise
       img.onload = () => {
         const canvas = document.createElement('canvas');
         let { width, height } = img;
-        // Scale down if larger than maxDim
         if (width > maxDim || height > maxDim) {
           if (width > height) {
             height = Math.round((height * maxDim) / width);
@@ -92,8 +96,15 @@ async function compressImage(file: File, maxDim = 1600, quality = 0.82): Promise
         canvas.height = height;
         const ctx = canvas.getContext('2d')!;
         ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve(dataUrl);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return reject(new Error('No se pudo generar el blob'));
+            const preview = canvas.toDataURL('image/jpeg', 0.5);
+            resolve({ blob, preview });
+          },
+          'image/jpeg',
+          quality
+        );
       };
       img.onerror = reject;
       img.src = e.target?.result as string;
@@ -129,26 +140,30 @@ function ImageUploader({ propertyId, onUploaded }: { propertyId: number; onUploa
       setProgress(`Comprimiendo ${i + 1}/${totalFiles}...`);
 
       try {
-        // Compress image
-        const compressed = await compressImage(file);
-        setPreview(compressed);
+        // Compress to JPEG blob + preview
+        const { blob, preview } = await compressImage(file);
+        setPreview(preview);
 
         setProgress(`Subiendo ${i + 1}/${totalFiles}...`);
 
-        // Upload to WASI via our API
-        const res = await fetch(`/api/properties/${propertyId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ main_image: compressed }),
+        // Multipart upload to WASI via our new dedicated endpoint
+        const formData = new FormData();
+        formData.append('image', blob, `property-${propertyId}-${Date.now()}-${i}.jpg`);
+        formData.append('position', String(i + 1));
+
+        const res = await fetch(`/api/properties/${propertyId}/upload-image`, {
+          method: 'POST',
+          body: formData,
         });
 
-        if (res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.status === 'success') {
           uploaded++;
         } else {
-          const data = await res.json();
           setError(data.error || `Error al subir imagen ${i + 1}`);
         }
-      } catch {
+      } catch (err) {
+        console.error('upload error', err);
         setError(`Error procesando imagen ${i + 1}`);
       }
     }
@@ -275,7 +290,7 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
     id_region: 2,
     id_city: 496,
     id_zone: 0,
-    id_property_condition: 1,
+    id_property_condition: 2,
     id_status_on_page: 1,
   });
 
@@ -328,10 +343,47 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
     setError('');
     setSuccess('');
 
+    // ── Frontend validation before hitting WASI ──────────────────────────
+    if (!form.title.trim()) {
+      setActiveTab('info');
+      setError('El título es obligatorio.');
+      return;
+    }
+    if (!form.for_sale && !form.for_rent) {
+      setActiveTab('info');
+      setError('Debes marcar al menos un tipo de negocio: Venta o Arriendo.');
+      return;
+    }
+    if (form.for_sale && form.sale_price <= 0) {
+      setActiveTab('info');
+      setError('El precio de venta debe ser mayor que 0.');
+      return;
+    }
+    if (form.for_rent && form.rent_price <= 0) {
+      setActiveTab('info');
+      setError('El canon de arriendo debe ser mayor que 0.');
+      return;
+    }
+    if (!form.id_region) {
+      setActiveTab('location');
+      setError('Debes seleccionar un departamento.');
+      return;
+    }
+    if (!form.id_city) {
+      setActiveTab('location');
+      setError('Debes seleccionar una ciudad.');
+      return;
+    }
+    if (!form.id_property_type) {
+      setActiveTab('info');
+      setError('Debes seleccionar un tipo de inmueble.');
+      return;
+    }
+
+    setSaving(true);
     try {
       const payload: Record<string, unknown> = { ...form };
       if (!payload.id_zone) delete payload.id_zone;
@@ -352,7 +404,7 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
         });
       }
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok && data.status === 'success') {
         setSuccess(isEditing ? 'Propiedad actualizada exitosamente' : `Propiedad creada (ID: ${data.id_property}) — Abriendo editor para subir fotos...`);
         setTimeout(() => {
@@ -363,10 +415,12 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
           }
         }, 1500);
       } else {
-        setError(data.error || 'Error al guardar');
+        // Surface WASI's real error message when available
+        setError(data.error || data.message || `Error al guardar (HTTP ${res.status})`);
       }
-    } catch {
-      setError('Error de conexión');
+    } catch (err) {
+      console.error('submit error', err);
+      setError('Error de conexión — revisa tu internet e intenta de nuevo.');
     } finally {
       setSaving(false);
     }
@@ -507,11 +561,16 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
                   </div>
                   <div>
                     <label className={labelClass}>Condición</label>
-                    <div className="flex gap-2">
-                      {[{ v: 1, l: 'Nuevo' }, { v: 2, l: 'Usado' }, { v: 3, l: 'Remodelado' }].map(opt => (
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { v: 2, l: 'Usado' },
+                        { v: 1, l: 'Nuevo' },
+                        { v: 3, l: 'Proyecto' },
+                        { v: 4, l: 'En construcción' },
+                      ].map(opt => (
                         <button key={opt.v} type="button"
                           onClick={() => setForm(prev => ({ ...prev, id_property_condition: opt.v }))}
-                          className={`flex-1 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                          className={`py-2.5 rounded-lg text-xs font-medium transition-all ${
                             form.id_property_condition === opt.v
                               ? 'bg-[#4A8BC2]/20 border border-[#4A8BC2]/50 text-[#4A8BC2]'
                               : 'bg-[#111] border border-[#333] text-[#888] hover:border-[#444]'
@@ -648,8 +707,8 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
                   <label className={labelClass}>Estado en página web</label>
                   <div className="flex gap-2">
                     {[
-                      { v: 1, l: 'Publicado', color: 'green' },
-                      { v: 2, l: 'Oculto', color: 'gray' },
+                      { v: 1, l: 'Activo', color: 'green' },
+                      { v: 2, l: 'Inactivo', color: 'gray' },
                       { v: 3, l: 'Destacado', color: 'amber' },
                     ].map(opt => (
                       <button key={opt.v} type="button"
@@ -766,7 +825,7 @@ export default function PropiedadesPage() {
   };
 
   const handleDeactivate = async (prop: Property) => {
-    if (!confirm(`¿Desactivar "${prop.title}"?\nSe cambiará a "No publicado" en WASI.`)) return;
+    if (!confirm(`¿Desactivar "${prop.title}"?\nSe marcará como "Inactivo" en WASI (no se mostrará en la web).`)) return;
     setDeactivating(prop.id_property);
     try {
       const res = await fetch(`/api/properties/${prop.id_property}`, {
