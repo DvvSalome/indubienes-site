@@ -307,29 +307,39 @@ function extractFeatureIds(raw: any): number[] {
 
 /**
  * Normalize WASI image object.
- * WASI's `url_original` field is BROKEN: it returns a tiny 100x90 thumbnail
- * (e.g. https://images.wasi.co/inmuebles/7596220260319055529.jpg is only 100x90).
- * The REAL raw photo lives at the same path but with a "g" prefix on the filename:
- *   https://images.wasi.co/inmuebles/g7596220260319055529.jpg (979x734)
- * We derive the correct URL from the `filename` field whenever possible.
- * `url`/`url_big` are the processed image.wasi.co tokens — they work but apply
- * fit:"contain" with white letterboxing on portrait shots, so we keep them only
- * as fallbacks when the filename isn't available.
+ *
+ * History: previously WASI's `url_original` returned a tiny 100x90 thumbnail and we
+ * worked around it by deriving a "g"-prefixed filename URL. WASI has since fixed
+ * `url_original` to return the true raw photo (e.g. 960x1280). The old workaround
+ * now produces the OPPOSITE bug: the "g"-prefixed URL returns a 979x734 image that
+ * WASI has pre-processed with `fit:contain` and a white background — i.e. portrait
+ * photos arrive with white letterboxing already baked into the pixels.
+ *
+ * `url` and `url_big` are the image.wasi.co resize tokens; decoding their base64
+ * shows `"fit":"contain","background":{"r":255,"g":255,"b":255}`, so they also
+ * letterbox. We only use them as a last resort.
+ *
+ * Trust order: url_original (raw, no letterbox) → raw-filename URL → url_big → url
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function fixImageObject(img: any): { url: string; url_big: string; url_original: string } {
   if (!img) return { url: '/placeholder-property.jpg', url_big: '/placeholder-property.jpg', url_original: '/placeholder-property.jpg' };
 
-  // Derive the real raw photo URL from filename (fixes WASI's broken url_original).
-  let urlOriginal = '';
-  const filename = typeof img.filename === 'string' ? img.filename : '';
-  if (filename) {
-    // Prefix with "g" if not already present
-    const normalized = filename.startsWith('g') ? filename : `g${filename}`;
-    urlOriginal = `https://images.wasi.co/inmuebles/${normalized}`;
-  } else {
-    urlOriginal = img.url_original || img.url_big || img.url || '';
+  // Prefer WASI's raw url_original if present. Never "g"-prefix — that returns the
+  // pre-letterboxed 979x734 processed image, which is exactly the bug we're fixing.
+  let urlOriginal = typeof img.url_original === 'string' ? img.url_original.trim() : '';
+
+  // Fall back to deriving the raw URL from the filename (NO "g" prefix).
+  if (!urlOriginal) {
+    const filename = typeof img.filename === 'string' ? img.filename : '';
+    if (filename) {
+      const rawName = filename.startsWith('g') ? filename.slice(1) : filename;
+      urlOriginal = `https://images.wasi.co/inmuebles/${rawName}`;
+    }
   }
+
+  // Last resort: the base64 resize-token URLs (they letterbox, but better than nothing).
+  if (!urlOriginal) urlOriginal = img.url_big || img.url || '';
 
   return {
     url: img.url || '',
