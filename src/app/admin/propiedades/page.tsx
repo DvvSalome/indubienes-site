@@ -343,25 +343,29 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
   const [uploadProgress, setUploadProgress] = useState<string>('');
 
   useEffect(() => {
-    fetch('/api/locations?type=property-types').then(r => r.json()).then(d => setPropertyTypes(d.data || []));
-    fetch('/api/locations?type=regions&country=1').then(r => r.json()).then(d => setRegions(d.data || []));
-    fetch('/api/locations?type=features').then(r => r.json()).then(d => {
+    const ac = new AbortController();
+    fetch('/api/locations?type=property-types', { signal: ac.signal }).then(r => r.json()).then(d => setPropertyTypes(d.data || [])).catch(() => {});
+    fetch('/api/locations?type=regions&country=1', { signal: ac.signal }).then(r => r.json()).then(d => setRegions(d.data || [])).catch(() => {});
+    fetch('/api/locations?type=features', { signal: ac.signal }).then(r => r.json()).then(d => {
       if (d.data && (d.data.internal || d.data.external)) {
         setFeatureCatalog({ internal: d.data.internal || [], external: d.data.external || [] });
       }
     }).catch(() => { /* non-fatal — features are optional */ });
+    return () => ac.abort();
   }, []);
 
   useEffect(() => {
-    if (form.id_region) {
-      fetch(`/api/locations?type=cities&region=${form.id_region}`).then(r => r.json()).then(d => setCities(d.data || []));
-    }
+    if (!form.id_region) return;
+    const ac = new AbortController();
+    fetch(`/api/locations?type=cities&region=${form.id_region}`, { signal: ac.signal }).then(r => r.json()).then(d => setCities(d.data || [])).catch(() => {});
+    return () => ac.abort();
   }, [form.id_region]);
 
   useEffect(() => {
-    if (form.id_city) {
-      fetch(`/api/locations?type=zones&city=${form.id_city}`).then(r => r.json()).then(d => setZones(d.data || []));
-    }
+    if (!form.id_city) return;
+    const ac = new AbortController();
+    fetch(`/api/locations?type=zones&city=${form.id_city}`, { signal: ac.signal }).then(r => r.json()).then(d => setZones(d.data || [])).catch(() => {});
+    return () => ac.abort();
   }, [form.id_city]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -434,6 +438,7 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (saving) return; // Prevent concurrent submissions (race condition guard)
     setError('');
     setSuccess('');
 
@@ -509,7 +514,6 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
       if (!res.ok || data.status !== 'success') {
         // Surface WASI's real error message when available
         setError(data.error || data.message || `Error al guardar (HTTP ${res.status})`);
-        setSaving(false);
         return;
       }
 
@@ -557,6 +561,7 @@ function PropertyFormModal({ property, onClose, onSaved, onCreated }: PropertyFo
     } catch (err) {
       console.error('submit error', err);
       setError('Error de conexión — revisa tu internet e intenta de nuevo.');
+    } finally {
       setSaving(false);
     }
   };
