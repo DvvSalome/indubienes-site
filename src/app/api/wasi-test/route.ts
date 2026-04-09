@@ -3,36 +3,34 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const raw_company = process.env.WASI_COMPANY_ID || '';
-  const raw_token = process.env.WASI_TOKEN || '';
-  const company = raw_company.trim();
-  const token = raw_token.trim();
+  const env_company = (process.env.WASI_COMPANY_ID || '').trim();
+  const env_token = (process.env.WASI_TOKEN || '').trim();
+  const hard_company = '1288465';
+  const hard_token = '***REDACTED***';
 
-  const url = `https://api.wasi.co/v1/property/highlighted/?id_company=${encodeURIComponent(company)}&wasi_token=${encodeURIComponent(token)}&for_sale=true`;
-
-  try {
+  async function callWasi(c: string, t: string) {
+    const url = `https://api.wasi.co/v1/property/highlighted/?id_company=${encodeURIComponent(c)}&wasi_token=${encodeURIComponent(t)}&for_sale=true`;
     const r = await fetch(url, { cache: 'no-store' });
     const text = await r.text();
-    let parsed: unknown = null;
-    try { parsed = JSON.parse(text); } catch {}
-    const numericKeys = parsed && typeof parsed === 'object'
-      ? Object.keys(parsed as Record<string, unknown>).filter(k => !isNaN(Number(k)))
-      : [];
-
-    return NextResponse.json({
-      raw_company_length: raw_company.length,
-      raw_company_charcodes: Array.from(raw_company).map(c => c.charCodeAt(0)),
-      raw_token_length: raw_token.length,
-      raw_token_first_4: raw_token.substring(0, 4),
-      raw_token_last_4: raw_token.substring(raw_token.length - 4),
-      raw_token_last_charcode: raw_token.length > 0 ? raw_token.charCodeAt(raw_token.length - 1) : null,
-      trimmed_company_length: company.length,
-      trimmed_token_length: token.length,
-      http_status: r.status,
-      response_preview: text.substring(0, 300),
-      numeric_keys_count: numericKeys.length,
-    });
-  } catch (e) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
+    return { status: r.status, body: text.substring(0, 200) };
   }
+
+  const env_charcodes = Array.from(env_token).map(c => c.charCodeAt(0));
+  const hard_charcodes = Array.from(hard_token).map(c => c.charCodeAt(0));
+  const env_eq_hard = env_token === hard_token;
+
+  const env_result = await callWasi(env_company, env_token);
+  const hard_result = await callWasi(hard_company, hard_token);
+
+  return NextResponse.json({
+    env_token_length: env_token.length,
+    hard_token_length: hard_token.length,
+    env_eq_hard,
+    env_charcodes,
+    hard_charcodes,
+    env_company_eq: env_company === hard_company,
+    env_company_chars: Array.from(env_company).map(c => c.charCodeAt(0)),
+    env_result,
+    hard_result,
+  });
 }
