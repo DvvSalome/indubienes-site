@@ -466,117 +466,18 @@ export default function PropertyDetailClient({ property }: Props) {
                 </div>
               )}
 
-              {/* KPI Stats — up to 4 highest-priority metrics */}
-              {(() => {
-                type Kpi = { value: string | number; label: string; icon: React.ReactNode };
-                const kpiList: (Kpi | null)[] = [
-                  property.bedrooms
-                    ? {
-                        value: property.bedrooms,
-                        label: 'Alcobas',
-                        icon: (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8" />
-                            <path d="M2 17h20" />
-                            <path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" />
-                          </svg>
-                        ),
-                      }
-                    : null,
-                  property.bathrooms
-                    ? {
-                        value: property.bathrooms,
-                        label: 'Baños',
-                        icon: (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M9 6 7 4H3v6h18V8a2 2 0 0 0-2-2h-6" />
-                            <path d="M3 10v4a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4v-4" />
-                            <path d="m6 20-1 2" />
-                            <path d="m19 22-1-2" />
-                          </svg>
-                        ),
-                      }
-                    : null,
-                  property.built_area
-                    ? {
-                        value: `${property.built_area} m²`,
-                        label: 'Construida',
-                        icon: (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                            <path d="M3 9h18" />
-                            <path d="M9 21V9" />
-                          </svg>
-                        ),
-                      }
-                    : null,
-                  property.private_area && !property.built_area
-                    ? {
-                        value: `${property.private_area} m²`,
-                        label: 'Privada',
-                        icon: (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                          </svg>
-                        ),
-                      }
-                    : null,
-                  property.stratum
-                    ? {
-                        value: property.stratum,
-                        label: 'Estrato',
-                        icon: (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
-                            <path d="M6 12H4a2 2 0 0 0-2 2v8h4" />
-                            <path d="M18 9h2a2 2 0 0 1 2 2v11h-4" />
-                            <path d="M10 6h4M10 10h4M10 14h4M10 18h4" />
-                          </svg>
-                        ),
-                      }
-                    : null,
-                  property.floor
-                    ? {
-                        value: property.floor,
-                        label: 'Piso',
-                        icon: (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m18 15-6-6-6 6" />
-                            <path d="M6 21h12" />
-                          </svg>
-                        ),
-                      }
-                    : null,
-                ];
-                const kpis = kpiList.filter((k): k is Kpi => k !== null).slice(0, 4);
-                if (kpis.length === 0) return null;
-                const gridCols =
-                  kpis.length === 1 ? 'grid-cols-1' :
-                  kpis.length === 2 ? 'grid-cols-2' :
-                  kpis.length === 3 ? 'grid-cols-3' :
-                  'grid-cols-2 md:grid-cols-4';
-                return (
-                  <div className={`grid gap-3 mb-4 ${gridCols}`}>
-                    {kpis.map((k) => (
-                      <div key={k.label} className="bg-surface border border-border/60 rounded-xl p-4 text-center hover:border-gold/40 transition-colors">
-                        <div className="w-8 h-8 mx-auto mb-2 text-gold">{k.icon}</div>
-                        <div className="text-2xl sm:text-3xl font-display font-bold text-foreground leading-none">{k.value}</div>
-                        <div className="text-[10px] font-body uppercase tracking-[0.15em] text-muted mt-2">{k.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })()}
-
-              {/* Secondary metadata — definition list */}
+              {/* Full technical metadata — definition list */}
               {(() => {
                 const rows = [
                   { label: 'Tipo de negocio', value: businessType },
                   { label: 'Tipo de inmueble', value: property.property_type_label },
                   { label: 'Estado', value: property.property_condition_label },
                   { label: 'Año construcción', value: property.year_built || null },
+                  { label: 'Estrato', value: property.stratum || null },
+                  { label: 'Piso', value: property.floor || null },
+                  { label: 'Área construida', value: property.built_area ? `${property.built_area} m²` : null },
+                  { label: 'Área privada', value: property.private_area ? `${property.private_area} m²` : null },
                   { label: 'Área terreno', value: property.area ? `${property.area} m²` : null },
-                  { label: 'Área privada', value: (property.private_area && property.built_area) ? `${property.private_area} m²` : null },
                   { label: 'Código', value: property.id_property },
                 ].filter((r) => r.value !== null && r.value !== undefined && r.value !== '' && r.value !== 0);
                 if (rows.length === 0) return null;
