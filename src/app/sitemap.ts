@@ -48,23 +48,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // We pull in pages of 100 until we've collected `total` or hit a safety cap.
   let propertyRoutes: MetadataRoute.Sitemap = [];
   try {
+    // WASI caps `take` around 100 per request, so we page through explicitly.
     const pageSize = 100;
-    const safetyCap = 1000; // guard against runaway loops
+    const safetyCap = 2000; // guard against runaway loops
+    const maxPages = 20;
     let skip = 0;
     let total = Infinity;
-    const ids: number[] = [];
+    const ids = new Set<number>();
 
-    while (skip < total && ids.length < safetyCap) {
+    for (let page = 0; page < maxPages && skip < total && ids.size < safetyCap; page++) {
       const { properties, total: t } = await searchProperties({ skip, take: pageSize });
+      if (t) total = t;
       if (!properties.length) break;
-      total = t;
       for (const p of properties) {
-        if (p.id_property) ids.push(p.id_property);
+        if (p.id_property) ids.add(p.id_property);
       }
+      // If this page returned less than a full page, we're done.
+      if (properties.length < pageSize) break;
       skip += pageSize;
     }
 
-    propertyRoutes = ids.map((id) => ({
+    propertyRoutes = Array.from(ids).map((id) => ({
       url: `${SITE_URL}/propiedad/${id}`,
       lastModified: now,
       changeFrequency: 'weekly' as const,
