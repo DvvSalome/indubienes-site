@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     url: 'https://indubienes-site.vercel.app/contacto',
     type: 'website',
     locale: 'es_CO',
+    images: [{ url: '/logo-hd.png', width: 1200, height: 630, alt: 'Indubienes - Contacto' }],
   },
 };
 
