@@ -1,13 +1,16 @@
 import Link from 'next/link';
 import Logo from './Logo';
 
+// IMPORTANT: IDs are the real WASI property-type IDs for this company.
+// Verified against live /api/properties results on 2026-04-10.
+//   1=Casa, 2=Apartamento, 3=Local, 4=Oficina, 5=Lote, 7=Finca, 8=Bodega, 14=Apartaestudio
 const propertyTypes = [
   { label: 'Apartamentos', id: 2, icon: (<><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4" /><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01" /></>) },
-  { label: 'Casas', id: 3, icon: (<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />) },
-  { label: 'Apartaestudios', id: 1, icon: (<><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M15 9v12" /></>) },
-  { label: 'Locales', id: 4, icon: (<><path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9h18" /><path d="M9 20v-6h6v6" /></>) },
-  { label: 'Bodegas', id: 5, icon: (<><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35z" /><path d="M6 18h12v-7H6z" /></>) },
-  { label: 'Fincas', id: 6, icon: (<><path d="M2 22h20M4 22V10l8-6 8 6v12" /><path d="M10 22v-6h4v6" /><circle cx="18" cy="6" r="2" /></>) },
+  { label: 'Casas', id: 1, icon: (<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />) },
+  { label: 'Apartaestudios', id: 14, icon: (<><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M15 9v12" /></>) },
+  { label: 'Locales', id: 3, icon: (<><path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9h18" /><path d="M9 20v-6h6v6" /></>) },
+  { label: 'Bodegas', id: 8, icon: (<><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35z" /><path d="M6 18h12v-7H6z" /></>) },
+  { label: 'Fincas', id: 7, icon: (<><path d="M2 22h20M4 22V10l8-6 8 6v12" /><path d="M10 22v-6h4v6" /><circle cx="18" cy="6" r="2" /></>) },
 ];
 
 const navLinks = [
@@ -225,3 +228,4 @@ export default function Footer() {
     </footer>
   );
 }
+
