@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import PropertyCard from '@/components/PropertyCard';
 import { getHighlightedProperties } from '@/lib/wasi';
 import HeroSearch from '@/components/HeroSearch';
@@ -109,11 +110,14 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24 items-center">
             {/* Image */}
             <div className="about-animate about-image scroll-reveal reveal-left relative overflow-hidden sm:overflow-visible">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden relative bg-neutral-100">
+                <Image
+                  src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=900&fit=crop&auto=format&q=80"
                   alt="Asesor inmobiliario acompañando a una familia en la búsqueda de su propiedad"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 hover:scale-105"
+                  priority
                 />
               </div>
               {/* Decorative accent */}
@@ -225,3 +229,4 @@ export default async function HomePage() {
     </>
   );
 }
+
