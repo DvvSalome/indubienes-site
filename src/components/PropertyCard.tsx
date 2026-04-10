@@ -50,8 +50,8 @@ function PropertyCardInner({ property }: { property: Property }) {
     [property.zone_label, property.city_label].filter(Boolean).join(', ');
 
   return (
-    <Link href={`/propiedad/${property.id_property}`} className="block group">
-      <div className="property-card bg-white dark:bg-card rounded-2xl overflow-hidden border border-black/[0.06] dark:border-border hover:border-gold/30 dark:hover:border-gold/30 transition-all duration-300">
+    <Link href={`/propiedad/${property.id_property}`} className="block group h-full">
+      <div className="property-card h-full flex flex-col bg-white dark:bg-card rounded-2xl overflow-hidden border border-black/[0.06] dark:border-border hover:border-gold/30 dark:hover:border-gold/30 transition-all duration-300">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900 image-shine">
           <Image
@@ -114,7 +114,7 @@ function PropertyCardInner({ property }: { property: Property }) {
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-4 flex flex-col flex-1">
           <h3 className="font-display text-base text-foreground mb-1 line-clamp-1 group-hover:text-gold transition-colors duration-300">
             {displayTitle}
           </h3>
@@ -128,7 +128,7 @@ function PropertyCardInner({ property }: { property: Property }) {
           </p>
 
           {/* Specs row */}
-          <div className="flex items-center gap-3 text-xs text-muted pt-3 border-t border-border/50">
+          <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted pt-3 border-t border-border/50">
             {property.bedrooms > 0 && (
               <span className="flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -176,4 +176,5 @@ export default React.memo(PropertyCardInner, (prev, next) =>
   prev.property.id_property === next.property.id_property &&
   prev.property.main_image?.url_original === next.property.main_image?.url_original
 );
+
 
