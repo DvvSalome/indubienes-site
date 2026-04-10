@@ -21,14 +21,18 @@ export default function HomeAnimations() {
       // === HERO TIMELINE ===
       const heroTl = gsap.timeline({ delay: 0.3 });
 
-      // Background Ken Burns zoom
-      heroTl.fromTo('.hero-bg-image', {
-        scale: 1.15,
-      }, {
-        scale: 1,
-        duration: 2.5,
-        ease: 'power2.out',
-      }, 0);
+      // Background Ken Burns zoom — only if fallback image is present
+      // (when videos are active, <video> elements are used instead)
+      const heroBgEl = document.querySelector('.hero-bg-image');
+      if (heroBgEl) {
+        heroTl.fromTo('.hero-bg-image', {
+          scale: 1.15,
+        }, {
+          scale: 1,
+          duration: 2.5,
+          ease: 'power2.out',
+        }, 0);
+      }
 
       // Tagline
       heroTl.to('.hero-tagline', {
@@ -59,18 +63,20 @@ export default function HomeAnimations() {
         opacity: 0.5, duration: 0.6,
       }, 1.6);
 
-      // === PARALLAX on hero bg ===
-      const parallax = gsap.to('.hero-bg-image', {
-        yPercent: 20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.hero-section',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-        },
-      });
-      scrollTriggerInstances.push(parallax);
+      // === PARALLAX on hero bg === (only when fallback image is visible)
+      if (heroBgEl) {
+        const parallax = gsap.to('.hero-bg-image', {
+          yPercent: 20,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.hero-section',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+        scrollTriggerInstances.push(parallax);
+      }
 
       // === SCROLL-REVEAL sections with GSAP ScrollTrigger ===
       // Featured Properties section
@@ -229,3 +235,4 @@ export default function HomeAnimations() {
 
   return null;
 }
+
