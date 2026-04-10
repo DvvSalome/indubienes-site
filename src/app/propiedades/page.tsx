@@ -1,8 +1,24 @@
+import type { Metadata } from 'next';
 import { searchProperties, getPropertyTypes } from '@/lib/wasi';
 import PropertiesClient from './PropertiesClient';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Propiedades en Venta y Arriendo en Medellín',
+  description:
+    'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín y el Área Metropolitana. Filtra por zona, precio y tipo.',
+  alternates: { canonical: '/propiedades' },
+  openGraph: {
+    title: 'Propiedades en Venta y Arriendo en Medellín | Indubienes',
+    description:
+      'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín y el Área Metropolitana.',
+    url: 'https://indubienes-site.vercel.app/propiedades',
+    type: 'website',
+    locale: 'es_CO',
+  },
+};
 
 interface Props {
   searchParams: {
@@ -115,4 +131,5 @@ export default async function PropiedadesPage({ searchParams }: Props) {
     </div>
   );
 }
+
 
