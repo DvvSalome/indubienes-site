@@ -9,8 +9,10 @@ const propertyTypes = [
   { label: 'Casas', id: 1, icon: (<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />) },
   { label: 'Apartaestudios', id: 14, icon: (<><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M15 9v12" /></>) },
   { label: 'Locales', id: 3, icon: (<><path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9h18" /><path d="M9 20v-6h6v6" /></>) },
+  { label: 'Oficinas', id: 4, icon: (<><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M2 13h20" /></>) },
   { label: 'Bodegas', id: 8, icon: (<><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35z" /><path d="M6 18h12v-7H6z" /></>) },
   { label: 'Fincas', id: 7, icon: (<><path d="M2 22h20M4 22V10l8-6 8 6v12" /><path d="M10 22v-6h4v6" /><circle cx="18" cy="6" r="2" /></>) },
+  { label: 'Lotes', id: 5, icon: (<><path d="M3 3h18v18H3z" /><path d="M3 9h18M3 15h18M9 3v18M15 3v18" /></>) },
 ];
 
 const navLinks = [
@@ -125,19 +127,19 @@ export default function Footer() {
           {/* TIPOS CARD */}
           <div className="md:col-span-3 bg-white rounded-2xl p-7 shadow-sm border border-black/5">
             <CardHeading>Tipos de inmueble</CardHeading>
-            <ul className="space-y-0.5">
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-0">
               {propertyTypes.map(({ label, id, icon }) => (
                 <li key={label}>
                   <Link
                     href={`/propiedades?propiedad=${id}`}
-                    className="group flex items-center gap-2.5 py-2 text-[14px] text-muted hover:text-gold transition-colors duration-200 min-h-[36px]"
+                    className="group flex items-center gap-2 py-1.5 text-[13px] text-muted hover:text-gold transition-colors duration-200 min-h-[32px]"
                   >
-                    <span className="flex items-center justify-center w-7 h-7 rounded-md bg-neutral-50 border border-black/5 text-muted/70 group-hover:border-gold/40 group-hover:text-gold group-hover:bg-gold/5 transition-all duration-300">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-md bg-neutral-50 border border-black/5 text-muted/70 group-hover:border-gold/40 group-hover:text-gold group-hover:bg-gold/5 transition-all duration-300">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         {icon}
                       </svg>
                     </span>
-                    {label}
+                    <span className="truncate">{label}</span>
                   </Link>
                 </li>
               ))}
