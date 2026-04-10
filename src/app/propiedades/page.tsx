@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     url: 'https://indubienes-site.vercel.app/propiedades',
     type: 'website',
     locale: 'es_CO',
+    images: [{ url: '/logo-hd.png', width: 1200, height: 630, alt: 'Indubienes - Propiedades' }],
   },
 };
 
