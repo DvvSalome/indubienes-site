@@ -564,19 +564,35 @@ export default function PropertyDetailClient({ property }: Props) {
               </div>
             )}
 
-            {/* Map placeholder */}
+            {/* Satellite map */}
             {property.latitude && property.longitude && (
               <div ref={mapRef} className="mb-8">
-                <h2 className="text-xl font-display font-bold text-foreground mb-4">Ubicación</h2>
-                <div className="aspect-[16/9] rounded-xl overflow-hidden border border-border">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-display font-bold text-foreground">Ubicación</h2>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
+                  >
+                    Abrir en Google Maps
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                </div>
+                <div className="relative aspect-[16/9] rounded-xl overflow-hidden border border-border shadow-lg">
                   <iframe
-                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.01},${property.latitude - 0.005},${property.longitude + 0.01},${property.latitude + 0.005}&layer=mapnik&marker=${property.latitude},${property.longitude}`}
+                    src={`https://www.google.com/maps?q=${property.latitude},${property.longitude}&t=h&z=17&ie=UTF8&output=embed`}
                     className="w-full h-full"
                     style={{ border: 0 }}
                     loading="lazy"
-                    title="Ubicación de la propiedad"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Ubicación satelital de la propiedad"
                   />
+                  <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl" />
                 </div>
+                <p className="text-xs text-muted-foreground mt-2 italic">
+                  Vista satelital híbrida · La ubicación exacta se comparte al agendar una visita.
+                </p>
               </div>
             )}
           </div>
