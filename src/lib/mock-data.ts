@@ -329,12 +329,16 @@ export const mockProperties: Property[] = [
   },
 ];
 
+// Real WASI property-type IDs (verified 2026-04-10 against live /api/properties).
+// Used only as a fallback when WASI's /property-type/all endpoint fails.
 export const mockPropertyTypes: PropertyType[] = [
-  { id_property_type: 1, name: 'Apartaestudio', count: 5 },
+  { id_property_type: 1, name: 'Casa', count: 16 },
   { id_property_type: 2, name: 'Apartamento', count: 53 },
-  { id_property_type: 3, name: 'Casa', count: 16 },
-  { id_property_type: 4, name: 'Local Comercial', count: 3 },
-  { id_property_type: 5, name: 'Bodega', count: 1 },
-  { id_property_type: 6, name: 'Finca', count: 2 },
-  { id_property_type: 7, name: 'Lote', count: 4 },
+  { id_property_type: 3, name: 'Local Comercial', count: 3 },
+  { id_property_type: 4, name: 'Oficina', count: 1 },
+  { id_property_type: 5, name: 'Lote', count: 4 },
+  { id_property_type: 7, name: 'Finca', count: 2 },
+  { id_property_type: 8, name: 'Bodega', count: 1 },
+  { id_property_type: 14, name: 'Apartaestudio', count: 5 },
 ];
+
