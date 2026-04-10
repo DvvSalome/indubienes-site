@@ -68,6 +68,24 @@ function PropertyCardInner({ property }: { property: Property }) {
           {/* Gradient overlay — stronger at top and bottom for badge + price readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/30" />
 
+          {/* Watermark — glass pill in top-right, anti-theft brand mark */}
+          <div
+            className="absolute top-3 right-3 z-10 pointer-events-none select-none"
+            aria-hidden="true"
+          >
+            <div className="w-10 h-10 rounded-full bg-black/35 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg ring-1 ring-black/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/favicon.svg"
+                alt=""
+                width={22}
+                height={22}
+                className="opacity-95"
+                draggable={false}
+              />
+            </div>
+          </div>
+
           {/* Badges */}
           <div className="absolute top-3 left-3 z-10 flex gap-2">
             <span className={`px-3 py-1.5 text-xs font-body font-bold rounded-full tracking-wide uppercase shadow-lg border ${
