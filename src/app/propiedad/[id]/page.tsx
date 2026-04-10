@@ -19,13 +19,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Propiedad no encontrada' };
   }
 
+  // WASI property type ID → human label (fallback when property_type_label is empty)
+  const TYPE_LABELS: Record<number, string> = {
+    1: 'Casa',
+    2: 'Apartamento',
+    3: 'Local',
+    4: 'Oficina',
+    5: 'Lote',
+    7: 'Finca',
+    8: 'Bodega',
+    11: 'Casa Lote',
+    14: 'Apartaestudio',
+    20: 'Apartamento Duplex',
+    29: 'Habitación',
+  };
+
   const tipo = property.for_sale ? 'Venta' : property.for_rent ? 'Arriendo' : '';
   const zona = property.zone_label || property.city_label || 'Medellín';
   const precio = property.for_sale
     ? property.sale_price_label
     : property.rent_price_label;
 
-  const rawTitle = `${tipo} ${property.property_type_label || 'Propiedad'} en ${zona}`;
+  const typeLabel =
+    property.property_type_label ||
+    TYPE_LABELS[property.id_property_type as number] ||
+    'Propiedad';
+
+  // Prefer real property.title when it exists (WASI returns empty property_type_label often).
+  const rawTitle = property.title
+    ? property.title
+    : `${tipo} ${typeLabel} en ${zona}`;
   const title = rawTitle.length > 60 ? rawTitle.slice(0, 57) + '...' : rawTitle;
 
   const descParts: string[] = [];
@@ -34,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (property.built_area) descParts.push(`${property.built_area} m²`);
   if (property.garages) descParts.push(`${property.garages} parq`);
   const specs = descParts.join(', ');
-  const baseDesc = `${tipo} de ${property.property_type_label?.toLowerCase() || 'propiedad'} en ${zona}. ${specs}. ${precio ? `Precio: ${precio}.` : ''} Indubienes.`;
+  const baseDesc = `${tipo} de ${typeLabel.toLowerCase()} en ${zona}. ${specs}. ${precio ? `Precio: ${precio}.` : ''} Indubienes.`;
   const description = baseDesc.length > 155 ? baseDesc.slice(0, 152) + '...' : baseDesc;
 
   const canonicalPath = `/propiedad/${id}`;
