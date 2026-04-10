@@ -130,8 +130,11 @@ function PropertyCardInner({ property }: { property: Property }) {
             )}
             {property.area > 0 && (
               <span className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 3L3 3l18 18" /><path d="M3 3v18" /><path d="M21 3v4" /><path d="M3 21h4" /><path d="M17 7l-10 10" />
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                  <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                  <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                  <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
                 </svg>
                 {property.area} m²
               </span>
@@ -155,3 +158,4 @@ export default React.memo(PropertyCardInner, (prev, next) =>
   prev.property.id_property === next.property.id_property &&
   prev.property.main_image?.url_original === next.property.main_image?.url_original
 );
+
