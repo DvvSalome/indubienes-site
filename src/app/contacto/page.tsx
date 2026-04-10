@@ -2,8 +2,16 @@ import type { Metadata } from 'next';
 import ContactForm from './ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contacto | Indubienes - Inmobiliaria en Medellín',
+  title: 'Contacto',
   description: 'Contáctenos para asesoría inmobiliaria en Medellín. Venta, arriendo y administración de propiedades.',
+  alternates: { canonical: '/contacto' },
+  openGraph: {
+    title: 'Contacto | Indubienes',
+    description: 'Contáctenos para asesoría inmobiliaria en Medellín. Venta, arriendo y administración de propiedades.',
+    url: 'https://indubienes-site.vercel.app/contacto',
+    type: 'website',
+    locale: 'es_CO',
+  },
 };
 
 export default function ContactPage() {
@@ -134,3 +142,4 @@ export default function ContactPage() {
     </div>
   );
 }
+
