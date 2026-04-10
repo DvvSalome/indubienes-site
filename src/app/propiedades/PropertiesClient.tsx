@@ -98,11 +98,20 @@ export default function PropertiesClient({
   }, [hasMore, loading, prefetchedBatch, properties.length, fetchNextBatch]);
 
   // Actual "Cargar más" click
+  // We force a minimum visible skeleton time (~450ms) so that when prefetch
+  // has already resolved the batch, users still see the loading feedback —
+  // otherwise the state flashes for a single frame and feels abrupt.
+  const MIN_SKELETON_MS = 450;
   const loadMore = useCallback(async () => {
     if (!hasMore || loading) return;
     setLoading(true);
+    const started = performance.now();
     try {
       const batch = prefetchedBatch ?? (await fetchNextBatch(properties.length));
+      const elapsed = performance.now() - started;
+      if (elapsed < MIN_SKELETON_MS) {
+        await new Promise((r) => setTimeout(r, MIN_SKELETON_MS - elapsed));
+      }
       newCardsCountRef.current = batch.length;
       setProperties((prev) => [...prev, ...batch]);
       setPrefetchedBatch(null);
