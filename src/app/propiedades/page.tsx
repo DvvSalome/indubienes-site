@@ -13,14 +13,13 @@ interface Props {
     maxPrecio?: string;
     habitaciones?: string;
     banos?: string;
-    page?: string;
   };
 }
 
 export default async function PropiedadesPage({ searchParams }: Props) {
-  const page = parseInt(searchParams.page || '1', 10);
+  // First page only — client handles "Cargar más" with incremental fetches
   const take = 12;
-  const skip = (page - 1) * take;
+  const skip = 0;
 
   const filters: Record<string, unknown> = { skip, take };
 
@@ -110,9 +109,10 @@ export default async function PropiedadesPage({ searchParams }: Props) {
         initialProperties={result.properties}
         total={result.total}
         propertyTypes={propertyTypes}
-        currentPage={page}
+        currentPage={1}
         searchParams={searchParams}
       />
     </div>
   );
 }
+
