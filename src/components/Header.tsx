@@ -2,12 +2,18 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Logo from './Logo';
 // ThemeToggle removed — site is light mode by default, toggle hidden per client request
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +40,7 @@ export default function Header() {
   }, [isMobileMenuOpen]);
 
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
@@ -116,7 +123,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu - full-screen drawer */}
+      {/* Mobile Menu is rendered via portal below to escape header's backdrop-filter containing block */}
+    </header>
+    {mounted && createPortal(
+      <>
       {/* Backdrop */}
       <div
         onClick={() => setIsMobileMenuOpen(false)}
@@ -195,6 +205,9 @@ export default function Header() {
           </a>
         </div>
       </aside>
-    </header>
+      </>,
+      document.body
+    )}
+    </>
   );
 }
