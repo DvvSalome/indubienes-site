@@ -319,6 +319,24 @@ export default function PropertyDetailClient({ property }: Props) {
                     {businessType}
                   </span>
                 </div>
+
+                {/* Watermark — glass pill, anti-theft brand mark (matches property cards) */}
+                <div
+                  className="absolute top-3 right-3 z-[5] pointer-events-none select-none"
+                  aria-hidden="true"
+                >
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/35 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg ring-1 ring-black/10">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/favicon.svg"
+                      alt=""
+                      width={26}
+                      height={26}
+                      className="opacity-95 sm:w-7 sm:h-7"
+                      draggable={false}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Thumbnails */}
@@ -766,3 +784,4 @@ export default function PropertyDetailClient({ property }: Props) {
     </div>
   );
 }
+
