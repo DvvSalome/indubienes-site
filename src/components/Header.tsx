@@ -62,6 +62,7 @@ export default function Header() {
               { label: 'Propiedades', href: '/propiedades' },
               { label: 'Venta', href: '/propiedades?tipo=venta' },
               { label: 'Arriendo', href: '/propiedades?tipo=arriendo' },
+              { label: 'Blog', href: '/blog' },
               { label: 'Contacto', href: '/contacto' },
               { label: 'Política de Privacidad', href: '/politica-privacidad' },
             ].map(({ label, href }) => (
@@ -167,6 +168,7 @@ export default function Header() {
             { label: 'Propiedades', href: '/propiedades', icon: <><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></> },
             { label: 'Venta', href: '/propiedades?tipo=venta', icon: <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01" /> },
             { label: 'Arriendo', href: '/propiedades?tipo=arriendo', icon: <><circle cx="7.5" cy="15.5" r="5.5" /><path d="M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3" /></> },
+            { label: 'Blog', href: '/blog', icon: <><path d="M4 4h13a3 3 0 0 1 3 3v13" /><path d="M4 4v16h13" /><path d="M8 9h8M8 13h8M8 17h5" /></> },
             { label: 'Contacto', href: '/contacto', icon: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6" /> },
             { label: 'Política de Privacidad', href: '/politica-privacidad', icon: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /> },
           ].map(({ label, href, icon }) => (
