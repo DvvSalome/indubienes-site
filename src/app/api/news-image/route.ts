@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import sharp from 'sharp';
 
 // Server-side proxy that fetches a WASI news image and auto-trims
 // the white borders that WASI bakes into thumbnails. Result is cached
@@ -65,33 +64,52 @@ export async function GET(req: NextRequest) {
 
     const buffer = Buffer.from(await upstream.arrayBuffer());
 
-    // Auto-trim white borders with a tolerant threshold, then resize to
-    // a sensible max and output webp. Falls back to original on failure.
-    let processed: Buffer;
+    // Dynamic import so the module doesn't crash at build time if sharp
+    // isn't resolvable in the build environment.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let sharpMod: any = null;
     try {
-      processed = await sharp(buffer)
-        .trim({ background: '#ffffff', threshold: 12 })
-        .resize({
-          width: 1200,
-          height: 900,
-          fit: 'inside',
-          withoutEnlargement: false,
-        })
-        .webp({ quality: 86 })
-        .toBuffer();
+      sharpMod = (await import('sharp')).default;
     } catch {
-      // If trim fails (e.g. image has no detectable border), fall back
-      // to a plain resize+webp.
-      processed = await sharp(buffer)
-        .resize({ width: 1200, withoutEnlargement: false })
-        .webp({ quality: 86 })
-        .toBuffer();
+      sharpMod = null;
+    }
+
+    // Auto-trim white borders with a tolerant threshold, then resize to
+    // a sensible max and output webp. Falls back to original if sharp
+    // isn't available.
+    let processed: Buffer = buffer;
+    let contentType = upstream.headers.get('content-type') || 'image/png';
+
+    if (sharpMod) {
+      try {
+        processed = await sharpMod(buffer)
+          .trim({ background: '#ffffff', threshold: 12 })
+          .resize({
+            width: 1200,
+            height: 900,
+            fit: 'inside',
+            withoutEnlargement: false,
+          })
+          .webp({ quality: 86 })
+          .toBuffer();
+        contentType = 'image/webp';
+      } catch {
+        try {
+          processed = await sharpMod(buffer)
+            .resize({ width: 1200, withoutEnlargement: false })
+            .webp({ quality: 86 })
+            .toBuffer();
+          contentType = 'image/webp';
+        } catch {
+          // keep original
+        }
+      }
     }
 
     return new NextResponse(processed, {
       status: 200,
       headers: {
-        'Content-Type': 'image/webp',
+        'Content-Type': contentType,
         'Cache-Control':
           'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
         'X-Wasi-Src': src,
