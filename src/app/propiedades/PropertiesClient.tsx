@@ -27,6 +27,17 @@ export default function PropertiesClient({
   const [showFilters, setShowFilters] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Track mobile breakpoint (< md = 768px) for infinite-scroll-only-on-mobile behavior
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
   const [tipo, setTipo] = useState(sp.tipo || '');
   const [propiedad, setPropiedad] = useState(sp.propiedad || '');
@@ -122,20 +133,27 @@ export default function PropertiesClient({
     }
   }, [hasMore, loading, prefetchedBatch, properties.length, fetchNextBatch]);
 
-  // IntersectionObserver sentinel — prefetch when user scrolls near button
+  // IntersectionObserver sentinel —
+  // • Desktop/tablet: prefetch when user scrolls near the button (button still visible).
+  // • Mobile (<768px): auto-load next batch so scroll feels infinite — the button is hidden.
   useEffect(() => {
     if (!hasMore) return;
     const el = sentinelRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) prefetchMore();
+        if (!entries.some((e) => e.isIntersecting)) return;
+        if (isMobile) {
+          if (!loading) loadMore();
+        } else {
+          prefetchMore();
+        }
       },
-      { rootMargin: '400px 0px' }
+      { rootMargin: isMobile ? '600px 0px' : '400px 0px' }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [hasMore, prefetchMore]);
+  }, [hasMore, prefetchMore, loadMore, isMobile, loading]);
 
   // Animate cards — initial load animates all; subsequent loads animate only new ones
   useEffect(() => {
@@ -352,12 +370,22 @@ export default function PropertiesClient({
             <div className="mt-14 flex flex-col items-center gap-4">
               {hasMore ? (
                 <>
+                  {/* Mobile: subtle auto-load indicator (button is hidden, scroll is infinite) */}
+                  {isMobile && loading && (
+                    <div className="flex md:hidden items-center gap-2 text-sm font-body text-muted py-2">
+                      <svg className="w-5 h-5 animate-spin text-gold" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                        <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                      </svg>
+                      <span>Cargando más propiedades…</span>
+                    </div>
+                  )}
                   <button
                     onClick={loadMore}
                     onMouseEnter={prefetchMore}
                     onFocus={prefetchMore}
                     disabled={loading}
-                    className="group relative w-full max-w-xs min-h-[56px] px-8 py-4 bg-gold hover:bg-gold-hover disabled:opacity-70 disabled:cursor-wait text-white font-body font-semibold text-sm sm:text-base rounded-2xl transition-all duration-300 tracking-wide flex items-center justify-center gap-3 shadow-lg shadow-gold/15 hover:shadow-xl hover:shadow-gold/25 hover:-translate-y-0.5"
+                    className="group relative hidden md:flex w-full max-w-xs min-h-[56px] px-8 py-4 bg-gold hover:bg-gold-hover disabled:opacity-70 disabled:cursor-wait text-white font-body font-semibold text-sm sm:text-base rounded-2xl transition-all duration-300 tracking-wide items-center justify-center gap-3 shadow-lg shadow-gold/15 hover:shadow-xl hover:shadow-gold/25 hover:-translate-y-0.5"
                   >
                     {loading ? (
                       <>
@@ -425,3 +453,4 @@ function SkeletonCard() {
     </div>
   );
 }
+
