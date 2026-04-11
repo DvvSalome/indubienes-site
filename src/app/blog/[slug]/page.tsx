@@ -90,10 +90,8 @@ export default async function BlogDetailPage({ params }: Props) {
 
   const safeHtml = sanitizeHtml(post.content);
   const date = formatSpanishDate(post.date);
-  const rawImage = post.image || '/logo-hd.png';
-  const image = rawImage.includes('wasi.co')
-    ? `/api/news-image?u=${encodeURIComponent(rawImage)}`
-    : rawImage;
+  const image = post.image || '/logo-hd.png';
+  const isWasi = image.includes('wasi.co');
 
   // Related posts
   const related = await searchNews({ skip: 0, take: 6 });
@@ -136,15 +134,23 @@ export default async function BlogDetailPage({ params }: Props) {
 
       {/* Hero */}
       <section className="relative h-[320px] sm:h-[420px] md:h-[480px] overflow-hidden bg-neutral-900">
-        <Image
-          src={image}
-          alt={post.title}
-          fill
-          priority
-          quality={92}
-          sizes="100vw"
-          className="object-cover"
-        />
+        <div
+          className={
+            isWasi
+              ? 'absolute inset-0 scale-[1.6] origin-center'
+              : 'absolute inset-0'
+          }
+        >
+          <Image
+            src={image}
+            alt={post.title}
+            fill
+            priority
+            quality={92}
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
         <div
           className="absolute inset-0"
           style={{
