@@ -49,8 +49,9 @@ const socialLinks = [
     href: 'https://instagram.com/indubienes',
     label: 'Instagram',
     brandColor: '#E4405F',
-    brandBg: 'linear-gradient(45deg,#F58529 0%,#DD2A7B 50%,#8134AF 100%)',
+    brandBg: 'rgba(228,64,95,0.10)',
     brandBgIsGradient: true,
+    brandHoverBg: 'linear-gradient(45deg,#F58529 0%,#DD2A7B 50%,#8134AF 100%)',
     icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.326 3.608 1.301.975.975 1.24 2.242 1.301 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.326 2.633-1.301 3.608-.975.975-2.242 1.24-3.608 1.301-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.326-3.608-1.301-.975-.975-1.24-2.242-1.301-3.608C2.175 15.647 2.163 15.267 2.163 12s.012-3.584.07-4.85c.062-1.366.326-2.633 1.301-3.608.975-.975 2.242-1.24 3.608-1.301C8.416 2.175 8.796 2.163 12 2.163zm0 1.802c-3.15 0-3.504.012-4.73.068-1.014.046-1.566.213-1.93.354-.487.188-.835.413-1.2.778-.365.365-.59.713-.778 1.2-.141.364-.308.916-.354 1.93-.056 1.226-.068 1.58-.068 4.73s.012 3.504.068 4.73c.046 1.014.213 1.566.354 1.93.188.487.413.835.778 1.2.365.365.713.59 1.2.778.364.141.916.308 1.93.354 1.226.056 1.58.068 4.73.068s3.504-.012 4.73-.068c1.014-.046 1.566-.213 1.93-.354.487-.188.835-.413 1.2-.778.365-.365.59-.713.778-1.2.141-.364.308-.916.354-1.93.056-1.226.068-1.58.068-4.73s-.012-3.504-.068-4.73c-.046-1.014-.213-1.566-.354-1.93a3.232 3.232 0 00-.778-1.2 3.232 3.232 0 00-1.2-.778c-.364-.141-.916-.308-1.93-.354-1.226-.056-1.58-.068-4.73-.068zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 8.468a3.333 3.333 0 110-6.666 3.333 3.333 0 010 6.666zm6.538-8.671a1.2 1.2 0 11-2.4 0 1.2 1.2 0 012.4 0z',
   },
 ];
@@ -116,19 +117,19 @@ export default function Footer() {
               En Medellín, ayudando a familias a encontrar su próximo hogar — y a inversionistas su próximo negocio.
             </p>
             <nav aria-label="Redes sociales" className="mt-auto pt-6 flex gap-3">
-              {socialLinks.map(({ href, label, icon, brandColor, brandBg, brandBgIsGradient }) => (
+              {socialLinks.map(({ href, label, icon, brandColor, brandBg, brandHoverBg }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="group social-icon w-14 h-14 rounded-full flex items-center justify-center shadow-sm hover:shadow-md hover:-translate-y-1 hover:text-white active:translate-y-0 transition-all duration-300 hover:[background:var(--brand-bg)]"
+                  className="group social-icon w-14 h-14 rounded-full flex items-center justify-center shadow-sm hover:shadow-md hover:-translate-y-1 hover:text-white active:translate-y-0 transition-all duration-300 hover:[background:var(--brand-hover-bg)]"
                   style={{
                     background: brandBg,
                     color: brandColor,
                     ['--brand' as string]: brandColor,
-                    ['--brand-bg' as string]: brandBgIsGradient ? brandBg : brandColor,
+                    ['--brand-hover-bg' as string]: brandHoverBg || brandColor,
                   }}
                 >
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={icon} /></svg>
