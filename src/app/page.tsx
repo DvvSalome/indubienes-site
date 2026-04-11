@@ -7,11 +7,17 @@ import HomeAnimations from '@/components/HomeAnimations';
 import HeroRotatingLine from '@/components/HeroRotatingLine';
 import HeroVideo from '@/components/HeroVideo';
 import AlliesSlider from '@/components/AlliesSlider';
+import BlogCard from '@/components/BlogCard';
+import { searchNews } from '@/lib/wasi';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const properties = await getHighlightedProperties();
+  const [properties, newsResult] = await Promise.all([
+    getHighlightedProperties(),
+    searchNews({ skip: 0, take: 3 }),
+  ]);
+  const latestPosts = newsResult.news;
 
   return (
     <>
@@ -188,6 +194,44 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Latest Blog Posts */}
+      {latestPosts.length > 0 && (
+        <section className="blog-section py-24 sm:py-32 px-5 sm:px-6 lg:px-8 bg-neutral-50/60">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-14 sm:mb-16">
+              <p className="text-gold text-xs sm:text-sm font-body tracking-[0.3em] uppercase mb-4">
+                Conocimiento experto
+              </p>
+              <div className="gold-line-animate w-12 h-[1px] bg-gold/50 mx-auto mb-8 origin-left" />
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-4 leading-tight">
+                Últimas publicaciones
+              </h2>
+              <p className="text-muted text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+                Consejos, guías y análisis del mercado inmobiliario en Medellín
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {latestPosts.map((post, idx) => (
+                <BlogCard key={post.id_news} post={post} priority={idx === 0} />
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 px-8 py-4 border border-gold/30 hover:bg-gold hover:text-white text-gold font-body font-semibold text-sm tracking-wide rounded-full transition-all duration-500"
+              >
+                Ver todas las publicaciones
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="cta-section py-24 sm:py-32 px-4 relative overflow-hidden">
