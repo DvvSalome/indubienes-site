@@ -42,10 +42,10 @@ export default function Header() {
   return (
     <>
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-500 ${
         isScrolled
-          ? 'bg-background/90 backdrop-blur-xl shadow-lg shadow-black/10 dark:shadow-black/20 border-b border-border'
-          : 'bg-black/20 backdrop-blur-sm'
+          ? 'shadow-lg shadow-black/10 border-b border-neutral-200'
+          : 'border-b border-neutral-100'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,7 +68,7 @@ export default function Header() {
               <Link
                 key={label}
                 href={href}
-                className="text-sm font-body tracking-wide text-white hover:text-gold transition-colors duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]"
+                className="text-sm font-body font-medium tracking-wide text-gold hover:text-gold-hover transition-colors duration-300"
               >
                 {label}
               </Link>
@@ -80,7 +80,7 @@ export default function Header() {
             {/* Admin panel — subtle icon */}
             <Link
               href="/admin"
-              className="p-2 text-white/40 hover:text-gold transition-colors duration-300"
+              className="p-2 text-gold/50 hover:text-gold transition-colors duration-300"
               title="Panel de administración"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -91,7 +91,7 @@ export default function Header() {
             {/* Phone - desktop only */}
             <a
               href="tel:+576043220207"
-              className="hidden lg:flex items-center gap-2 text-sm text-white/80 hover:text-gold transition-colors duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]"
+              className="hidden lg:flex items-center gap-2 text-sm font-medium text-gold hover:text-gold-hover transition-colors duration-300"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -102,7 +102,7 @@ export default function Header() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-white"
+              className="md:hidden p-2 text-gold hover:text-gold-hover transition-colors duration-300"
               aria-label={isMobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
               aria-expanded={isMobileMenuOpen}
             >
@@ -174,15 +174,15 @@ export default function Header() {
               key={label}
               href={href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="group flex items-center gap-4 px-3 py-4 min-h-[52px] rounded-xl text-[15px] font-body font-medium text-neutral-800 hover:text-primary hover:bg-neutral-50 active:bg-neutral-100 transition-all duration-200"
+              className="group flex items-center gap-4 px-3 py-4 min-h-[52px] rounded-xl text-[15px] font-body font-medium text-gold hover:text-gold-hover hover:bg-neutral-50 active:bg-neutral-100 transition-all duration-200"
             >
-              <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-neutral-100 text-neutral-600 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-200">
+              <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-neutral-100 text-gold group-hover:bg-gold/10 group-hover:text-gold-hover transition-all duration-200">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   {icon}
                 </svg>
               </span>
               <span className="flex-1">{label}</span>
-              <svg className="w-4 h-4 text-neutral-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-4 h-4 text-neutral-300 group-hover:text-gold group-hover:translate-x-0.5 transition-all duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </Link>
@@ -194,9 +194,9 @@ export default function Header() {
           <p className="text-[11px] uppercase tracking-widest text-neutral-400 font-semibold mb-2">Contáctanos</p>
           <a
             href="tel:+576043220207"
-            className="flex items-center gap-3 text-lg font-display font-bold text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 text-lg font-display font-bold text-gold hover:text-gold/80 transition-colors"
           >
-            <span className="flex items-center justify-center w-11 h-11 rounded-full bg-primary/10">
+            <span className="flex items-center justify-center w-11 h-11 rounded-full bg-gold/10">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
@@ -211,3 +211,4 @@ export default function Header() {
     </>
   );
 }
+
