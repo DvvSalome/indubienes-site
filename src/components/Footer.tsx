@@ -20,6 +20,7 @@ const navLinks = [
   { label: 'Propiedades', href: '/propiedades' },
   { label: 'Venta', href: '/propiedades?tipo=venta' },
   { label: 'Arriendo', href: '/propiedades?tipo=arriendo' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Contacto', href: '/contacto' },
 ];
 
