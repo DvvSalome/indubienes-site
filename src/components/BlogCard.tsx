@@ -19,25 +19,37 @@ function formatSpanishDate(iso: string): string {
   return `${d} de ${months[m - 1]} de ${y}`;
 }
 
+// Route WASI images through our proxy so server-side trim removes
+// the white borders that WASI bakes into news thumbnails.
+function proxiedImage(src: string): string {
+  if (!src) return '/logo-hd.png';
+  if (src.includes('wasi.co')) {
+    return `/api/news-image?u=${encodeURIComponent(src)}`;
+  }
+  return src;
+}
+
 export default function BlogCard({ post, priority = false }: Props) {
   const slug = `${post.id_news}-${slugifyNewsTitle(post.title)}`;
   const href = `/blog/${slug}`;
-  const image = post.image || '/logo-hd.png';
+  const image = proxiedImage(post.image);
   const date = formatSpanishDate(post.date);
 
   return (
     <Link
       href={href}
-      className="group blog-card-anim flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-black/5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+      className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-black/5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
     >
       <div className="relative aspect-[16/9] bg-neutral-100 overflow-hidden">
         <Image
           src={image}
           alt={post.title}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+          quality={90}
           className="object-cover group-hover:scale-[1.04] transition-transform duration-700"
           priority={priority}
+          loading={priority ? 'eager' : 'lazy'}
         />
       </div>
       <div className="flex flex-col flex-1 p-5 sm:p-6">
