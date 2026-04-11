@@ -90,7 +90,10 @@ export default async function BlogDetailPage({ params }: Props) {
 
   const safeHtml = sanitizeHtml(post.content);
   const date = formatSpanishDate(post.date);
-  const image = post.image || '/logo-hd.png';
+  const rawImage = post.image || '/logo-hd.png';
+  const image = rawImage.includes('wasi.co')
+    ? `/api/news-image?u=${encodeURIComponent(rawImage)}`
+    : rawImage;
 
   // Related posts
   const related = await searchNews({ skip: 0, take: 6 });
@@ -138,6 +141,7 @@ export default async function BlogDetailPage({ params }: Props) {
           alt={post.title}
           fill
           priority
+          quality={92}
           sizes="100vw"
           className="object-cover"
         />
