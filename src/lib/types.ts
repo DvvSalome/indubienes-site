@@ -136,3 +136,29 @@ export interface WasiClientSearchFilters {
   id_client_type?: number;
   query?: string;
 }
+
+
+// ============================================================================
+// Blog / News (WASI calls it "news", we expose it as blog on the frontend)
+// ============================================================================
+
+export interface WasiNews {
+  id_news: number;
+  title: string;
+  abstract: string;
+  content: string; // raw HTML from WASI — needs sanitization before render
+  image: string;
+  date: string; // "YYYY-MM-DD"
+  position: number;
+}
+
+export interface WasiNewsSearchFilters {
+  skip?: number;
+  take?: number;
+  query?: string;
+}
+
+export interface WasiNewsSearchResult {
+  news: WasiNews[];
+  total: number;
+}
