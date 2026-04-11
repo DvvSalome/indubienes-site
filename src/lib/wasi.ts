@@ -658,6 +658,17 @@ function normalizeGalleries(raw: any): Property['galleries'] {
 // aligned with WASI (news) but expose it as "blog" on the public site.
 // ============================================================================
 
+// WASI exposes several size prefixes for news thumbnails:
+//   s = 120x90, b = 210x150 (default), m = 578x270
+// The default `b` is very low resolution — promote to `m` for card/hero use.
+function upgradeWasiNewsImage(url: string): string {
+  if (!url) return '';
+  return url.replace(
+    /(https?:\/\/images?\.wasi\.co\/noticias\/)[bsmgo](\d)/i,
+    '$1m$2'
+  );
+}
+
 function normalizeNews(raw: unknown): WasiNews {
   const r = (raw ?? {}) as Record<string, unknown>;
   return {
@@ -665,7 +676,7 @@ function normalizeNews(raw: unknown): WasiNews {
     title: String(r.title || '').trim(),
     abstract: String(r.abstract || '').trim(),
     content: String(r.content || '').trim(),
-    image: String(r.image || '').trim(),
+    image: upgradeWasiNewsImage(String(r.image || '').trim()),
     date: String(r.date || '').trim(),
     position: Number(r.position) || 0,
   };
