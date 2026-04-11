@@ -1,4 +1,4 @@
-import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, PropertyFeatureGroup, WasiClient, WasiClientSearchFilters, WasiClientSearchResult } from './types';
+import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, PropertyFeatureGroup, WasiClient, WasiClientSearchFilters, WasiClientSearchResult, WasiNews, WasiNewsSearchFilters, WasiNewsSearchResult } from './types';
 import { mockProperties, mockPropertyTypes } from './mock-data';
 
 const WASI_BASE_URL = 'https://api.wasi.co/v1';
@@ -649,4 +649,83 @@ function normalizeGalleries(raw: any): Property['galleries'] {
       images: imgArray,
     };
   });
+}
+
+
+// ============================================================================
+// BLOG / NEWS
+// WASI exposes blog content under /v1/news/*. We keep the internal naming
+// aligned with WASI (news) but expose it as "blog" on the public site.
+// ============================================================================
+
+function normalizeNews(raw: unknown): WasiNews {
+  const r = (raw ?? {}) as Record<string, unknown>;
+  return {
+    id_news: Number(r.id_news) || 0,
+    title: String(r.title || '').trim(),
+    abstract: String(r.abstract || '').trim(),
+    content: String(r.content || '').trim(),
+    image: String(r.image || '').trim(),
+    date: String(r.date || '').trim(),
+    position: Number(r.position) || 0,
+  };
+}
+
+export async function searchNews(filters: WasiNewsSearchFilters = {}): Promise<WasiNewsSearchResult> {
+  const { skip = 0, take = 12, query } = filters;
+
+  const params: Record<string, string> = {
+    skip: String(skip),
+    take: String(take),
+  };
+  if (query) params.query = query;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await wasiRequest<Record<string, any>>('/news/search', {
+    method: 'GET',
+    params,
+  });
+
+  if (!result || result.status === 'error') {
+    return { news: [], total: 0 };
+  }
+
+  const total = Number(result.total) || 0;
+  const news = Object.entries(result)
+    .filter(([key]) => !isNaN(Number(key)))
+    .map(([, value]) => normalizeNews(value))
+    // Sort by date DESC primarily, then by position (manual order) as tiebreaker
+    .sort((a, b) => {
+      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return a.position - b.position;
+    });
+
+  return { news, total };
+}
+
+export async function getNews(id: number): Promise<WasiNews | null> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await wasiRequest<Record<string, any>>(`/news/get/${id}`, {
+    method: 'GET',
+  });
+
+  if (!result || result.status === 'error' || !result.id_news) {
+    return null;
+  }
+
+  return normalizeNews(result);
+}
+
+// Helper to build a SEO-friendly slug from a news title.
+// Produces: "como-elegir-apartamento-en-laureles"
+export function slugifyNewsTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // strip diacritics
+    .replace(/[^a-z0-9\s-]/g, '') // drop punctuation
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 80);
 }
