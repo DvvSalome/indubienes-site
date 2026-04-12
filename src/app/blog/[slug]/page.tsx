@@ -10,6 +10,15 @@ export const dynamic = 'force-dynamic';
 
 const SITE_URL = 'https://indubienes-site.vercel.app';
 
+/**
+ * Override map: WASI post ID → local AI-generated image.
+ * Must stay in sync with BlogCard.tsx LOCAL_IMAGES.
+ */
+const LOCAL_IMAGES: Record<number, string> = {
+  27256: '/blog/blog-laureles.jpg',
+  27227: '/blog/blog-inversion.jpg',
+};
+
 interface Props {
   params: { slug: string };
 }
@@ -69,7 +78,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .replace(/\s{2,}/g, ' ')
     .trim()
     .slice(0, 160);
-  const image = post.image || '/logo-hd.png';
+  const localImg = LOCAL_IMAGES[post.id_news];
+  const image = localImg || post.image || '/logo-hd.png';
 
   return {
     title: post.title,
@@ -102,8 +112,9 @@ export default async function BlogDetailPage({ params }: Props) {
 
   const safeHtml = sanitizeHtml(post.content);
   const date = formatSpanishDate(post.date);
-  const image = post.image || '/logo-hd.png';
-  const isWasi = image.includes('wasi.co');
+  const localImg = LOCAL_IMAGES[post.id_news];
+  const image = localImg || post.image || '/logo-hd.png';
+  const isWasi = !localImg && image.includes('wasi.co');
 
   // Related posts
   const related = await searchNews({ skip: 0, take: 6 });
