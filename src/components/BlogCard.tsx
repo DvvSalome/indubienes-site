@@ -27,12 +27,22 @@ function cleanText(text: string): string {
     .trim();
 }
 
+/**
+ * Override map: WASI post ID → local AI-generated image.
+ * Images in /public/blog/ replace the low-quality WASI originals.
+ */
+const LOCAL_IMAGES: Record<number, string> = {
+  27256: '/blog/blog-laureles.jpg',   // Laureles Medellín aerial
+  27227: '/blog/blog-inversion.jpg',  // Real estate investment
+};
+
 export default function BlogCard({ post, priority = false }: Props) {
   const slug = `${post.id_news}-${slugifyNewsTitle(post.title)}`;
   const href = `/blog/${slug}`;
-  const image = post.image || '/logo-hd.png';
+  const localImg = LOCAL_IMAGES[post.id_news];
+  const image = localImg || post.image || '/logo-hd.png';
   const date = formatSpanishDate(post.date);
-  const isWasi = image.includes('wasi.co');
+  const isWasi = !localImg && image.includes('wasi.co');
   const abstract = cleanText(post.abstract || '');
 
   return (
@@ -49,7 +59,7 @@ export default function BlogCard({ post, priority = false }: Props) {
           className={
             isWasi
               ? 'absolute inset-0 scale-[2.1] origin-center transition-transform duration-700 ease-out group-hover:scale-[2.25]'
-              : 'absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.06]'
+              : 'absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.05]'
           }
         >
           <Image
