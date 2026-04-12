@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-// Indubienes site configuration
+// Indubienes site configuration — v2 media pipeline
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -28,3 +28,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
