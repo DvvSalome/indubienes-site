@@ -1,18 +1,10 @@
 import type { Metadata } from 'next';
 import ContactForm from './ContactForm';
+import MapEmbed, { OFFICE_COORDS } from '@/components/MapEmbed';
 
 export const metadata: Metadata = {
-  title: 'Contacto',
+  title: 'Contacto | Indubienes - Inmobiliaria en Medellín',
   description: 'Contáctenos para asesoría inmobiliaria en Medellín. Venta, arriendo y administración de propiedades.',
-  alternates: { canonical: '/contacto' },
-  openGraph: {
-    title: 'Contacto | Indubienes',
-    description: 'Contáctenos para asesoría inmobiliaria en Medellín. Venta, arriendo y administración de propiedades.',
-    url: 'https://indubienes-site.vercel.app/contacto',
-    type: 'website',
-    locale: 'es_CO',
-    images: [{ url: '/logo-hd.png', width: 1200, height: 630, alt: 'Indubienes - Contacto' }],
-  },
 };
 
 export default function ContactPage() {
@@ -128,13 +120,12 @@ export default function ContactPage() {
             </div>
 
             {/* Map */}
-            <div className="mt-8 rounded-xl overflow-hidden border border-border">
-              <iframe
-                src="https://www.openstreetmap.org/export/embed.html?bbox=-75.5966,6.2392,-75.5766,6.2492&layer=mapnik&marker=6.2442,-75.5866"
-                className="w-full h-80"
-                style={{ border: 0 }}
-                loading="lazy"
+            <div className="mt-8">
+              <MapEmbed
+                latitude={OFFICE_COORDS.lat}
+                longitude={OFFICE_COORDS.lng}
                 title="Ubicación de Indubienes"
+                className="h-80"
               />
             </div>
           </div>
@@ -143,4 +134,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
