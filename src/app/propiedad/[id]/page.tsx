@@ -121,11 +121,30 @@ export default async function PropertyDetailPage({ params }: Props) {
     }),
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Propiedades', item: `${SITE_URL}/propiedades` },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: property.title || `${property.property_type_label || 'Propiedad'} en ${property.zone_label || 'Medellín'}`,
+        item: `${SITE_URL}/propiedad/${id}`,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <PropertyDetailClient property={property} />
     </>
