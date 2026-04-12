@@ -43,7 +43,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth removed — causes jank during heavy scroll on Chrome */
   overflow-x: clip;
 }
 
@@ -308,8 +308,9 @@ main {
   transform: translateY(40px);
   transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1),
               transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-  will-change: opacity, transform;
+  /* will-change moved to .revealed transition — permanent will-change wastes GPU */
 }
+
 
 .scroll-reveal.reveal-left {
   transform: translateX(-50px);
