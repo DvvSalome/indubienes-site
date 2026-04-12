@@ -18,6 +18,9 @@ export default function HomeAnimations() {
     ]).then(([{ default: gsap }, { ScrollTrigger }]) => {
       gsap.registerPlugin(ScrollTrigger);
 
+      // Performance: reduce scroll-triggered recalculations
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
       // === HERO TIMELINE ===
       const heroTl = gsap.timeline({ delay: 0.3 });
 
