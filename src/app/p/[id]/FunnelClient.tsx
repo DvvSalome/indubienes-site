@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
 import FunnelForm from './FunnelForm';
+import MapEmbed from '@/components/MapEmbed';
 
 interface FunnelClientProps {
   property: Property;
@@ -350,18 +351,12 @@ export default function FunnelClient({ property }: FunnelClientProps) {
 
             {/* Map */}
             {property.latitude !== 0 && property.longitude !== 0 && (
-              <div>
-                <h2 className="text-xl font-display font-bold text-foreground mb-5">Ubicación</h2>
-                <div className="aspect-[16/9] rounded-xl overflow-hidden border border-border">
-                  <iframe
-                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.008},${property.latitude - 0.004},${property.longitude + 0.008},${property.latitude + 0.004}&layer=mapnik&marker=${property.latitude},${property.longitude}`}
-                    className="w-full h-full"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    title="Ubicación de la propiedad"
-                  />
-                </div>
-              </div>
+              <MapEmbed
+                latitude={property.latitude}
+                longitude={property.longitude}
+                heading="Ubicación"
+                title="Ubicación de la propiedad"
+              />
             )}
           </div>
 
