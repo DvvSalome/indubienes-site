@@ -102,8 +102,8 @@ export async function POST(request: NextRequest) {
       content: base64Content,
       branch: GITHUB_BRANCH,
       committer: {
-        name: 'Indubienes Admin',
-        email: 'admin@indubienes.com',
+        name: 'Adrian Garzon',
+        email: 'adriangarzon22@gmail.com',
       },
     };
     if (existingSha) body.sha = existingSha;
