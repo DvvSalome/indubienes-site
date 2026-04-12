@@ -6,6 +6,7 @@ import { Property } from '@/lib/types';
 import { formatPrice } from '@/lib/wasi';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import MapEmbed from '@/components/MapEmbed';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -71,7 +72,6 @@ export default function PropertyDetailClient({ property }: Props) {
 
   const [currentImage, setCurrentImage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [mapView, setMapView] = useState<'satellite' | 'streetview'>('satellite');
   const pauseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // When an image fails to load, mark it as broken
@@ -319,24 +319,6 @@ export default function PropertyDetailClient({ property }: Props) {
                     {businessType}
                   </span>
                 </div>
-
-                {/* Watermark — glass pill, anti-theft brand mark (matches property cards) */}
-                <div
-                  className="absolute top-3 right-3 z-[5] pointer-events-none select-none"
-                  aria-hidden="true"
-                >
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/35 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg ring-1 ring-black/10">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/favicon.svg"
-                      alt=""
-                      width={26}
-                      height={26}
-                      className="opacity-95 sm:w-7 sm:h-7"
-                      draggable={false}
-                    />
-                  </div>
-                </div>
               </div>
 
               {/* Thumbnails */}
@@ -447,7 +429,7 @@ export default function PropertyDetailClient({ property }: Props) {
               {[
                 { label: 'Habitaciones', value: property.bedrooms, icon: 'M2 4v16M2 8h18a2 2 0 012 2v10M2 17h20M6 8v9' },
                 { label: 'Baños', value: property.bathrooms, icon: 'M4 12h16a1 1 0 011 1v3a4 4 0 01-4 4H7a4 4 0 01-4-4v-3a1 1 0 011-1zM6 12V5a2 2 0 012-2h3v2.25' },
-                { label: 'Área', value: property.area ? `${property.area} m²` : null, icon: 'M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3' },
+                { label: 'Área', value: property.area ? `${property.area} m²` : null, icon: 'M21 3L3 3l18 18M3 3v18M21 3v4M3 21h4M17 7l-10 10' },
                 { label: 'Parqueaderos', value: property.garages, icon: 'M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10H6l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2M14 17H10M6 10V5h12v5M9 17.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM20 17.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z' },
               ].filter(s => s.value).map((spec) => (
                 <div key={spec.label} className="spec-card bg-surface rounded-xl p-5 text-center border border-border/60 shadow-sm hover:shadow-md hover:border-gold/30 transition-all duration-300">
@@ -583,84 +565,15 @@ export default function PropertyDetailClient({ property }: Props) {
               </div>
             )}
 
-            {/* Immersive map: satellite + street view tabs */}
+            {/* Map */}
             {property.latitude && property.longitude && (
               <div ref={mapRef} className="mb-8">
-                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                  <h2 className="text-xl font-display font-bold text-foreground">Ubicación</h2>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
-                  >
-                    Abrir en Google Maps
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                  </a>
-                </div>
-
-                {/* View toggle */}
-                <div className="inline-flex items-center bg-muted/40 backdrop-blur-sm border border-border rounded-full p-1 mb-3 shadow-sm">
-                  <button
-                    type="button"
-                    onClick={() => setMapView('satellite')}
-                    className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 inline-flex items-center gap-1.5 ${
-                      mapView === 'satellite'
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                    aria-pressed={mapView === 'satellite'}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    Satélite
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMapView('streetview')}
-                    className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 inline-flex items-center gap-1.5 ${
-                      mapView === 'streetview'
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                    aria-pressed={mapView === 'streetview'}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12c-4 0-8 2-8 6v2h16v-2c0-4-4-6-8-6z"/></svg>
-                    Tour 360° · Street View
-                  </button>
-                </div>
-
-                <div className="relative aspect-[16/9] rounded-xl overflow-hidden border border-border shadow-lg bg-muted/20">
-                  {mapView === 'satellite' ? (
-                    <iframe
-                      key="sat"
-                      src={`https://www.google.com/maps?q=${property.latitude},${property.longitude}&t=h&z=17&ie=UTF8&output=embed`}
-                      className="w-full h-full"
-                      style={{ border: 0 }}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="Ubicación satelital de la propiedad"
-                      allow="fullscreen"
-                    />
-                  ) : (
-                    <iframe
-                      key="sv"
-                      src={`https://www.google.com/maps?q=&layer=c&cbll=${property.latitude},${property.longitude}&cbp=11,0,0,0,0&output=svembed`}
-                      className="w-full h-full"
-                      style={{ border: 0 }}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="Tour Street View de la propiedad"
-                      allow="fullscreen; accelerometer; gyroscope"
-                      allowFullScreen
-                    />
-                  )}
-                  <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl" />
-                </div>
-                <p className="text-xs text-muted-foreground mt-2 italic">
-                  {mapView === 'satellite'
-                    ? 'Vista satelital híbrida · La ubicación exacta se comparte al agendar una visita.'
-                    : 'Tour inmersivo Street View · Arrastra para mirar alrededor, usa los íconos para caminar por la zona. Si la calle no tiene cobertura, prueba con el modo satélite.'}
-                </p>
+                <MapEmbed
+                  latitude={property.latitude}
+                  longitude={property.longitude}
+                  heading="Ubicación"
+                  title="Ubicación de la propiedad"
+                />
               </div>
             )}
           </div>
@@ -784,4 +697,3 @@ export default function PropertyDetailClient({ property }: Props) {
     </div>
   );
 }
-
