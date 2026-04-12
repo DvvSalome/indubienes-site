@@ -3,9 +3,7 @@ import Link from 'next/link';
 import { searchNews } from '@/lib/wasi';
 import BlogCard from '@/components/BlogCard';
 
-// ISR: regenerate at most every 5 minutes — fast enough for new posts,
-// slow enough to avoid hammering WASI on every visit.
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 12;
 const SITE_URL = 'https://indubienes-site.vercel.app';
