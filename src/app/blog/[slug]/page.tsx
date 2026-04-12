@@ -56,9 +56,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Publicación no encontrada' };
 
   const canonicalSlug = `${post.id_news}-${slugifyNewsTitle(post.title)}`;
-  const description =
+  const rawDesc =
     post.abstract ||
-    post.content.replace(/<[^>]+>/g, '').slice(0, 160).trim();
+    post.content.replace(/<[^>]+>/g, '').slice(0, 200).trim();
+  // Strip emoji (surrogate pairs), collapse whitespace, limit to 160 chars
+  /* eslint-disable no-misleading-character-class */
+  const description = rawDesc
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
+    .replace(/[\u2600-\u27BF\uFE00-\uFEFF]/g, '')
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+    .slice(0, 160);
   const image = post.image || '/logo-hd.png';
 
   return {
