@@ -7,43 +7,28 @@ export const dynamic = 'force-dynamic';
 
 const SITE_URL = 'https://indubienes-site.vercel.app';
 
-export async function generateMetadata(): Promise<Metadata> {
-  // Use first property image as og:image when available.
-  let ogImage = '/logo-hd.png';
-  let ogAlt = 'Indubienes - Propiedades en Medellín';
-  try {
-    const { properties } = await searchProperties({ skip: 0, take: 1 });
-    const p = properties[0];
-    const img = p?.main_image?.url || p?.gallery?.[0]?.url;
-    if (img) {
-      ogImage = img;
-      ogAlt = p.title || ogAlt;
-    }
-  } catch { /* fall back to logo */ }
-
-  return {
-    title: 'Propiedades en Venta y Arriendo en Medellín',
+export const metadata: Metadata = {
+  title: 'Propiedades en Venta y Arriendo en Medellín',
+  description:
+    'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín y el Área Metropolitana. Filtra por zona, precio y tipo.',
+  alternates: { canonical: '/propiedades' },
+  openGraph: {
+    title: 'Propiedades en Venta y Arriendo en Medellín | Indubienes',
     description:
-      'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín y el Área Metropolitana. Filtra por zona, precio y tipo.',
-    alternates: { canonical: '/propiedades' },
-    openGraph: {
-      title: 'Propiedades en Venta y Arriendo en Medellín | Indubienes',
-      description:
-        'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín y el Área Metropolitana.',
-      url: `${SITE_URL}/propiedades`,
-      type: 'website',
-      locale: 'es_CO',
-      images: [{ url: ogImage, width: 1200, height: 630, alt: ogAlt }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'Propiedades en Venta y Arriendo en Medellín | Indubienes',
-      description:
-        'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín.',
-      images: [ogImage],
-    },
-  };
-}
+      'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín y el Área Metropolitana.',
+    url: `${SITE_URL}/propiedades`,
+    type: 'website',
+    locale: 'es_CO',
+    images: [{ url: '/logo-hd.png', width: 1200, height: 630, alt: 'Indubienes - Propiedades' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Propiedades en Venta y Arriendo en Medellín | Indubienes',
+    description:
+      'Explora apartamentos, casas, fincas y locales en venta y arriendo en Medellín.',
+    images: ['/logo-hd.png'],
+  },
+};
 
 interface Props {
   searchParams: {
