@@ -5,10 +5,27 @@ import { notFound } from 'next/navigation';
 import { getNews, searchNews, slugifyNewsTitle } from '@/lib/wasi';
 import BlogCard from '@/components/BlogCard';
 
-export const dynamic = 'force-dynamic';
+// ISR: pre-generate at build (via generateStaticParams) and refresh
+// every 5 minutes after first request.
+export const revalidate = 300;
+export const dynamicParams = true;
+
+const SITE_URL = 'https://indubienes-site.vercel.app';
 
 interface Props {
   params: { slug: string };
+}
+
+// Pre-build slugs for current WASI posts so first hit is instant.
+export async function generateStaticParams() {
+  try {
+    const { news } = await searchNews({ skip: 0, take: 100 });
+    return news.map((post) => ({
+      slug: `${post.id_news}-${slugifyNewsTitle(post.title)}`,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 // Minimal HTML sanitizer — strips scripts, iframes, event handlers and javascript: URLs.
@@ -66,12 +83,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${post.title} | Indubienes`,
       description,
-      url: `https://indubienes-site.vercel.app/blog/${canonicalSlug}`,
+      url: `${SITE_URL}/blog/${canonicalSlug}`,
       type: 'article',
       locale: 'es_CO',
       images: [
         {
-          url: image.startsWith('http') ? image : `https://indubienes-site.vercel.app${image}`,
+          url: image.startsWith('http') ? image : `${SITE_URL}${image}`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -104,7 +121,7 @@ export default async function BlogDetailPage({ params }: Props) {
     '@type': 'Article',
     headline: post.title,
     description: post.abstract,
-    image: image.startsWith('http') ? image : `https://indubienes-site.vercel.app${image}`,
+    image: image.startsWith('http') ? image : `${SITE_URL}${image}`,
     datePublished: post.date,
     dateModified: post.date,
     author: {
@@ -116,13 +133,28 @@ export default async function BlogDetailPage({ params }: Props) {
       name: 'Indubienes',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://indubienes-site.vercel.app/logo-hd.png',
+        url: `${SITE_URL}/logo-hd.png`,
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://indubienes-site.vercel.app/blog/${post.id_news}-${slugifyNewsTitle(post.title)}`,
+      '@id': `${SITE_URL}/blog/${post.id_news}-${slugifyNewsTitle(post.title)}`,
     },
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: `${SITE_URL}/blog/${post.id_news}-${slugifyNewsTitle(post.title)}`,
+      },
+    ],
   };
 
   return (
@@ -130,6 +162,10 @@ export default async function BlogDetailPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Hero */}
