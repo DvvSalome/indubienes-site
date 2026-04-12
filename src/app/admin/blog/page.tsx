@@ -11,16 +11,8 @@ interface BlogImage {
   sha: string;
 }
 
-interface BlogPost {
-  id_news: number;
-  title: string;
-  image: string;
-  date: string;
-}
-
 export default function AdminBlogPage() {
   const [images, setImages] = useState<BlogImage[]>([]);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState('');
@@ -28,7 +20,6 @@ export default function AdminBlogPage() {
   const [success, setSuccess] = useState('');
   const [preview, setPreview] = useState<string | null>(null);
   const [customName, setCustomName] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [compressedBlob, setCompressedBlob] = useState<Blob | null>(null);
 
   const fetchImages = useCallback(async () => {
@@ -41,22 +32,9 @@ export default function AdminBlogPage() {
     }
   }, []);
 
-  const fetchPosts = useCallback(async () => {
-    try {
-      const res = await fetch('/api/properties/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skip: 0, take: 20 }),
-      });
-      // Blog posts come from a different endpoint
-    } catch {
-      // Posts are optional display
-    }
-  }, []);
-
   useEffect(() => {
-    Promise.all([fetchImages(), fetchPosts()]).finally(() => setLoading(false));
-  }, [fetchImages, fetchPosts]);
+    fetchImages().finally(() => setLoading(false));
+  }, [fetchImages]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
@@ -70,7 +48,6 @@ export default function AdminBlogPage() {
       return;
     }
 
-    setSelectedFile(file);
     setProgress('Comprimiendo imagen...');
 
     try {
@@ -115,7 +92,6 @@ export default function AdminBlogPage() {
       if (res.ok && data.status === 'success') {
         setSuccess(`Imagen subida: ${data.url} (commit ${data.commit})`);
         setPreview(null);
-        setSelectedFile(null);
         setCompressedBlob(null);
         setCustomName('');
         setProgress('');
@@ -123,7 +99,7 @@ export default function AdminBlogPage() {
       } else {
         setError(data.error || 'Error subiendo imagen');
       }
-    } catch (err) {
+    } catch {
       setError('Error de conexión al subir');
     } finally {
       setUploading(false);
@@ -132,7 +108,6 @@ export default function AdminBlogPage() {
 
   const handleReset = () => {
     setPreview(null);
-    setSelectedFile(null);
     setCompressedBlob(null);
     setCustomName('');
     setProgress('');
