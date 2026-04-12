@@ -10,9 +10,7 @@ import AlliesSlider from '@/components/AlliesSlider';
 import BlogCard from '@/components/BlogCard';
 import { searchNews } from '@/lib/wasi';
 
-// ISR: revalidate every 5 min — cuts TTFB from ~1s to <100ms
-// while keeping property highlights and blog posts fresh enough.
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const [properties, newsResult] = await Promise.all([
