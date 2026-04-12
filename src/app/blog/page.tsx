@@ -3,25 +3,50 @@ import Link from 'next/link';
 import { searchNews } from '@/lib/wasi';
 import BlogCard from '@/components/BlogCard';
 
-export const dynamic = 'force-dynamic';
+// ISR: regenerate at most every 5 minutes — fast enough for new posts,
+// slow enough to avoid hammering WASI on every visit.
+export const revalidate = 300;
 
 const PAGE_SIZE = 12;
+const SITE_URL = 'https://indubienes-site.vercel.app';
 
-export const metadata: Metadata = {
-  title: 'Blog Inmobiliario',
-  description:
-    'Consejos, guías y noticias sobre el mercado inmobiliario en Medellín. Aprende a invertir, vender y comprar propiedades con Indubienes.',
-  alternates: { canonical: '/blog' },
-  openGraph: {
-    title: 'Blog Inmobiliario | Indubienes',
+export async function generateMetadata(): Promise<Metadata> {
+  // Pull latest post so og:image can be a real photo, not the logo.
+  let ogImage = `${SITE_URL}/logo-hd.png`;
+  let ogAlt = 'Indubienes - Blog Inmobiliario';
+  try {
+    const { news } = await searchNews({ skip: 0, take: 1 });
+    if (news[0]?.image) {
+      ogImage = news[0].image;
+      ogAlt = news[0].title || ogAlt;
+    }
+  } catch {
+    // fall back to logo
+  }
+
+  return {
+    title: 'Blog Inmobiliario',
     description:
-      'Consejos, guías y noticias sobre el mercado inmobiliario en Medellín.',
-    url: 'https://indubienes-site.vercel.app/blog',
-    type: 'website',
-    locale: 'es_CO',
-    images: [{ url: '/logo-hd.png', width: 1200, height: 630, alt: 'Indubienes - Blog' }],
-  },
-};
+      'Consejos, guías y noticias sobre el mercado inmobiliario en Medellín. Aprende a invertir, vender y comprar propiedades con Indubienes.',
+    alternates: { canonical: '/blog' },
+    openGraph: {
+      title: 'Blog Inmobiliario | Indubienes',
+      description:
+        'Consejos, guías y noticias sobre el mercado inmobiliario en Medellín.',
+      url: `${SITE_URL}/blog`,
+      type: 'website',
+      locale: 'es_CO',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: ogAlt }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Blog Inmobiliario | Indubienes',
+      description:
+        'Consejos, guías y noticias sobre el mercado inmobiliario en Medellín.',
+      images: [ogImage],
+    },
+  };
+}
 
 interface Props {
   searchParams: { page?: string };
@@ -34,28 +59,41 @@ export default async function BlogPage({ searchParams }: Props) {
   const { news, total } = await searchNews({ skip, take: PAGE_SIZE });
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  const jsonLd = {
+  const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'Blog Indubienes',
     description:
       'Consejos, guías y noticias sobre el mercado inmobiliario en Medellín.',
-    url: 'https://indubienes-site.vercel.app/blog',
+    url: `${SITE_URL}/blog`,
     publisher: {
       '@type': 'RealEstateAgent',
       name: 'Indubienes',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://indubienes-site.vercel.app/logo-hd.png',
+        url: `${SITE_URL}/logo-hd.png`,
       },
     },
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+    ],
   };
 
   return (
     <div className="pt-20 sm:pt-24">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Mini-hero banner */}
