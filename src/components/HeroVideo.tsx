@@ -30,12 +30,19 @@ export default function HeroVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const nextVideoRef = useRef<HTMLVideoElement>(null);
 
-  // Detect mobile
+  // Detect mobile (debounced to avoid layout thrash during resize)
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+    let timer: ReturnType<typeof setTimeout>;
+    const check = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => setIsMobile(window.innerWidth < 768), 150);
+    };
+    setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', check, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', check);
+    };
   }, []);
 
   // Fetch config
@@ -144,13 +151,13 @@ export default function HeroVideo() {
         style={{ transform: 'scale(1.05)' }}
       />
 
-      {/* Hidden next-video for preloading crossfade */}
+      {/* Hidden next-video for preloading crossfade — preload="none" until needed */}
       {activeVideos.length > 1 && (
         <video
           ref={nextVideoRef}
           muted
           playsInline
-          preload="auto"
+          preload="none"
           className="absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none"
           style={{ transform: 'scale(1.05)' }}
         />
