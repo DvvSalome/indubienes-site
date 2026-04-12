@@ -2,30 +2,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getNews, searchNews, slugifyNewsTitle } from '@/lib/wasi';
+import { getNews, slugifyNewsTitle } from '@/lib/wasi';
 import BlogCard from '@/components/BlogCard';
 
-// ISR: pre-generate at build (via generateStaticParams) and refresh
-// every 5 minutes after first request.
-export const revalidate = 300;
-export const dynamicParams = true;
+export const dynamic = 'force-dynamic';
 
 const SITE_URL = 'https://indubienes-site.vercel.app';
 
 interface Props {
   params: { slug: string };
-}
-
-// Pre-build slugs for current WASI posts so first hit is instant.
-export async function generateStaticParams() {
-  try {
-    const { news } = await searchNews({ skip: 0, take: 100 });
-    return news.map((post) => ({
-      slug: `${post.id_news}-${slugifyNewsTitle(post.title)}`,
-    }));
-  } catch {
-    return [];
-  }
 }
 
 // Minimal HTML sanitizer — strips scripts, iframes, event handlers and javascript: URLs.
