@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getNews, slugifyNewsTitle } from '@/lib/wasi';
+import { getNews, searchNews, slugifyNewsTitle } from '@/lib/wasi';
 import BlogCard from '@/components/BlogCard';
 
 export const dynamic = 'force-dynamic';
