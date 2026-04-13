@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import ContactForm from './ContactForm';
-import MapEmbed, { OFFICE_COORDS } from '@/components/MapEmbed';
+import MapEmbed from '@/components/MapEmbed';
+import { OFFICE_COORDS } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: 'Contacto | Indubienes - Inmobiliaria en Medellín',
