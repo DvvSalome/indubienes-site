@@ -1,14 +1,12 @@
 'use client';
 
 /**
- * Unified OpenStreetMap embed component.
+ * Unified Google Maps satellite embed component.
  *
  * Replaces duplicate iframe maps across:
  *   - /contacto (static office location)
  *   - /propiedad/[id] (dynamic property location)
  *   - /p/[id] (funnel property location)
- *
- * @see ADR-0002 for media pipeline decisions
  */
 
 interface MapEmbedProps {
@@ -16,8 +14,8 @@ interface MapEmbedProps {
   latitude: number;
   /** Longitude (e.g. -75.5866 for Medellín) */
   longitude: number;
-  /** Controls zoom — smaller = closer. Default 0.008 */
-  bboxPadding?: { lat: number; lng: number };
+  /** Zoom level (default 17) */
+  zoom?: number;
   /** Accessible title for the iframe */
   title?: string;
   /** Extra Tailwind classes for the outer container */
@@ -26,25 +24,16 @@ interface MapEmbedProps {
   heading?: string;
 }
 
-/** Indubienes office — Carrera 77 #36-31, Laureles, Medellín */
-export const OFFICE_COORDS = { lat: 6.2442, lng: -75.5866 } as const;
-
 export default function MapEmbed({
   latitude,
   longitude,
-  bboxPadding = { lat: 0.005, lng: 0.01 },
+  zoom = 17,
   title = 'Ubicación en el mapa',
   className = 'aspect-[16/9]',
   heading,
 }: MapEmbedProps) {
-  const bbox = [
-    longitude - bboxPadding.lng,
-    latitude - bboxPadding.lat,
-    longitude + bboxPadding.lng,
-    latitude + bboxPadding.lat,
-  ].join(',');
-
-  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${latitude},${longitude}`;
+  // Google Maps embed — hybrid satellite view (t=h), no API key needed
+  const src = `https://maps.google.com/maps?q=${latitude},${longitude}&t=h&z=${zoom}&ie=UTF8&iwloc=&output=embed`;
 
   return (
     <div>
@@ -57,6 +46,8 @@ export default function MapEmbed({
           className="w-full h-full"
           style={{ border: 0 }}
           loading="lazy"
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
           title={title}
         />
       </div>
