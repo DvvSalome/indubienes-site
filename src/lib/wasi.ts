@@ -1,4 +1,4 @@
-import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, PropertyFeatureGroup, WasiClient, WasiClientSearchFilters, WasiClientSearchResult, WasiNews, WasiNewsSearchFilters, WasiNewsSearchResult } from './types';
+import { Property, PropertySearchFilters, PropertySearchResult, PropertyType, PropertyFeatureGroup, WasiClient, WasiClientSearchFilters, WasiClientSearchResult } from './types';
 import { mockProperties, mockPropertyTypes } from './mock-data';
 
 const WASI_BASE_URL = 'https://api.wasi.co/v1';
@@ -140,16 +140,21 @@ export async function searchProperties(filters: PropertySearchFilters = {}): Pro
   };
 }
 
-// Read admin-curated featured IDs from GitHub (source of truth)
+// Read admin-curated featured IDs from GitHub Gist (no rebuild trigger)
 async function getFeaturedIds(): Promise<number[]> {
   try {
-    // Read directly from GitHub raw content (always fresh, no cache)
     const res = await fetch(
-      'https://raw.githubusercontent.com/adriangar333/indubienes-site/master/data/featured-ids.json',
-      { cache: 'no-store' }
+      'https://api.github.com/gists/0219a824e7e5307a50d318fa08dc5e3e',
+      {
+        headers: { Authorization: `token ${process.env.GITHUB_TOKEN || ''}` },
+        cache: 'no-store',
+      }
     );
     if (!res.ok) return [];
-    const data = await res.json();
+    const gist = await res.json();
+    const raw = gist.files?.['featured-ids.json']?.content;
+    if (!raw) return [];
+    const data = JSON.parse(raw);
     return Array.isArray(data.ids) ? data.ids.filter((id: number) => id > 0) : [];
   } catch {
     return [];
@@ -530,75 +535,48 @@ export async function updateClient(id: number, data: Record<string, unknown>): P
 }
 
 // Get regions for a country from WASI
-// Colombian departments — static list with WASI IDs (WASI removed bulk endpoints)
-const COLOMBIAN_REGIONS: Array<{ id: number; name: string }> = [
-  { id: 1, name: 'Amazonas' }, { id: 2, name: 'Antioquia' }, { id: 3, name: 'Arauca' },
-  { id: 4, name: 'Atl\u00e1ntico' }, { id: 5, name: 'Bol\u00edvar' }, { id: 6, name: 'Boyac\u00e1' },
-  { id: 7, name: 'Caldas' }, { id: 8, name: 'Caquet\u00e1' }, { id: 9, name: 'Casanare' },
-  { id: 10, name: 'Cauca' }, { id: 11, name: 'Cesar' }, { id: 12, name: 'Choc\u00f3' },
-  { id: 13, name: 'C\u00f3rdoba' }, { id: 14, name: 'Cundinamarca' }, { id: 15, name: 'Guain\u00eda' },
-  { id: 16, name: 'Guaviare' }, { id: 17, name: 'Huila' }, { id: 18, name: 'La Guajira' },
-  { id: 19, name: 'Magdalena' }, { id: 20, name: 'Meta' }, { id: 21, name: 'Nari\u00f1o' },
-  { id: 22, name: 'Norte de Santander' }, { id: 23, name: 'Putumayo' },
-  { id: 24, name: 'Quind\u00edo' }, { id: 25, name: 'Risaralda' },
-  { id: 26, name: 'San Andr\u00e9s y Providencia' }, { id: 27, name: 'Santander' },
-  { id: 28, name: 'Sucre' }, { id: 29, name: 'Tolima' }, { id: 30, name: 'Valle del Cauca' },
-  { id: 31, name: 'Vaup\u00e9s' }, { id: 32, name: 'Vichada' }, { id: 33, name: 'Bogot\u00e1 D.C.' },
-];
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function getRegions(_countryId: number = 1): Promise<Array<{ id: number; name: string }>> {
-  return COLOMBIAN_REGIONS;
+export async function getRegions(countryId: number = 1): Promise<Array<{ id: number; name: string }>> {
+  const result = await wasiRequest<Record<string, unknown>>('/location/regions-by-country', {
+    method: 'POST',
+    body: { id_country: countryId },
+  });
+  if (!result) return [];
+  return Object.entries(result)
+    .filter(([key]) => !isNaN(Number(key)))
+    .map(([, val]) => {
+      const v = val as Record<string, unknown>;
+      return { id: Number(v.id_region || v.id), name: String(v.name || v.label || '') };
+    });
 }
 
-// Discover cities from existing property data in WASI
+// Get cities for a region from WASI
 export async function getCities(regionId: number): Promise<Array<{ id: number; name: string }>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result = await wasiRequest<Record<string, any>>('/property/search', {
+  const result = await wasiRequest<Record<string, unknown>>('/location/cities-by-region', {
     method: 'POST',
-    body: { id_region: regionId, take: 100, skip: 0, order_by: 'city', order: 'asc' },
+    body: { id_region: regionId },
   });
   if (!result) return [];
-
-  const seen = new Map<number, string>();
-  Object.entries(result)
+  return Object.entries(result)
     .filter(([key]) => !isNaN(Number(key)))
-    .forEach(([, val]) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p = val as Record<string, any>;
-      const id = Number(p.id_city);
-      const name = String(p.city_label || '').trim();
-      if (id > 0 && name && !seen.has(id)) seen.set(id, name);
+    .map(([, val]) => {
+      const v = val as Record<string, unknown>;
+      return { id: Number(v.id_city || v.id), name: String(v.name || v.label || '') };
     });
-
-  return Array.from(seen.entries())
-    .map(([id, name]) => ({ id, name }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'es'));
 }
 
-// Discover zones from existing property data in WASI
+// Get zones for a city from WASI
 export async function getZones(cityId: number): Promise<Array<{ id: number; name: string }>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result = await wasiRequest<Record<string, any>>('/property/search', {
+  const result = await wasiRequest<Record<string, unknown>>('/location/zones-by-city', {
     method: 'POST',
-    body: { id_city: cityId, take: 100, skip: 0, order_by: 'zone', order: 'asc' },
+    body: { id_city: cityId },
   });
   if (!result) return [];
-
-  const seen = new Map<number, string>();
-  Object.entries(result)
+  return Object.entries(result)
     .filter(([key]) => !isNaN(Number(key)))
-    .forEach(([, val]) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p = val as Record<string, any>;
-      const id = Number(p.id_zone);
-      const name = String(p.zone_label || '').trim();
-      if (id > 0 && name && !seen.has(id)) seen.set(id, name);
+    .map(([, val]) => {
+      const v = val as Record<string, unknown>;
+      return { id: Number(v.id_zone || v.id), name: String(v.name || v.label || '') };
     });
-
-  return Array.from(seen.entries())
-    .map(([id, name]) => ({ id, name }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'es'));
 }
 
 // Normalize client data from WASI API
@@ -676,94 +654,4 @@ function normalizeGalleries(raw: any): Property['galleries'] {
       images: imgArray,
     };
   });
-}
-
-
-// ============================================================================
-// BLOG / NEWS
-// WASI exposes blog content under /v1/news/*. We keep the internal naming
-// aligned with WASI (news) but expose it as "blog" on the public site.
-// ============================================================================
-
-// WASI exposes several size prefixes for news thumbnails:
-//   s = 120x90, b = 210x150 (default), m = 578x270
-// The default `b` is very low resolution — promote to `m` for card/hero use.
-function upgradeWasiNewsImage(url: string): string {
-  if (!url) return '';
-  return url.replace(
-    /(https?:\/\/images?\.wasi\.co\/noticias\/)[bsmgo](\d)/i,
-    '$1m$2'
-  );
-}
-
-function normalizeNews(raw: unknown): WasiNews {
-  const r = (raw ?? {}) as Record<string, unknown>;
-  return {
-    id_news: Number(r.id_news) || 0,
-    title: String(r.title || '').trim(),
-    abstract: String(r.abstract || '').trim(),
-    content: String(r.content || '').trim(),
-    image: upgradeWasiNewsImage(String(r.image || '').trim()),
-    date: String(r.date || '').trim(),
-    position: Number(r.position) || 0,
-  };
-}
-
-export async function searchNews(filters: WasiNewsSearchFilters = {}): Promise<WasiNewsSearchResult> {
-  const { skip = 0, take = 12, query } = filters;
-
-  const params: Record<string, string> = {
-    skip: String(skip),
-    take: String(take),
-  };
-  if (query) params.query = query;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result = await wasiRequest<Record<string, any>>('/news/search', {
-    method: 'GET',
-    params,
-  });
-
-  if (!result || result.status === 'error') {
-    return { news: [], total: 0 };
-  }
-
-  const total = Number(result.total) || 0;
-  const news = Object.entries(result)
-    .filter(([key]) => !isNaN(Number(key)))
-    .map(([, value]) => normalizeNews(value))
-    // Sort by date DESC primarily, then by position (manual order) as tiebreaker
-    .sort((a, b) => {
-      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
-      return a.position - b.position;
-    });
-
-  return { news, total };
-}
-
-export async function getNews(id: number): Promise<WasiNews | null> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result = await wasiRequest<Record<string, any>>(`/news/get/${id}`, {
-    method: 'GET',
-  });
-
-  if (!result || result.status === 'error' || !result.id_news) {
-    return null;
-  }
-
-  return normalizeNews(result);
-}
-
-// Helper to build a SEO-friendly slug from a news title.
-// Produces: "como-elegir-apartamento-en-laureles"
-export function slugifyNewsTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // strip diacritics
-    .replace(/[^a-z0-9\s-]/g, '') // drop punctuation
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .slice(0, 80);
 }
