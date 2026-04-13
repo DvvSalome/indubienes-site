@@ -2,45 +2,48 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-async function testEndpoint(url: string, method: string, body?: Record<string, unknown>) {
+async function test(url: string, method: string, body?: Record<string, unknown>) {
   const id_company = (process.env.WASI_COMPANY_ID || '').trim();
   const wasi_token = (process.env.WASI_TOKEN || '').trim();
-  
   try {
     let finalUrl = url;
     const opts: RequestInit = { method, headers: { 'Content-Type': 'application/json' }, cache: 'no-store' };
-    
     if (method === 'GET') {
-      const params = new URLSearchParams({ id_company, wasi_token, ...(body as Record<string, string> || {}) });
+      const params = new URLSearchParams({ id_company, wasi_token, ...(body as Record<string,string> || {}) });
       finalUrl = `${url}?${params}`;
     } else {
       opts.body = JSON.stringify({ id_company, wasi_token, ...body });
     }
-    
     const r = await fetch(finalUrl, opts);
     const text = await r.text();
     const isJson = text.startsWith('{') || text.startsWith('[');
-    return { status: r.status, isJson, sample: text.slice(0, 300) };
-  } catch (e: unknown) { return { error: String(e) }; }
+    return { s: r.status, ok: isJson, d: text.slice(0, 400) };
+  } catch (e: unknown) { return { err: String(e) }; }
 }
 
 export async function GET() {
-  const BASE = 'https://api.wasi.co/v1';
-  const results: Record<string, unknown> = {};
+  const B = 'https://api.wasi.co/v1';
+  const r: Record<string, unknown> = {};
   
-  // Try various location endpoints
-  results['POST /location/regions-by-country'] = await testEndpoint(`${BASE}/location/regions-by-country`, 'POST', { id_country: 1 });
-  results['GET /location/regions-by-country'] = await testEndpoint(`${BASE}/location/regions-by-country`, 'GET', { id_country: '1' });
-  results['POST /region/all'] = await testEndpoint(`${BASE}/region/all`, 'POST', { id_country: 1 });
-  results['GET /region/all'] = await testEndpoint(`${BASE}/region/all`, 'GET', { id_country: '1' });
-  results['POST /location/region/all'] = await testEndpoint(`${BASE}/location/region/all`, 'POST', { id_country: 1 });
-  results['GET /location/all-regions'] = await testEndpoint(`${BASE}/location/all-regions`, 'GET', { id_country: '1' });
-  results['POST /location/get-regions'] = await testEndpoint(`${BASE}/location/get-regions`, 'POST', { id_country: 1 });
+  // /location/country patterns
+  r['POST /location/country/all'] = await test(`${B}/location/country/all`, 'POST');
+  r['POST /location/country/1'] = await test(`${B}/location/country/1`, 'POST');
   
-  // Also test city endpoint variants
-  results['POST /location/cities-by-region'] = await testEndpoint(`${BASE}/location/cities-by-region`, 'POST', { id_region: 2 });
-  results['POST /city/all'] = await testEndpoint(`${BASE}/city/all`, 'POST', { id_region: 2 });
-  results['GET /location/cities'] = await testEndpoint(`${BASE}/location/cities`, 'GET', { id_region: '2' });
+  // /location/region patterns  
+  r['POST /location/region/1'] = await test(`${B}/location/region/1`, 'POST');
+  r['POST /location/region/2'] = await test(`${B}/location/region/2`, 'POST');
+  r['POST /location/regions'] = await test(`${B}/location/regions`, 'POST', { id_country: 1 });
+  
+  // /location/city patterns
+  r['POST /location/city/496'] = await test(`${B}/location/city/496`, 'POST');
+  r['POST /location/cities'] = await test(`${B}/location/cities`, 'POST', { id_region: 2 });
+  
+  // /location/zone patterns
+  r['POST /location/zone/1'] = await test(`${B}/location/zone/1`, 'POST');
+  r['POST /location/zones'] = await test(`${B}/location/zones`, 'POST', { id_city: 496 });
 
-  return NextResponse.json(results);
+  // Try searching with property that has location data
+  r['POST /property/search (1 result)'] = await test(`${B}/property/search`, 'POST', { take: 1, skip: 0 });
+  
+  return NextResponse.json(r);
 }
