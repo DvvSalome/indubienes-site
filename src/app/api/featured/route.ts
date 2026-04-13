@@ -4,35 +4,35 @@ import { verifySessionToken } from '@/lib/auth';
 export const runtime = 'nodejs';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
-const REPO = 'adriangar333/indubienes-site';
-const FILE_PATH = 'data/featured-ids.json';
-const BRANCH = 'master';
+const GIST_ID = '0219a824e7e5307a50d318fa08dc5e3e';
+const GIST_FILE = 'featured-ids.json';
 
-// GET: Read current featured IDs from GitHub
+// GET: Read current featured IDs from Gist (no rebuild needed)
 export async function GET() {
   try {
-    const res = await fetch(
-      `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
-      {
-        headers: { Authorization: `token ${GITHUB_TOKEN}` },
-        cache: 'no-store',
-      }
-    );
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      headers: { Authorization: `token ${GITHUB_TOKEN}` },
+      cache: 'no-store',
+    });
 
     if (!res.ok) {
       return NextResponse.json({ ids: [], updatedAt: '', updatedBy: '' });
     }
 
-    const data = await res.json();
-    const content = JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'));
+    const gist = await res.json();
+    const raw = gist.files?.[GIST_FILE]?.content;
+    if (!raw) {
+      return NextResponse.json({ ids: [], updatedAt: '', updatedBy: '' });
+    }
 
-    return NextResponse.json({ ...content, sha: data.sha });
+    const content = JSON.parse(raw);
+    return NextResponse.json(content);
   } catch {
     return NextResponse.json({ ids: [], updatedAt: '', updatedBy: '' });
   }
 }
 
-// POST: Save featured IDs to GitHub (triggers Vercel rebuild)
+// POST: Save featured IDs to Gist (instant, no Vercel rebuild)
 export async function POST(request: NextRequest) {
   try {
     const sessionCookie = request.cookies.get('indubienes_session');
@@ -51,54 +51,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'ids must be an array' }, { status: 400 });
     }
 
-    // Get current file SHA (needed for update)
-    const getRes = await fetch(
-      `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
-      {
-        headers: { Authorization: `token ${GITHUB_TOKEN}` },
-        cache: 'no-store',
-      }
-    );
-
-    let sha: string | undefined;
-    if (getRes.ok) {
-      const current = await getRes.json();
-      sha = current.sha;
-    }
-
     const newContent = {
       ids: ids.map(Number),
       updatedAt: new Date().toISOString(),
       updatedBy: updatedBy || 'admin',
     };
 
-    // Write file via GitHub Contents API
-    const putRes = await fetch(
-      `https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
-      {
-        method: 'PUT',
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-          'Content-Type': 'application/json',
+    // Update Gist (does NOT trigger Vercel rebuild)
+    const patchRes = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        files: {
+          [GIST_FILE]: {
+            content: JSON.stringify(newContent, null, 2),
+          },
         },
-        body: JSON.stringify({
-          message: `feat: update featured properties [${ids.length} selected]`,
-          content: Buffer.from(JSON.stringify(newContent, null, 2) + '\n').toString('base64'),
-          sha,
-          branch: BRANCH,
-        }),
-      }
-    );
+      }),
+    });
 
-    if (!putRes.ok) {
-      const err = await putRes.text();
-      console.error('GitHub write error:', err);
+    if (!patchRes.ok) {
+      const err = await patchRes.text();
+      console.error('Gist write error:', err);
       return NextResponse.json({ error: 'Failed to save' }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
-      message: `Guardadas ${ids.length} propiedades destacadas. Vercel reconstruirá el sitio en ~1 minuto.`,
+      message: `Guardadas ${ids.length} propiedades destacadas. Los cambios se reflejan de inmediato.`,
       ...newContent,
     });
   } catch (err) {
