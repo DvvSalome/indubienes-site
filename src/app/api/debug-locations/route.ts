@@ -6,9 +6,11 @@ export async function GET() {
   const B = 'https://api.wasi.co/v1';
   const id_company = (process.env.WASI_COMPANY_ID || '').trim();
   const wasi_token = (process.env.WASI_TOKEN || '').trim();
-
-  // Discover all regions (1-35)
-  const regionPromises = Array.from({ length: 35 }, (_, i) => i + 1).map(async (id) => {
+  
+  const results: Record<string, unknown> = {};
+  
+  // Just test 3 specific IDs
+  for (const id of [1, 2, 3]) {
     try {
       const r = await fetch(`${B}/location/region/${id}`, {
         method: 'POST',
@@ -16,36 +18,36 @@ export async function GET() {
         body: JSON.stringify({ id_company, wasi_token }),
         cache: 'no-store',
       });
-      const d = await r.json();
-      if (d.status === 'success' && d.id_region) {
-        return { id: d.id_region, name: d.name };
-      }
-      return null;
-    } catch { return null; }
-  });
+      results[`region_${id}`] = { status: r.status, body: await r.text().then(t => t.slice(0, 200)) };
+    } catch (e: unknown) { results[`region_${id}`] = String(e); }
+  }
 
-  const regions = (await Promise.all(regionPromises)).filter(Boolean);
+  // Test city 496 (Medellin)
+  try {
+    const r = await fetch(`${B}/location/city/496`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_company, wasi_token }),
+      cache: 'no-store',
+    });
+    results.city_496 = { status: r.status, body: await r.text().then(t => t.slice(0, 200)) };
+  } catch (e: unknown) { results.city_496 = String(e); }
 
-  // Discover Antioquia cities (try IDs around 490-520, plus common ones)
-  const cityIds = [...Array.from({ length: 50 }, (_, i) => 480 + i), ...Array.from({ length: 30 }, (_, i) => 1 + i)];
-  const cityPromises = cityIds.map(async (id) => {
-    try {
-      const r = await fetch(`${B}/location/city/${id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_company, wasi_token }),
-        cache: 'no-store',
-      });
-      const d = await r.json();
-      if (d.status === 'success' && d.id_city) {
-        return { id: d.id_city, name: d.name, region: d.id_region };
-      }
-      return null;
-    } catch { return null; }
-  });
+  // Test getting location from property data
+  try {
+    const r = await fetch(`${B}/property/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_company, wasi_token, take: 3, skip: 0 }),
+      cache: 'no-store',
+    });
+    const d = await r.json();
+    const props = Object.entries(d).filter(([k]) => !isNaN(Number(k))).map(([,v]) => {
+      const p = v as Record<string, unknown>;
+      return { id: p.id_property, region: p.id_region, region_label: p.region_label, city: p.id_city, city_label: p.city_label, zone: p.id_zone, zone_label: p.zone_label };
+    });
+    results.property_locations = props;
+  } catch (e: unknown) { results.property_locations = String(e); }
 
-  const cities = (await Promise.all(cityPromises)).filter(Boolean);
-  const antioquiaCities = cities.filter((c: { region?: number }) => c && c.region === 2);
-
-  return NextResponse.json({ regions, antioquiaCities, allCitiesFound: cities });
+  return NextResponse.json(results);
 }
