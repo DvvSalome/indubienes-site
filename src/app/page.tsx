@@ -123,7 +123,7 @@ export default async function HomePage() {
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover transition-transform duration-700 hover:scale-105"
-                  priority
+                  loading="lazy"
                 />
               </div>
               {/* Decorative accent */}
