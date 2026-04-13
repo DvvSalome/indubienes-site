@@ -24,7 +24,9 @@ export default function PropertiesClient({
 }: Props) {
   const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
+  const [showFab, setShowFab] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
+  const filterBarRef = useRef<HTMLDivElement>(null);
 
   const [tipo, setTipo] = useState(sp.tipo || '');
   const [propiedad, setPropiedad] = useState(sp.propiedad || '');
@@ -34,6 +36,17 @@ export default function PropertiesClient({
   const [banos, setBanos] = useState(sp.banos || '');
 
   const totalPages = Math.ceil(total / 12);
+
+  // Show FAB when filter bar scrolls out of view (mobile only)
+  useEffect(() => {
+    const onScroll = () => {
+      if (!filterBarRef.current) return;
+      const rect = filterBarRef.current.getBoundingClientRect();
+      setShowFab(rect.bottom < -50);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Animate cards on mount — quick fade-in, no scroll dependency
   useEffect(() => {
@@ -131,7 +144,7 @@ export default function PropertiesClient({
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
       {/* Premium filter bar */}
-      <div className="mb-10 sticky top-0 lg:relative lg:top-auto z-40">
+      <div ref={filterBarRef} className="mb-10 sticky top-0 lg:relative lg:top-auto z-40">
         {/* Mobile toggle — sticky on mobile so users don't scroll up */}
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -282,6 +295,29 @@ export default function PropertiesClient({
           </>
         )}
       </div>
+
+      {/* FAB "Filtros" — mobile only, appears when filter bar scrolls out */}
+      <button
+        onClick={() => {
+          filterBarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => setShowFilters(true), 400);
+        }}
+        aria-label="Ir a filtros"
+        className={`lg:hidden fixed bottom-20 right-4 z-50 flex items-center gap-2 bg-gold text-white border-none rounded-full px-5 py-3 text-sm font-body font-semibold shadow-lg shadow-gold/30 transition-all duration-300 ${
+          showFab
+            ? 'opacity-100 translate-y-0 pointer-events-auto'
+            : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" />
+          <line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" />
+          <line x1="1" y1="14" x2="7" y2="14" /><line x1="9" y1="8" x2="15" y2="8" />
+          <line x1="17" y1="16" x2="23" y2="16" />
+        </svg>
+        Filtros
+      </button>
     </div>
   );
 }
