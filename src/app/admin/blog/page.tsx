@@ -19,7 +19,7 @@ interface BlogPost {
 
 export default function AdminBlogPage() {
   const [images, setImages] = useState<BlogImage[]>([]);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [_posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState('');
