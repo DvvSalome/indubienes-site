@@ -131,7 +131,7 @@ export default function PropertiesClient({
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
       {/* Mobile filter toggle — fixed to top when scrolling */}
-      <div className="lg:hidden sticky top-0 z-50 -mx-4 px-4 pt-2 pb-2 bg-background/95 backdrop-blur-md">
+      <div className="lg:hidden sticky top-[80px] z-40 -mx-4 px-4 pt-2 pb-2 bg-background/95 backdrop-blur-md">
         <button
           onClick={() => setShowFilters(!showFilters)}
           className="w-full flex items-center justify-between gap-2 px-5 py-3.5 bg-card/95 backdrop-blur-md border border-border rounded-xl text-sm font-body text-foreground transition-all duration-300 hover:border-gold/30 shadow-lg shadow-background/20"
