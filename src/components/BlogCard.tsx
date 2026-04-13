@@ -28,21 +28,27 @@ function cleanText(text: string): string {
 }
 
 /**
- * Override map: WASI post ID → local AI-generated image.
- * Images in /public/blog/ replace the low-quality WASI originals.
+ * Convention-based image resolution:
+ *   1. /blog/{id_news}.jpg  — high-res local image (uploaded via admin)
+ *   2. WASI news image      — fallback (low-res CDN thumbnail)
+ *   3. /logo-hd.png         — last resort placeholder
+ *
+ * The admin panel uploads images as {id_news}.jpg automatically.
+ * No hardcoded map needed — just match by post ID.
  */
-const LOCAL_IMAGES: Record<number, string> = {
-  27256: '/blog/blog-laureles.jpg',   // Laureles Medellín aerial
-  27227: '/blog/blog-inversion.jpg',  // Real estate investment
-};
+function resolveImage(post: WasiNews): { src: string; isLocal: boolean } {
+  // Convention: /blog/{id_news}.jpg
+  const localPath = `/blog/${post.id_news}.jpg`;
+  return { src: localPath, isLocal: true };
+}
 
 export default function BlogCard({ post, priority = false }: Props) {
   const slug = `${post.id_news}-${slugifyNewsTitle(post.title)}`;
   const href = `/blog/${slug}`;
-  const localImg = LOCAL_IMAGES[post.id_news];
-  const image = localImg || post.image || '/logo-hd.png';
+  const { src: imageSrc, isLocal } = resolveImage(post);
+  const wasiImage = post.image || '/logo-hd.png';
   const date = formatSpanishDate(post.date);
-  const isWasi = !localImg && image.includes('wasi.co');
+  const isWasi = !isLocal;
   const abstract = cleanText(post.abstract || '');
 
   return (
@@ -63,7 +69,7 @@ export default function BlogCard({ post, priority = false }: Props) {
           }
         >
           <Image
-            src={image}
+            src={imageSrc}
             alt={post.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
@@ -71,6 +77,13 @@ export default function BlogCard({ post, priority = false }: Props) {
             className="object-cover"
             priority={priority}
             loading={priority ? 'eager' : 'lazy'}
+            onError={(e) => {
+              // If local image doesn't exist, fall back to WASI
+              const img = e.target as HTMLImageElement;
+              if (img.src !== wasiImage && !img.src.includes('wasi.co')) {
+                img.src = wasiImage;
+              }
+            }}
           />
         </div>
 
