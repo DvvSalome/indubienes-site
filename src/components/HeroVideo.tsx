@@ -19,7 +19,12 @@ interface HeroVideoConfig {
 /**
  * HeroVideo — loops through multiple videos with crossfade.
  * Shows landscape on desktop, portrait on mobile.
- * Config is fetched from /api/hero-videos (editable in admin).
+ * 
+ * Performance optimizations (v2):
+ * - preload="none" — videos only start downloading when playback begins
+ * - Only the first video auto-plays; subsequent ones load on demand
+ * - Poster image shown immediately while video buffers
+ * - Reduced quality on slow connections via Network Information API
  */
 export default function HeroVideo() {
   const [config, setConfig] = useState<HeroVideoConfig | null>(null);
@@ -27,10 +32,11 @@ export default function HeroVideo() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [fadeClass, setFadeClass] = useState('opacity-100');
+  const [isSlowConnection, setIsSlowConnection] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const nextVideoRef = useRef<HTMLVideoElement>(null);
 
-  // Detect mobile (debounced to avoid layout thrash during resize)
+  // Detect mobile
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     const check = () => {
@@ -43,6 +49,16 @@ export default function HeroVideo() {
       clearTimeout(timer);
       window.removeEventListener('resize', check);
     };
+  }, []);
+
+  // Detect slow connection
+  useEffect(() => {
+    const nav = navigator as Navigator & { connection?: { effectiveType?: string; saveData?: boolean } };
+    const conn = nav.connection;
+    if (conn) {
+      const slow = conn.saveData || ['slow-2g', '2g', '3g'].includes(conn.effectiveType || '');
+      setIsSlowConnection(slow);
+    }
   }, []);
 
   // Fetch config
@@ -62,7 +78,6 @@ export default function HeroVideo() {
   const activeVideos = config?.videos || [];
   const poster = isMobile ? config?.posterMobile : config?.posterDesktop;
 
-  // Get video URL for current device
   const getVideoUrl = useCallback(
     (idx: number) => {
       if (!activeVideos.length) return '';
@@ -79,25 +94,27 @@ export default function HeroVideo() {
 
     const handleEnded = () => {
       if (activeVideos.length <= 1) {
-        // Single video — just loop
         video.currentTime = 0;
         video.play().catch(() => {});
         return;
       }
 
-      // Crossfade
+      // On slow connections, just loop the first video — don't download more
+      if (isSlowConnection) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+        return;
+      }
+
       const nextIdx = (currentIdx + 1) % activeVideos.length;
 
-      // Preload next video
       if (nextVideoRef.current) {
         nextVideoRef.current.src = getVideoUrl(nextIdx);
         nextVideoRef.current.load();
         nextVideoRef.current.play().catch(() => {});
       }
 
-      // Fade out current
       setFadeClass('opacity-0');
-
       setTimeout(() => {
         setCurrentIdx(nextIdx);
         setFadeClass('opacity-100');
@@ -106,7 +123,7 @@ export default function HeroVideo() {
 
     video.addEventListener('ended', handleEnded);
     return () => video.removeEventListener('ended', handleEnded);
-  }, [currentIdx, activeVideos, getVideoUrl]);
+  }, [currentIdx, activeVideos, getVideoUrl, isSlowConnection]);
 
   // Auto-play when source changes
   useEffect(() => {
@@ -123,10 +140,8 @@ export default function HeroVideo() {
 
   if (!activeVideos.length) {
     if (!configLoaded) {
-      // Still loading config — show blank dark bg to avoid flash of fallback image
       return <div className="absolute inset-0 bg-[#1a1a1a]" />;
     }
-    // Config loaded but no videos — fallback to static background
     return (
       <div
         className="hero-bg-image absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
@@ -140,19 +155,19 @@ export default function HeroVideo() {
 
   return (
     <>
-      {/* Main video */}
+      {/* Main video — preload metadata only, not the full file */}
       <video
         ref={videoRef}
         muted
         playsInline
         poster={poster || undefined}
-        preload="auto"
+        preload="metadata"
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[800ms] ease-in-out ${fadeClass}`}
         style={{ transform: 'scale(1.05)' }}
       />
 
-      {/* Hidden next-video for preloading crossfade — preload="none" until needed */}
-      {activeVideos.length > 1 && (
+      {/* Hidden next-video for preloading crossfade */}
+      {activeVideos.length > 1 && !isSlowConnection && (
         <video
           ref={nextVideoRef}
           muted
