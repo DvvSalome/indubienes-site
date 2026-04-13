@@ -513,7 +513,7 @@ export default function PropertyDetailClient({ property }: Props) {
             )}
 
             {/* Features */}
-            {(property.features?.internal?.length > 0 || property.features?.external?.length > 0) && (
+            {((property.features?.internal?.length ?? 0) > 0 || (property.features?.external?.length ?? 0) > 0) && (
               <div ref={featuresRef} className="mb-8">
                 <h2 className="text-xl font-display font-bold text-foreground mb-4">Características</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
