@@ -154,9 +154,9 @@ export default function PropertiesClient({
           </svg>
         </button>
 
-        {/* Expandable filter panel — slides down under the sticky button */}
-        {showFilters && (
-          <div className="mt-3 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-5">
+        {/* Expandable filter panel — always mounted, animated with max-height */}
+        <div className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${showFilters ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
+          <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-5">
             <div className="grid grid-cols-2 gap-4">
               <CustomSelect label="Negocio" options={tipoOptions} value={tipo} onChange={setTipo} variant="filter" />
               <CustomSelect label="Propiedad" options={propiedadOptions} value={propiedad} onChange={setPropiedad} variant="filter" />
@@ -165,19 +165,19 @@ export default function PropertiesClient({
               <div>
                 <label className="block text-xs font-body text-muted mb-1.5 tracking-wide">Precio mín.</label>
                 <input type="number" value={minPrecio} onChange={(e) => setMinPrecio(e.target.value)} placeholder="$ Mínimo"
-                  className="w-full bg-surface border border-border text-foreground rounded-xl px-4 py-2.5 text-sm font-body placeholder:text-faint/50 transition-all duration-300 hover:border-gold/30 focus:border-gold/60 focus:shadow-[0_0_0_2px_rgba(201,169,98,0.15)]" />
+                  className="w-full bg-surface border border-border text-foreground rounded-xl px-4 py-2.5 text-sm font-body placeholder:text-faint/50 hover:border-gold/30 focus:border-gold/60 focus:shadow-[0_0_0_2px_rgba(201,169,98,0.15)]" />
               </div>
               <div>
                 <label className="block text-xs font-body text-muted mb-1.5 tracking-wide">Precio máx.</label>
                 <input type="number" value={maxPrecio} onChange={(e) => setMaxPrecio(e.target.value)} placeholder="$ Máximo"
-                  className="w-full bg-surface border border-border text-foreground rounded-xl px-4 py-2.5 text-sm font-body placeholder:text-faint/50 transition-all duration-300 hover:border-gold/30 focus:border-gold/60 focus:shadow-[0_0_0_2px_rgba(201,169,98,0.15)]" />
+                  className="w-full bg-surface border border-border text-foreground rounded-xl px-4 py-2.5 text-sm font-body placeholder:text-faint/50 hover:border-gold/30 focus:border-gold/60 focus:shadow-[0_0_0_2px_rgba(201,169,98,0.15)]" />
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 mt-5 pt-4 border-t border-border/30">
               {hasActiveFilters && (
-                <button onClick={clearFilters} className="px-5 py-2.5 text-sm font-body text-muted hover:text-gold transition-all duration-300 tracking-wide">Limpiar</button>
+                <button onClick={clearFilters} className="px-5 py-2.5 text-sm font-body text-muted hover:text-gold transition-colors duration-300 tracking-wide">Limpiar</button>
               )}
-              <button onClick={applyFilters} className="group px-8 py-2.5 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm rounded-xl transition-all duration-300 tracking-wide flex items-center gap-2">
+              <button onClick={applyFilters} className="group px-8 py-2.5 bg-gold hover:bg-gold-hover text-white font-body font-semibold text-sm rounded-xl transition-colors duration-300 tracking-wide flex items-center gap-2">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:scale-110">
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
@@ -185,7 +185,7 @@ export default function PropertiesClient({
               </button>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Desktop filter bar — always visible */}
