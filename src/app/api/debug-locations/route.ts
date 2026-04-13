@@ -2,48 +2,50 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-async function test(url: string, method: string, body?: Record<string, unknown>) {
-  const id_company = (process.env.WASI_COMPANY_ID || '').trim();
-  const wasi_token = (process.env.WASI_TOKEN || '').trim();
-  try {
-    let finalUrl = url;
-    const opts: RequestInit = { method, headers: { 'Content-Type': 'application/json' }, cache: 'no-store' };
-    if (method === 'GET') {
-      const params = new URLSearchParams({ id_company, wasi_token, ...(body as Record<string,string> || {}) });
-      finalUrl = `${url}?${params}`;
-    } else {
-      opts.body = JSON.stringify({ id_company, wasi_token, ...body });
-    }
-    const r = await fetch(finalUrl, opts);
-    const text = await r.text();
-    const isJson = text.startsWith('{') || text.startsWith('[');
-    return { s: r.status, ok: isJson, d: text.slice(0, 400) };
-  } catch (e: unknown) { return { err: String(e) }; }
-}
-
 export async function GET() {
   const B = 'https://api.wasi.co/v1';
-  const r: Record<string, unknown> = {};
-  
-  // /location/country patterns
-  r['POST /location/country/all'] = await test(`${B}/location/country/all`, 'POST');
-  r['POST /location/country/1'] = await test(`${B}/location/country/1`, 'POST');
-  
-  // /location/region patterns  
-  r['POST /location/region/1'] = await test(`${B}/location/region/1`, 'POST');
-  r['POST /location/region/2'] = await test(`${B}/location/region/2`, 'POST');
-  r['POST /location/regions'] = await test(`${B}/location/regions`, 'POST', { id_country: 1 });
-  
-  // /location/city patterns
-  r['POST /location/city/496'] = await test(`${B}/location/city/496`, 'POST');
-  r['POST /location/cities'] = await test(`${B}/location/cities`, 'POST', { id_region: 2 });
-  
-  // /location/zone patterns
-  r['POST /location/zone/1'] = await test(`${B}/location/zone/1`, 'POST');
-  r['POST /location/zones'] = await test(`${B}/location/zones`, 'POST', { id_city: 496 });
+  const id_company = (process.env.WASI_COMPANY_ID || '').trim();
+  const wasi_token = (process.env.WASI_TOKEN || '').trim();
 
-  // Try searching with property that has location data
-  r['POST /property/search (1 result)'] = await test(`${B}/property/search`, 'POST', { take: 1, skip: 0 });
-  
-  return NextResponse.json(r);
+  // Discover all regions (1-35)
+  const regionPromises = Array.from({ length: 35 }, (_, i) => i + 1).map(async (id) => {
+    try {
+      const r = await fetch(`${B}/location/region/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_company, wasi_token }),
+        cache: 'no-store',
+      });
+      const d = await r.json();
+      if (d.status === 'success' && d.id_region) {
+        return { id: d.id_region, name: d.name };
+      }
+      return null;
+    } catch { return null; }
+  });
+
+  const regions = (await Promise.all(regionPromises)).filter(Boolean);
+
+  // Discover Antioquia cities (try IDs around 490-520, plus common ones)
+  const cityIds = [...Array.from({ length: 50 }, (_, i) => 480 + i), ...Array.from({ length: 30 }, (_, i) => 1 + i)];
+  const cityPromises = cityIds.map(async (id) => {
+    try {
+      const r = await fetch(`${B}/location/city/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_company, wasi_token }),
+        cache: 'no-store',
+      });
+      const d = await r.json();
+      if (d.status === 'success' && d.id_city) {
+        return { id: d.id_city, name: d.name, region: d.id_region };
+      }
+      return null;
+    } catch { return null; }
+  });
+
+  const cities = (await Promise.all(cityPromises)).filter(Boolean);
+  const antioquiaCities = cities.filter((c: { region?: number }) => c && c.region === 2);
+
+  return NextResponse.json({ regions, antioquiaCities, allCitiesFound: cities });
 }
