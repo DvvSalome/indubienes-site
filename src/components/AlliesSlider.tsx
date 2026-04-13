@@ -1,18 +1,19 @@
 'use client';
 
+import Image from 'next/image';
+
 const ALLIES = [
-  { name: 'El Libertador', logo: '/logos/el-libertador.png' },
-  { name: 'Sura', logo: '/logos/sura.png' },
-  { name: 'Cien Cuadras', logo: '/logos/cien-cuadras.png' },
-  { name: 'Metro Cuadrado', logo: '/logos/metro-cuadrado.png' },
-  { name: 'Finca Raíz', logo: '/logos/finca-raiz.png' },
-  { name: 'Espacio Urbano', logo: '/logos/espacio-urbano.png' },
-  { name: 'WASI', logo: '/logos/wasi.png' },
-  { name: 'Sedi ERP', logo: '/logos/sedi-erp.png' },
+  { name: 'El Libertador', logo: '/logos/el-libertador.png', w: 140, h: 48 },
+  { name: 'Sura', logo: '/logos/sura.png', w: 120, h: 48 },
+  { name: 'Cien Cuadras', logo: '/logos/cien-cuadras.png', w: 140, h: 48 },
+  { name: 'Metro Cuadrado', logo: '/logos/metro-cuadrado.png', w: 140, h: 48 },
+  { name: 'Finca Raíz', logo: '/logos/finca-raiz.png', w: 130, h: 48 },
+  { name: 'Espacio Urbano', logo: '/logos/espacio-urbano.png', w: 120, h: 48 },
+  { name: 'WASI', logo: '/logos/wasi.png', w: 110, h: 48 },
+  { name: 'Sedi ERP', logo: '/logos/sedi-erp.png', w: 110, h: 48 },
 ];
 
 export default function AlliesSlider() {
-  // Duplicate for infinite seamless scroll
   const items = [...ALLIES, ...ALLIES];
 
   return (
@@ -25,7 +26,6 @@ export default function AlliesSlider() {
       </div>
 
       <div className="allies-track-wrapper relative">
-        {/* Fade edges */}
         <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-surface dark:from-[#111] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-surface dark:from-[#111] to-transparent z-10 pointer-events-none" />
 
@@ -35,9 +35,11 @@ export default function AlliesSlider() {
               key={`${ally.name}-${i}`}
               className="flex-shrink-0 flex items-center justify-center h-12 sm:h-14 w-[140px] sm:w-[170px] opacity-70 hover:opacity-100 transition-all duration-500"
             >
-              <img
+              <Image
                 src={ally.logo}
                 alt={ally.name}
+                width={ally.w}
+                height={ally.h}
                 className="max-h-full max-w-full object-contain"
                 loading="lazy"
               />
