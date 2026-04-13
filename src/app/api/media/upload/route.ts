@@ -7,70 +7,20 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const GITHUB_REPO = 'Adriangar333/indubienes-site';
 const GITHUB_BRANCH = 'master';
 
-/** Max width for blog hero images (px) */
-const BLOG_MAX_WIDTH = 1600;
-/** JPEG quality for compressed blog images */
-const BLOG_JPEG_QUALITY = 82;
-/** Max file size before compression kicks in (bytes) — 200 KB */
-const COMPRESSION_THRESHOLD = 200 * 1024;
-
-/**
- * Compress and optimize an image buffer.
- * Uses dynamic import of sharp (available in Next.js Vercel runtime).
- * Falls back to raw upload if sharp is unavailable.
- */
-async function compressImage(
-  inputBuffer: Buffer,
-  options: { maxWidth?: number; quality?: number } = {}
-): Promise<{
-  buffer: Buffer;
-  width: number;
-  height: number;
-  originalSize: number;
-  compressedSize: number;
-} | null> {
-  const maxWidth = options.maxWidth || BLOG_MAX_WIDTH;
-  const quality = options.quality || BLOG_JPEG_QUALITY;
-
-  try {
-    // Dynamic import — works on Vercel where sharp is pre-installed
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const sharp = require('sharp');
-
-    const meta = await sharp(inputBuffer).metadata();
-    const needsResize = (meta.width || 0) > maxWidth;
-
-    let pipeline = sharp(inputBuffer).rotate();
-
-    if (needsResize) {
-      pipeline = pipeline.resize(maxWidth, undefined, {
-        fit: 'inside',
-        withoutEnlargement: true,
-      });
-    }
-
-    const output = await pipeline
-      .jpeg({ quality, progressive: true, mozjpeg: true })
-      .toBuffer({ resolveWithObject: true });
-
-    return {
-      buffer: output.data,
-      width: output.info.width,
-      height: output.info.height,
-      originalSize: inputBuffer.length,
-      compressedSize: output.data.length,
-    };
-  } catch (err) {
-    console.warn('[upload] sharp not available, uploading without compression:', err);
-    return null;
-  }
-}
-
 /**
  * POST /api/media/upload
  *
- * Unified media upload endpoint with automatic image compression.
- * Blog images are automatically resized (max 1600px) and compressed (progressive JPEG q82).
+ * Unified media upload endpoint.
+ * Images should be pre-compressed client-side via compressImage() utility
+ * before upload for optimal performance.
+ *
+ * Accepts multipart/form-data with:
+ *   - image (required): the file blob (ideally pre-compressed)
+ *   - target (required): "property" | "blog"
+ *   - entityId (optional): property ID (required for target=property)
+ *   - description (optional)
+ *   - position (optional)
+ *   - filename (optional): custom filename for blog images
  */
 export async function POST(request: NextRequest) {
   try {
@@ -109,43 +59,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.message }, { status: 400 });
     }
 
-    // --- BLOG: compress + push to GitHub → public/blog/ ---
+    // --- BLOG: push to GitHub → public/blog/ ---
     if (!GITHUB_TOKEN) {
       return NextResponse.json({ error: 'GITHUB_TOKEN no configurado' }, { status: 500 });
     }
 
-    // Determine filename
     const customName = formData.get('filename') as string | null;
     const originalName =
       file instanceof File && file.name ? file.name.replace(/[^a-zA-Z0-9._-]/g, '-') : '';
-    let safeName = customName
+    const safeName = customName
       ? customName.replace(/[^a-zA-Z0-9._-]/g, '-')
       : originalName || `blog-${Date.now()}.jpg`;
-
-    // Read file into buffer
-    const rawBuffer = Buffer.from(await file.arrayBuffer());
-    let finalBuffer = rawBuffer;
-    let compressionInfo = '';
-    let compressed = false;
-
-    // Compress if above threshold
-    const skipCompression = formData.get('skipCompression') === 'true';
-    if (!skipCompression && rawBuffer.length > COMPRESSION_THRESHOLD) {
-      const result = await compressImage(rawBuffer);
-      if (result) {
-        finalBuffer = result.buffer;
-        compressed = true;
-        const savedPct = Math.round(100 - (result.compressedSize * 100) / result.originalSize);
-        compressionInfo = ` (${result.width}x${result.height}, ${Math.round(result.compressedSize / 1024)}KB, -${savedPct}%)`;
-
-        // Ensure .jpg extension
-        safeName = safeName.replace(/\.(png|webp|gif|bmp|tiff?)$/i, '.jpg');
-        if (!/\.(jpe?g)$/i.test(safeName)) {
-          safeName = safeName.replace(/\.[^.]+$/, '.jpg');
-          if (!/\.jpg$/i.test(safeName)) safeName += '.jpg';
-        }
-      }
-    }
 
     const filePath = `public/blog/${safeName}`;
     const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`;
@@ -154,7 +78,6 @@ export async function POST(request: NextRequest) {
       'Content-Type': 'application/json',
     };
 
-    // Check if file already exists
     let existingSha: string | undefined;
     try {
       const check = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, { headers });
@@ -166,10 +89,11 @@ export async function POST(request: NextRequest) {
       // File doesn't exist yet
     }
 
-    const base64Content = finalBuffer.toString('base64');
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const base64Content = buffer.toString('base64');
 
     const body: Record<string, unknown> = {
-      message: `media: upload blog image ${safeName}${compressionInfo}`,
+      message: `media: upload blog image ${safeName}`,
       content: base64Content,
       branch: GITHUB_BRANCH,
       committer: {
@@ -202,12 +126,7 @@ export async function POST(request: NextRequest) {
       url: publicUrl,
       sha: pushData.content?.sha,
       commit: pushData.commit?.sha?.slice(0, 7),
-      compression: {
-        originalSize: rawBuffer.length,
-        finalSize: finalBuffer.length,
-        savedPercent: compressed ? Math.round(100 - (finalBuffer.length * 100) / rawBuffer.length) : 0,
-        compressed,
-      },
+      size: buffer.length,
     });
   } catch (error) {
     console.error('Media upload error:', error);
