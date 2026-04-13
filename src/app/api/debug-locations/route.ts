@@ -2,46 +2,45 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
-  const WASI_BASE = 'https://api.wasi.co/v1';
+async function testEndpoint(url: string, method: string, body?: Record<string, unknown>) {
   const id_company = (process.env.WASI_COMPANY_ID || '').trim();
   const wasi_token = (process.env.WASI_TOKEN || '').trim();
-  const results: Record<string, unknown> = { id_company: id_company ? 'SET' : 'MISSING', wasi_token: wasi_token ? 'SET' : 'MISSING' };
-
-  // Test 1: POST regions
+  
   try {
-    const r1 = await fetch(`${WASI_BASE}/location/regions-by-country`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_company, wasi_token, id_country: 1 }),
-      cache: 'no-store',
-    });
-    const d1 = await r1.json();
-    const keys = Object.keys(d1).slice(0, 10);
-    results.regions_post = { status: r1.status, keys, sample: JSON.stringify(d1).slice(0, 500) };
-  } catch (e: unknown) { results.regions_post = { error: String(e) }; }
+    let finalUrl = url;
+    const opts: RequestInit = { method, headers: { 'Content-Type': 'application/json' }, cache: 'no-store' };
+    
+    if (method === 'GET') {
+      const params = new URLSearchParams({ id_company, wasi_token, ...(body as Record<string, string> || {}) });
+      finalUrl = `${url}?${params}`;
+    } else {
+      opts.body = JSON.stringify({ id_company, wasi_token, ...body });
+    }
+    
+    const r = await fetch(finalUrl, opts);
+    const text = await r.text();
+    const isJson = text.startsWith('{') || text.startsWith('[');
+    return { status: r.status, isJson, sample: text.slice(0, 300) };
+  } catch (e: unknown) { return { error: String(e) }; }
+}
 
-  // Test 2: GET regions
-  try {
-    const params = new URLSearchParams({ id_company, wasi_token, id_country: '1' });
-    const r2 = await fetch(`${WASI_BASE}/location/regions-by-country?${params}`, { cache: 'no-store' });
-    const d2 = await r2.json();
-    const keys = Object.keys(d2).slice(0, 10);
-    results.regions_get = { status: r2.status, keys, sample: JSON.stringify(d2).slice(0, 500) };
-  } catch (e: unknown) { results.regions_get = { error: String(e) }; }
-
-  // Test 3: cities for Antioquia (region 2) POST
-  try {
-    const r3 = await fetch(`${WASI_BASE}/location/cities-by-region`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_company, wasi_token, id_region: 2 }),
-      cache: 'no-store',
-    });
-    const d3 = await r3.json();
-    const keys = Object.keys(d3).slice(0, 10);
-    results.cities_antioquia = { status: r3.status, keys, sample: JSON.stringify(d3).slice(0, 500) };
-  } catch (e: unknown) { results.cities_antioquia = { error: String(e) }; }
+export async function GET() {
+  const BASE = 'https://api.wasi.co/v1';
+  const results: Record<string, unknown> = {};
+  
+  // Try various location endpoints
+  results['POST /location/regions-by-country'] = await testEndpoint(`${BASE}/location/regions-by-country`, 'POST', { id_country: 1 });
+  results['GET /location/regions-by-country'] = await testEndpoint(`${BASE}/location/regions-by-country`, 'GET', { id_country: '1' });
+  results['POST /region/all'] = await testEndpoint(`${BASE}/region/all`, 'POST', { id_country: 1 });
+  results['GET /region/all'] = await testEndpoint(`${BASE}/region/all`, 'GET', { id_country: '1' });
+  results['POST /location/region/all'] = await testEndpoint(`${BASE}/location/region/all`, 'POST', { id_country: 1 });
+  results['GET /location/all-regions'] = await testEndpoint(`${BASE}/location/all-regions`, 'GET', { id_country: '1' });
+  results['POST /location/get-regions'] = await testEndpoint(`${BASE}/location/get-regions`, 'POST', { id_country: 1 });
+  
+  // Also test city endpoint variants
+  results['POST /location/cities-by-region'] = await testEndpoint(`${BASE}/location/cities-by-region`, 'POST', { id_region: 2 });
+  results['POST /city/all'] = await testEndpoint(`${BASE}/city/all`, 'POST', { id_region: 2 });
+  results['GET /location/cities'] = await testEndpoint(`${BASE}/location/cities`, 'GET', { id_region: '2' });
 
   return NextResponse.json(results);
 }
