@@ -11,15 +11,22 @@ interface BlogImage {
   sha: string;
 }
 
+interface BlogPost {
+  id_news: number;
+  title: string;
+  image: string;
+}
+
 export default function AdminBlogPage() {
   const [images, setImages] = useState<BlogImage[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [preview, setPreview] = useState<string | null>(null);
-  const [customName, setCustomName] = useState('');
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [compressedBlob, setCompressedBlob] = useState<Blob | null>(null);
 
   const fetchImages = useCallback(async () => {
@@ -32,9 +39,23 @@ export default function AdminBlogPage() {
     }
   }, []);
 
+  const fetchPosts = useCallback(async () => {
+    try {
+      const res = await fetch('/api/blog/list');
+      const data = await res.json();
+      setPosts(data.posts || []);
+    } catch {
+      // Blog list API may not exist yet — not critical
+      console.warn('Could not fetch blog posts list');
+    }
+  }, []);
+
   useEffect(() => {
-    fetchImages().finally(() => setLoading(false));
-  }, [fetchImages]);
+    Promise.all([fetchImages(), fetchPosts()]).finally(() => setLoading(false));
+  }, [fetchImages, fetchPosts]);
+
+  // Check which posts have a local high-res image
+  const postHasLocalImage = (id: number) => images.some(img => img.name === `${id}.jpg`);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
@@ -55,10 +76,6 @@ export default function AdminBlogPage() {
       setCompressedBlob(result.blob);
       setPreview(result.preview);
       setProgress(`Comprimida: ${result.width}×${result.height}px — ${(result.blob.size / 1024).toFixed(0)} KB`);
-
-      // Suggest a name based on the original filename
-      const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
-      if (!customName) setCustomName(`blog-${baseName}.jpg`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error comprimiendo imagen');
       setProgress('');
@@ -66,21 +83,27 @@ export default function AdminBlogPage() {
   };
 
   const handleUpload = async () => {
-    if (!compressedBlob || !customName.trim()) {
-      setError('Selecciona una imagen y define un nombre');
+    if (!compressedBlob) {
+      setError('Selecciona una imagen');
       return;
     }
+    if (!selectedPostId) {
+      setError('Selecciona o escribe el ID del post');
+      return;
+    }
+
+    const filename = `${selectedPostId}.jpg`;
 
     setUploading(true);
     setError('');
     setSuccess('');
-    setProgress('Subiendo a GitHub...');
+    setProgress('Subiendo...');
 
     try {
       const formData = new FormData();
-      formData.append('image', compressedBlob, customName);
+      formData.append('image', compressedBlob, filename);
       formData.append('target', 'blog');
-      formData.append('filename', customName.trim());
+      formData.append('filename', filename);
 
       const res = await fetch('/api/media/upload', {
         method: 'POST',
@@ -90,12 +113,12 @@ export default function AdminBlogPage() {
       const data = await res.json();
 
       if (res.ok && data.status === 'success') {
-        setSuccess(`Imagen subida: ${data.url} (commit ${data.commit})`);
+        setSuccess(`✓ Imagen subida: /blog/${filename}`);
         setPreview(null);
         setCompressedBlob(null);
-        setCustomName('');
+        setSelectedPostId(null);
         setProgress('');
-        fetchImages(); // Refresh list
+        fetchImages();
       } else {
         setError(data.error || 'Error subiendo imagen');
       }
@@ -109,7 +132,7 @@ export default function AdminBlogPage() {
   const handleReset = () => {
     setPreview(null);
     setCompressedBlob(null);
-    setCustomName('');
+    setSelectedPostId(null);
     setProgress('');
     setError('');
     setSuccess('');
@@ -126,9 +149,10 @@ export default function AdminBlogPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">Blog — Media</h1>
+          <h1 className="text-2xl font-bold text-white">Blog — Imágenes</h1>
           <p className="text-sm text-[#888] mt-1">
-            Sube y administra imágenes para los artículos del blog
+            Sube imágenes de alta calidad para los artículos del blog.
+            Cada imagen se asocia al ID del post de WASI.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-[#555]">
@@ -143,16 +167,36 @@ export default function AdminBlogPage() {
           <svg className="w-5 h-5 text-[#4A8BC2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          Subir imagen
+          Subir imagen para post
         </h2>
 
+        {/* Post ID selector */}
+        <div className="mb-4">
+          <label className="block text-xs text-[#888] mb-1.5">ID del post de WASI</label>
+          <input
+            type="number"
+            value={selectedPostId || ''}
+            onChange={(e) => setSelectedPostId(e.target.value ? Number(e.target.value) : null)}
+            placeholder="Ej: 27256"
+            className="w-full max-w-xs bg-[#0a0a0a] border border-[#333] rounded-lg px-4 py-2.5 text-white text-sm focus:border-[#4A8BC2] focus:outline-none placeholder:text-[#444]"
+          />
+          {selectedPostId && (
+            <p className="text-xs text-[#555] mt-1.5">
+              Se guardará como: <code className="text-[#4A8BC2]">/blog/{selectedPostId}.jpg</code>
+              {postHasLocalImage(selectedPostId) && (
+                <span className="text-amber-400 ml-2">⚠ Ya existe — se reemplazará</span>
+              )}
+            </p>
+          )}
+        </div>
+
         {!preview ? (
-          <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-[#333] rounded-xl cursor-pointer hover:border-[#4A8BC2] hover:bg-[#4A8BC2]/5 transition-all">
+          <label className="flex flex-col items-center justify-center w-full h-44 border-2 border-dashed border-[#333] rounded-xl cursor-pointer hover:border-[#4A8BC2] hover:bg-[#4A8BC2]/5 transition-all">
             <svg className="w-10 h-10 text-[#555] mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
             <span className="text-sm text-[#888]">Haz clic o arrastra una imagen</span>
-            <span className="text-xs text-[#555] mt-1">JPG, PNG o WebP · Máx 8 MB · Se comprime a 2400px</span>
+            <span className="text-xs text-[#555] mt-1">JPG, PNG o WebP · Máx 8 MB · Se comprime a 2400px JPEG q90</span>
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
@@ -162,38 +206,16 @@ export default function AdminBlogPage() {
           </label>
         ) : (
           <div className="space-y-4">
-            {/* Preview */}
             <div className="relative w-full h-56 rounded-lg overflow-hidden bg-[#0a0a0a]">
-              <Image
-                src={preview}
-                alt="Preview"
-                fill
-                className="object-contain"
-                unoptimized
-              />
+              <Image src={preview} alt="Preview" fill className="object-contain" unoptimized />
             </div>
 
-            {/* Filename */}
-            <div>
-              <label className="block text-xs text-[#888] mb-1">Nombre del archivo</label>
-              <input
-                type="text"
-                value={customName}
-                onChange={(e) => setCustomName(e.target.value.replace(/[^a-zA-Z0-9._-]/g, '-'))}
-                className="w-full bg-[#0a0a0a] border border-[#333] rounded-lg px-4 py-2 text-white text-sm focus:border-[#4A8BC2] focus:outline-none"
-                placeholder="blog-mi-imagen.jpg"
-              />
-            </div>
+            {progress && <p className="text-xs text-[#4A8BC2]">{progress}</p>}
 
-            {progress && (
-              <p className="text-xs text-[#4A8BC2]">{progress}</p>
-            )}
-
-            {/* Actions */}
             <div className="flex gap-3">
               <button
                 onClick={handleUpload}
-                disabled={uploading}
+                disabled={uploading || !selectedPostId}
                 className="px-6 py-2.5 bg-[#4A8BC2] text-white text-sm font-medium rounded-lg hover:bg-[#3a7bb2] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
               >
                 {uploading ? (
@@ -205,12 +227,7 @@ export default function AdminBlogPage() {
                     Subiendo...
                   </>
                 ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    Subir imagen
-                  </>
+                  'Subir imagen'
                 )}
               </button>
               <button
@@ -224,7 +241,6 @@ export default function AdminBlogPage() {
           </div>
         )}
 
-        {/* Messages */}
         {error && (
           <div className="mt-4 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
             {error}
@@ -243,7 +259,7 @@ export default function AdminBlogPage() {
           <svg className="w-5 h-5 text-[#4A8BC2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
-          Imágenes del blog
+          Imágenes subidas
         </h2>
 
         {loading ? (
@@ -259,7 +275,6 @@ export default function AdminBlogPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <p className="text-sm">No hay imágenes aún</p>
-            <p className="text-xs mt-1">Sube la primera imagen arriba</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -269,19 +284,12 @@ export default function AdminBlogPage() {
                 className="group relative bg-[#0a0a0a] rounded-lg overflow-hidden border border-[#222] hover:border-[#4A8BC2]/50 transition-colors"
               >
                 <div className="relative aspect-video">
-                  <Image
-                    src={img.url}
-                    alt={img.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
+                  <Image src={img.url} alt={img.name} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
                 </div>
                 <div className="p-3">
                   <p className="text-xs text-white truncate font-mono">{img.name}</p>
                   <p className="text-[10px] text-[#555] mt-0.5">{formatSize(img.size)}</p>
                 </div>
-                {/* Copy path button */}
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(img.url);
@@ -301,9 +309,10 @@ export default function AdminBlogPage() {
         )}
       </section>
 
-      {/* Tip */}
       <div className="mt-6 px-4 py-3 bg-[#111] border border-[#222] rounded-lg text-xs text-[#666]">
-        <strong className="text-[#888]">Tip:</strong> Las imágenes del hero del blog deben ser horizontales (16:9) y mínimo 1920px de ancho para verse nítidas. El sistema comprime automáticamente a 2400px y calidad 90%.
+        <strong className="text-[#888]">Convención:</strong> Cada imagen se guarda como <code className="text-[#4A8BC2]">/blog/&#123;id_post&#125;.jpg</code>.
+        El blog la detecta automáticamente. Si no existe, usa la thumbnail de WASI como fallback.
+        Imágenes ideales: horizontal 16:9, mínimo 1920px de ancho.
       </div>
     </div>
   );
